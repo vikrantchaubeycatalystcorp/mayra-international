@@ -1,0 +1,68 @@
+import type { Metadata } from "next";
+import { Globe, Map as MapIcon, Building2 } from "lucide-react";
+import { worldCollegeStats } from "../../../data/worldCollegeStats";
+import { colleges } from "../../../data/colleges";
+import { MapClientWrapper } from "../../../components/map/MapClientWrapper";
+
+export const metadata: Metadata = {
+  title: "World College Map | Mayra",
+  description: "Explore colleges worldwide on an interactive map. Zoom in to see exact college locations.",
+};
+
+export default function MapPage() {
+  const mapColleges = colleges
+    .filter((c) => c.latitude && c.longitude)
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      city: c.city,
+      state: c.state,
+      latitude: c.latitude!,
+      longitude: c.longitude!,
+      countryCode: c.countryCode,
+      countryName: c.countryName,
+      nirfRank: c.nirfRank,
+      rating: c.rating,
+      fees: c.fees,
+      streams: c.streams,
+      type: c.type,
+    }));
+
+  const totalCountries = worldCollegeStats.length;
+  const totalColleges = worldCollegeStats.reduce((sum, c) => sum + c.collegeCount, 0);
+
+  return (
+    <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
+      {/* Top stats bar */}
+      <div className="bg-slate-900 border-b border-slate-700 px-6 py-2.5 flex items-center gap-6 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <MapIcon className="h-4 w-4 text-blue-400" />
+          <span className="text-white font-bold text-sm">World College Map</span>
+        </div>
+        <div className="h-4 w-px bg-slate-600" />
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-1.5">
+            <Globe className="h-3.5 w-3.5 text-blue-400" />
+            <span className="text-slate-300">{totalCountries} Countries</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Building2 className="h-3.5 w-3.5 text-orange-400" />
+            <span className="text-slate-300">{totalColleges.toLocaleString()}+ Colleges</span>
+          </div>
+        </div>
+        <div className="ml-auto text-xs text-slate-500">
+          Click a country to explore · Zoom in for college locations
+        </div>
+      </div>
+
+      {/* Map container — fills remaining viewport */}
+      <div className="flex-1 relative overflow-hidden">
+        <MapClientWrapper
+          countriesData={worldCollegeStats}
+          initialColleges={mapColleges}
+        />
+      </div>
+    </div>
+  );
+}
