@@ -77,7 +77,7 @@ export interface SectionConfig {
   order: number;
 }
 
-export type TemplateId = 'classic' | 'modern' | 'minimal' | 'professional';
+export type TemplateId = 'classic' | 'modern' | 'minimal' | 'professional' | 'compact' | 'executive' | 'slate' | 'creative';
 
 export interface ResumeData {
   personal: PersonalInfo;

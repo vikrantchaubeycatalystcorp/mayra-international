@@ -5,7 +5,7 @@ import {
   FileText, User, GraduationCap, Briefcase, Wrench, Eye, Download,
   ChevronLeft, ChevronRight, Check, Plus, Trash2, Palette, LayoutTemplate,
   Target, AlertCircle, AlertTriangle, Lightbulb, RotateCcw, FolderKanban,
-  Award, Trophy, X, GripVertical,
+  Award, Trophy, X, GripVertical, Sparkles, Loader2, FileDown, ClipboardCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -171,9 +171,27 @@ function ResumeBuilderContent() {
   const [newCategory, setNewCategory] = useState("");
   const [skillInputs, setSkillInputs] = useState<Record<number, string>>({});
 
-  // --- Score debounce ---
+  // --- AI Bullet Improvement state ---
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
+  const [aiSuggestions, setAiSuggestions] = useState<Record<string, any>>({});
+
+  // --- AI Summary Generator state ---
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summarySuggestions, setSummarySuggestions] = useState<any>(null);
+
+  // --- JD Match Panel state ---
+  const [showJdMatch, setShowJdMatch] = useState(false);
+  const [jdText, setJdText] = useState('');
+  const [jdResult, setJdResult] = useState<any>(null);
+  const [jdLoading, setJdLoading] = useState(false);
+
+  // --- Auto-save indicator ---
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving'>('saved');
+
+  // --- Score debounce + auto-save indicator ---
   const storeState = useResumeStore.getState;
   useEffect(() => {
+    setSaveStatus('saving');
     const timer = setTimeout(() => {
       const s = useResumeStore.getState();
       const data: ResumeData = {
@@ -183,10 +201,21 @@ function ResumeBuilderContent() {
         sections: s.sections, templateId: s.templateId, accentColor: s.accentColor,
       };
       setScore(scoreResume(data));
+      setSaveStatus('saved');
     }, 500);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personal, summary, education, experience, projects, skills, certifications, achievements, sections]);
+
+  // --- Keyboard Shortcuts ---
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'p') { e.preventDefault(); handlePrint(); }
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); /* already auto-saved via zustand persist */ }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
 
   const sortedSections = useMemo(
     () => [...sections].sort((a, b) => a.order - b.order),
@@ -214,6 +243,119 @@ function ResumeBuilderContent() {
   }, [sections, reorderSections]);
 
   const handlePrint = useCallback(() => window.print(), []);
+
+  // --- AI Bullet Improvement ---
+  async function improveBullet(text: string, key: string) {
+    if (!text.trim()) return;
+    setAiLoading(key);
+    try {
+      const res = await fetch('/api/ai/improve-bullet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bullet: text, targetRole: personal.name ? `${personal.name}'s target role` : undefined }),
+      });
+      const data = await res.json();
+      setAiSuggestions(prev => ({ ...prev, [key]: data }));
+    } catch {}
+    finally { setAiLoading(null); }
+  }
+
+  // --- AI Summary Generator ---
+  async function generateSummary() {
+    setSummaryLoading(true);
+    try {
+      const allSkills = skills.flatMap(g => g.skills);
+      const expSummary = experience.map(e => `${e.role} at ${e.company}`).join(', ');
+      const res = await fetch('/api/ai/generate-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetRole: personal.name || 'Professional',
+          skills: allSkills,
+          experienceSummary: expSummary,
+          segment: 'experienced',
+        }),
+      });
+      const data = await res.json();
+      setSummarySuggestions(data);
+    } catch {}
+    finally { setSummaryLoading(false); }
+  }
+
+  // --- JD Match Analysis ---
+  async function analyzeJd() {
+    if (!jdText.trim()) return;
+    setJdLoading(true);
+    try {
+      const parseRes = await fetch('/api/ai/parse-jd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jdText }),
+      });
+      const parsed = await parseRes.json();
+
+      // Client-side matching against resume data
+      const allSkills = skills.flatMap(g => g.skills).map(s => s.toLowerCase());
+      const jdSkills: string[] = (parsed.skills || parsed.required_skills || []).map((s: string) => s.toLowerCase());
+      const matchedSkills = jdSkills.filter(s => allSkills.some(rs => rs.includes(s) || s.includes(rs)));
+      const missingSkills = jdSkills.filter(s => !allSkills.some(rs => rs.includes(s) || s.includes(rs)));
+
+      const skillScore = jdSkills.length > 0 ? Math.round((matchedSkills.length / jdSkills.length) * 100) : 50;
+      const hasRelevantExp = experience.some(e =>
+        (parsed.title || '').toLowerCase().split(' ').some((w: string) => e.role.toLowerCase().includes(w))
+      );
+      const expScore = hasRelevantExp ? 80 : 40;
+      const eduScore = education.length > 0 ? 70 : 30;
+      const overallMatch = Math.round(skillScore * 0.5 + expScore * 0.3 + eduScore * 0.2);
+
+      const recommendations: { text: string; priority: 'high' | 'medium' | 'low' }[] = [];
+      if (missingSkills.length > 0) {
+        recommendations.push({ text: `Add missing skills: ${missingSkills.slice(0, 5).join(', ')}`, priority: 'high' });
+      }
+      if (!hasRelevantExp) {
+        recommendations.push({ text: 'Tailor your experience bullets to match the job title and responsibilities', priority: 'high' });
+      }
+      if (summary.length < 50) {
+        recommendations.push({ text: 'Write a targeted summary mentioning key requirements from the JD', priority: 'medium' });
+      }
+      recommendations.push({ text: 'Use keywords from the job description in your bullet points', priority: 'medium' });
+
+      setJdResult({
+        parsed,
+        matchScore: overallMatch,
+        breakdown: { skills: skillScore, experience: expScore, education: eduScore },
+        matchedSkills: matchedSkills.map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+        missingSkills: missingSkills.map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+        recommendations: recommendations.sort((a, b) => {
+          const order = { high: 0, medium: 1, low: 2 };
+          return order[a.priority] - order[b.priority];
+        }),
+      });
+    } catch {}
+    finally { setJdLoading(false); }
+  }
+
+  // --- DOCX Export ---
+  async function handleDocxExport() {
+    try {
+      const { generateDocx } = await import('@/lib/resume/docx-export');
+      const s = useResumeStore.getState();
+      const blob = await generateDocx({
+        personal: s.personal, summary: s.summary, education: s.education,
+        experience: s.experience, projects: s.projects, skills: s.skills,
+        certifications: s.certifications, achievements: s.achievements,
+        sections: s.sections, templateId: s.templateId, accentColor: s.accentColor,
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${personal.name || 'Resume'}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('DOCX export is not available yet. Please use PDF download instead.');
+    }
+  }
 
   // --- All nav items ---
   const navItems = useMemo(() => {
@@ -264,11 +406,36 @@ function ResumeBuilderContent() {
       case "summary":
         return (
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-gray-900">Professional Summary</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-900">Professional Summary</h2>
+              <button
+                onClick={generateSummary}
+                disabled={summaryLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-50"
+                suppressHydrationWarning
+              >
+                {summaryLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Generate Summary
+              </button>
+            </div>
             <Field label="Summary">
               <textarea value={summary} onChange={e => updateSummary(e.target.value)} placeholder="Results-driven software engineer with 3+ years of experience in full-stack development. Proficient in React, Node.js, and cloud technologies with a track record of delivering scalable solutions..." className={cn(inputCls, "h-36")} />
             </Field>
             <p className="text-xs text-gray-400">{summary.length} characters</p>
+            {summarySuggestions && summarySuggestions.variants && (
+              <div className="bg-indigo-50 rounded-xl p-4 space-y-3 border border-indigo-100">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-indigo-700">AI-Generated Summaries</span>
+                  <button onClick={() => setSummarySuggestions(null)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-4 w-4" /></button>
+                </div>
+                {summarySuggestions.variants.map((v: any, vi: number) => (
+                  <button key={vi} onClick={() => { updateSummary(v.text); setSummarySuggestions(null); }} className="w-full text-left p-3 rounded-lg hover:bg-white text-sm transition-colors border border-transparent hover:border-indigo-200">
+                    <span className="text-xs font-medium text-indigo-500 uppercase">{v.style || v.tone || `Option ${vi + 1}`}</span>
+                    <p className="text-gray-700 mt-1">{v.text}</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         );
 
@@ -323,15 +490,47 @@ function ResumeBuilderContent() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Key Achievements / Bullets</label>
-                  {exp.bullets.map((b, bi) => (
-                    <div key={bi} className="flex gap-2 mb-2">
-                      <span className="text-gray-400 mt-2.5 text-xs">{bi + 1}.</span>
-                      <Input value={b} onChange={e => updateExperienceBullet(exp.id, bi, e.target.value)} placeholder="Led a team of 5 to build..." className="flex-1" />
-                      {exp.bullets.length > 1 && (
-                        <button onClick={() => removeExperienceBullet(exp.id, bi)} className="text-gray-400 hover:text-red-500" suppressHydrationWarning><X className="h-4 w-4" /></button>
-                      )}
-                    </div>
-                  ))}
+                  {exp.bullets.map((b, bi) => {
+                    const bulletKey = `exp-${exp.id}-${bi}`;
+                    return (
+                      <div key={bi} className="mb-2">
+                        <div className="flex gap-2">
+                          <span className="text-gray-400 mt-2.5 text-xs">{bi + 1}.</span>
+                          <Input value={b} onChange={e => updateExperienceBullet(exp.id, bi, e.target.value)} placeholder="Led a team of 5 to build..." className="flex-1" />
+                          <button
+                            onClick={() => improveBullet(b, bulletKey)}
+                            disabled={aiLoading === bulletKey}
+                            className="px-2 py-1 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
+                            title="AI Improve"
+                            suppressHydrationWarning
+                          >
+                            {aiLoading === bulletKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                          </button>
+                          {exp.bullets.length > 1 && (
+                            <button onClick={() => removeExperienceBullet(exp.id, bi)} className="text-gray-400 hover:text-red-500" suppressHydrationWarning><X className="h-4 w-4" /></button>
+                          )}
+                        </div>
+                        {aiSuggestions[bulletKey] && (
+                          <div className="ml-6 mt-2 bg-indigo-50 rounded-lg p-3 space-y-2 border border-indigo-100">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-indigo-700">AI Suggestions</span>
+                              <button onClick={() => setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; })} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-3 w-3" /></button>
+                            </div>
+                            {aiSuggestions[bulletKey].variants?.map((v: any, vi: number) => (
+                              <button key={vi} onClick={() => { updateExperienceBullet(exp.id, bi, v.text); setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; }); }} className="w-full text-left p-2 rounded-lg hover:bg-white text-sm transition-colors">
+                                <span className="text-xs font-medium text-indigo-500 uppercase">{v.style}</span>
+                                <p className="text-gray-700 mt-0.5">{v.text}</p>
+                                <p className="text-xs text-gray-400 mt-0.5">{v.changes}</p>
+                              </button>
+                            ))}
+                            {aiSuggestions[bulletKey].metrics_prompt && (
+                              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   <button onClick={() => addExperienceBullet(exp.id)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
                 </div>
               </div>
@@ -356,15 +555,47 @@ function ResumeBuilderContent() {
                 <Field label="Tech Stack (comma-separated)"><Input value={proj.techStack} onChange={e => updateProject(proj.id, "techStack", e.target.value)} placeholder="React, Node.js, PostgreSQL" /></Field>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description Bullets</label>
-                  {proj.bullets.map((b, bi) => (
-                    <div key={bi} className="flex gap-2 mb-2">
-                      <span className="text-gray-400 mt-2.5 text-xs">{bi + 1}.</span>
-                      <Input value={b} onChange={e => updateProjectBullet(proj.id, bi, e.target.value)} placeholder="Built a responsive UI..." className="flex-1" />
-                      {proj.bullets.length > 1 && (
-                        <button onClick={() => removeProjectBullet(proj.id, bi)} className="text-gray-400 hover:text-red-500" suppressHydrationWarning><X className="h-4 w-4" /></button>
-                      )}
-                    </div>
-                  ))}
+                  {proj.bullets.map((b, bi) => {
+                    const bulletKey = `proj-${proj.id}-${bi}`;
+                    return (
+                      <div key={bi} className="mb-2">
+                        <div className="flex gap-2">
+                          <span className="text-gray-400 mt-2.5 text-xs">{bi + 1}.</span>
+                          <Input value={b} onChange={e => updateProjectBullet(proj.id, bi, e.target.value)} placeholder="Built a responsive UI..." className="flex-1" />
+                          <button
+                            onClick={() => improveBullet(b, bulletKey)}
+                            disabled={aiLoading === bulletKey}
+                            className="px-2 py-1 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
+                            title="AI Improve"
+                            suppressHydrationWarning
+                          >
+                            {aiLoading === bulletKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                          </button>
+                          {proj.bullets.length > 1 && (
+                            <button onClick={() => removeProjectBullet(proj.id, bi)} className="text-gray-400 hover:text-red-500" suppressHydrationWarning><X className="h-4 w-4" /></button>
+                          )}
+                        </div>
+                        {aiSuggestions[bulletKey] && (
+                          <div className="ml-6 mt-2 bg-indigo-50 rounded-lg p-3 space-y-2 border border-indigo-100">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-indigo-700">AI Suggestions</span>
+                              <button onClick={() => setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; })} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-3 w-3" /></button>
+                            </div>
+                            {aiSuggestions[bulletKey].variants?.map((v: any, vi: number) => (
+                              <button key={vi} onClick={() => { updateProjectBullet(proj.id, bi, v.text); setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; }); }} className="w-full text-left p-2 rounded-lg hover:bg-white text-sm transition-colors">
+                                <span className="text-xs font-medium text-indigo-500 uppercase">{v.style}</span>
+                                <p className="text-gray-700 mt-0.5">{v.text}</p>
+                                <p className="text-xs text-gray-400 mt-0.5">{v.changes}</p>
+                              </button>
+                            ))}
+                            {aiSuggestions[bulletKey].metrics_prompt && (
+                              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   <button onClick={() => addProjectBullet(proj.id)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
                 </div>
               </div>
@@ -515,8 +746,15 @@ function ResumeBuilderContent() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <span className={cn("text-xs font-medium transition-colors", saveStatus === 'saving' ? "text-amber-500" : "text-green-500")}>
+                {saveStatus === 'saving' ? 'Saving...' : 'Saved'}
+              </span>
               <ScoreChip />
+              <button onClick={() => setShowJdMatch(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-xs font-semibold text-gray-700 hidden sm:flex" suppressHydrationWarning>
+                <ClipboardCheck className="h-4 w-4 text-indigo-500" />JD Match
+              </button>
               <Button variant="outline" onClick={() => setShowFullPreview(true)} className="gap-1.5 hidden sm:flex"><LayoutTemplate className="h-4 w-4" />Templates</Button>
+              <Button variant="outline" onClick={handleDocxExport} className="gap-1.5 hidden sm:flex"><FileDown className="h-4 w-4" />DOCX</Button>
               <Button variant="gradient" onClick={handlePrint} className="gap-1.5"><Download className="h-4 w-4" /><span className="hidden sm:inline">Download PDF</span></Button>
               <Button variant="ghost" onClick={() => { if (confirm("Reset all resume data?")) resetResume(); }} className="text-gray-400 hover:text-red-500" title="Reset"><RotateCcw className="h-4 w-4" /></Button>
             </div>
@@ -574,8 +812,17 @@ function ResumeBuilderContent() {
 
             {/* Center - Editor */}
             <div className={cn("flex-1 min-w-0", showPreview && "hidden lg:block")}>
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-20 lg:mb-0">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4 lg:mb-0">
                 {renderEditor()}
+              </div>
+              {/* AI Toolbar (desktop) */}
+              <div className="hidden lg:flex items-center gap-2 mt-4 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100 mb-20 lg:mb-0">
+                <Sparkles className="h-4 w-4 text-indigo-500" />
+                <span className="text-xs font-medium text-indigo-700">AI Actions:</span>
+                <button onClick={() => { if (activeSection !== 'experience' && activeSection !== 'projects') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Improve Bullet</button>
+                <button onClick={() => { if (activeSection !== 'experience') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Add Metrics</button>
+                <button onClick={() => setShowJdMatch(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Match to JD</button>
+                <button onClick={() => setShowScore(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>ATS Check</button>
               </div>
             </div>
 
@@ -633,6 +880,104 @@ function ResumeBuilderContent() {
             )}
           </div>
         </div>
+
+        {/* JD Match Panel (slide-in) */}
+        {showJdMatch && (
+          <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setShowJdMatch(false)}>
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="relative w-full max-w-md bg-white shadow-2xl h-full overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><ClipboardCheck className="h-5 w-5 text-indigo-600" /> JD Match</h2>
+                  <button onClick={() => setShowJdMatch(false)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-5 w-5" /></button>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Paste Job Description</label>
+                  <textarea
+                    value={jdText}
+                    onChange={e => setJdText(e.target.value)}
+                    placeholder="Paste the full job description here..."
+                    className={cn(inputCls, "h-40")}
+                  />
+                </div>
+                <button
+                  onClick={analyzeJd}
+                  disabled={jdLoading || !jdText.trim()}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-medium text-sm hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-50"
+                  suppressHydrationWarning
+                >
+                  {jdLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  Analyze Match
+                </button>
+
+                {jdResult && (
+                  <>
+                    {/* Overall Match Score Circle */}
+                    <div className="flex flex-col items-center py-4">
+                      <svg width="120" height="120" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#f3f4f6" strokeWidth="8" />
+                        <circle cx="60" cy="60" r="50" fill="none" stroke={jdResult.matchScore <= 40 ? "#ef4444" : jdResult.matchScore <= 60 ? "#f97316" : jdResult.matchScore <= 80 ? "#eab308" : "#22c55e"} strokeWidth="8" strokeDasharray={2 * Math.PI * 50} strokeDashoffset={2 * Math.PI * 50 - (jdResult.matchScore / 100) * 2 * Math.PI * 50} strokeLinecap="round" transform="rotate(-90 60 60)" className="transition-all duration-1000" />
+                        <text x="60" y="55" textAnchor="middle" className="text-2xl font-bold" fill="#1f2937">{jdResult.matchScore}</text>
+                        <text x="60" y="72" textAnchor="middle" className="text-xs" fill="#6b7280">Match %</text>
+                      </svg>
+                    </div>
+
+                    {/* Breakdown bars */}
+                    <div className="space-y-3">
+                      <p className="text-sm font-semibold text-gray-700">Match Breakdown</p>
+                      {Object.entries(jdResult.breakdown).map(([key, val]) => (
+                        <div key={key}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-gray-600 capitalize">{key}</span>
+                            <span className="font-semibold text-gray-800">{val as number}%</span>
+                          </div>
+                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full transition-all duration-700" style={{ width: `${val as number}%`, backgroundColor: (val as number) <= 40 ? "#ef4444" : (val as number) <= 60 ? "#f97316" : (val as number) <= 80 ? "#eab308" : "#22c55e" }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Matched / Missing Skills */}
+                    {jdResult.matchedSkills?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 mb-2">Matched Skills</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {jdResult.matchedSkills.map((s: string) => (
+                            <span key={s} className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded-full border border-green-200">{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {jdResult.missingSkills?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 mb-2">Missing Skills</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {jdResult.missingSkills.map((s: string) => (
+                            <span key={s} className="px-2 py-0.5 bg-red-50 text-red-700 text-xs rounded-full border border-red-200">{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommendations */}
+                    {jdResult.recommendations?.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold text-gray-700">Recommendations</p>
+                        {jdResult.recommendations.map((rec: any, i: number) => (
+                          <div key={i} className={cn("flex gap-2.5 p-3 rounded-lg text-xs", rec.priority === 'high' ? "bg-red-50" : rec.priority === 'medium' ? "bg-amber-50" : "bg-blue-50")}>
+                            {rec.priority === 'high' ? <AlertCircle className="h-4 w-4 text-red-500 shrink-0" /> : rec.priority === 'medium' ? <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" /> : <Lightbulb className="h-4 w-4 text-blue-500 shrink-0" />}
+                            <p className="font-medium text-gray-800">{rec.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Score Panel (slide-in) */}
         {showScore && (

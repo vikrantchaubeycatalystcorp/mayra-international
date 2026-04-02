@@ -53,6 +53,26 @@ export const templateOptions: {
     name: 'Professional',
     description: 'Corporate two-tone header with structured grid layout.',
   },
+  {
+    id: 'compact',
+    name: 'Compact ATS',
+    description: 'Maximum content density with narrow spacing, optimized for engineering roles.',
+  },
+  {
+    id: 'executive',
+    name: 'Executive',
+    description: 'Elegant design with generous whitespace for experienced professionals.',
+  },
+  {
+    id: 'slate',
+    name: 'Slate Modern',
+    description: 'Contemporary layout with accent bar and visual hierarchy.',
+  },
+  {
+    id: 'creative',
+    name: 'Creative Minimal',
+    description: 'Centered typographic layout with airy spacing, portfolio-oriented.',
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -257,6 +277,20 @@ function SkillsSectionGrid({ data }: { data: ResumeData }) {
   );
 }
 
+function SkillsSectionCreative({ data }: { data: ResumeData }) {
+  if (!data.skills?.length) return null;
+  return (
+    <div className="space-y-1">
+      {data.skills.map((group, i) => (
+        <p key={i} className="text-xs text-gray-600 leading-relaxed">
+          <span className="font-bold text-gray-800">{group.category}: </span>
+          {group.items.join(', ')}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 function CertificationsSection({ data }: { data: ResumeData }) {
   if (!data.certifications?.length) return null;
   return (
@@ -300,7 +334,7 @@ function AchievementsSection({ data }: { data: ResumeData }) {
 function renderSection(
   sectionId: string,
   data: ResumeData,
-  variant: 'classic' | 'modern' | 'minimal' | 'professional',
+  variant: TemplateId,
 ) {
   switch (sectionId) {
     case 'summary':
@@ -312,7 +346,7 @@ function renderSection(
     case 'projects':
       return <ProjectsSection data={data} />;
     case 'skills':
-      if (variant === 'modern')
+      if (variant === 'modern' || variant === 'slate')
         return (
           <SkillsSectionBadges
             data={data}
@@ -321,6 +355,8 @@ function renderSection(
         );
       if (variant === 'professional')
         return <SkillsSectionGrid data={data} />;
+      if (variant === 'creative')
+        return <SkillsSectionCreative data={data} />;
       return <SkillsSectionClassic data={data} />;
     case 'certifications':
       return <CertificationsSection data={data} />;
@@ -598,6 +634,251 @@ function ProfessionalTemplate({
 }
 
 /* ------------------------------------------------------------------ */
+/*  Template 5: Compact ATS                                            */
+/* ------------------------------------------------------------------ */
+
+function CompactTemplate({
+  data,
+  sections,
+}: {
+  data: ResumeData;
+  sections: SectionConfig[];
+}) {
+  const accent = data.accentColor ?? '#374151';
+
+  return (
+    <div id="resume-print-area" className="bg-white px-8 py-6 font-sans">
+      {/* Two-line header: name left, contact stacked right */}
+      <div className="flex items-start justify-between mb-4">
+        <h1 className="text-lg font-bold text-gray-900 tracking-tight leading-tight">
+          {data.personalInfo?.name}
+        </h1>
+        {data.personalInfo && (
+          <div className="text-right text-[10px] text-gray-600 space-y-0 leading-tight">
+            {data.personalInfo.email && <p>{data.personalInfo.email}</p>}
+            {data.personalInfo.phone && <p>{data.personalInfo.phone}</p>}
+            {data.personalInfo.location && <p>{data.personalInfo.location}</p>}
+            {data.personalInfo.linkedin && <p>{data.personalInfo.linkedin}</p>}
+            {data.personalInfo.website && <p>{data.personalInfo.website}</p>}
+          </div>
+        )}
+      </div>
+
+      {/* Sections */}
+      <div className="space-y-2.5">
+        {sections.map((section) => {
+          const content = renderSection(section.id, data, 'compact');
+          if (!content) return null;
+          return (
+            <div key={section.id}>
+              <div className="flex items-center gap-2 mb-1">
+                <h2
+                  className="text-[10px] font-semibold uppercase tracking-widest shrink-0"
+                  style={{ color: accent }}
+                >
+                  {SECTION_LABELS[section.id] ?? section.id}
+                </h2>
+                <div className="flex-1 border-t" style={{ borderColor: `${accent}30` }} />
+              </div>
+              <div className="text-xs leading-snug">{content}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Template 6: Executive                                              */
+/* ------------------------------------------------------------------ */
+
+function ExecutiveTemplate({
+  data,
+  sections,
+}: {
+  data: ResumeData;
+  sections: SectionConfig[];
+}) {
+  const accent = data.accentColor ?? '#1e3a5f';
+
+  return (
+    <div id="resume-print-area" className="bg-white px-14 py-12 font-sans">
+      {/* Header: centered name with accent line */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 tracking-wide">
+          {data.personalInfo?.name}
+        </h1>
+        <div
+          className="mx-auto mt-3 mb-4"
+          style={{ width: 60, height: 2, backgroundColor: accent }}
+        />
+        {data.personalInfo && (
+          <p className="text-xs text-gray-500 tracking-wide">
+            {[
+              data.personalInfo.email,
+              data.personalInfo.phone,
+              data.personalInfo.location,
+              data.personalInfo.linkedin,
+              data.personalInfo.website,
+            ]
+              .filter(Boolean)
+              .join('    |    ')}
+          </p>
+        )}
+      </div>
+
+      {/* Sections */}
+      <div className="space-y-7">
+        {sections.map((section) => {
+          const content = renderSection(section.id, data, 'executive');
+          if (!content) return null;
+          return (
+            <div key={section.id}>
+              <h2
+                className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
+                style={{ color: accent }}
+              >
+                {SECTION_LABELS[section.id] ?? section.id}
+              </h2>
+              {content}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Template 7: Slate Modern                                           */
+/* ------------------------------------------------------------------ */
+
+function SlateTemplate({
+  data,
+  sections,
+}: {
+  data: ResumeData;
+  sections: SectionConfig[];
+}) {
+  const accent = data.accentColor ?? '#3b82f6';
+
+  return (
+    <div id="resume-print-area" className="bg-white font-sans relative">
+      {/* Full-height left accent bar */}
+      <div
+        className="absolute left-0 top-0 bottom-0"
+        style={{ width: 8, backgroundColor: accent }}
+      />
+
+      {/* Name area with tinted background */}
+      <div
+        className="pl-12 pr-10 py-6"
+        style={{ backgroundColor: `${accent}08` }}
+      >
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          {data.personalInfo?.name}
+        </h1>
+        {data.personalInfo && (
+          <p className="mt-1.5 text-xs text-gray-600">
+            {[
+              data.personalInfo.email,
+              data.personalInfo.phone,
+              data.personalInfo.location,
+              data.personalInfo.linkedin,
+              data.personalInfo.website,
+            ]
+              .filter(Boolean)
+              .join('  |  ')}
+          </p>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="pl-12 pr-10 py-8 space-y-5">
+        {sections.map((section) => {
+          const content = renderSection(section.id, data, 'slate');
+          if (!content) return null;
+          return (
+            <div key={section.id}>
+              <h2
+                className="text-sm font-bold text-gray-800 mb-2 pl-3"
+                style={{ borderLeft: `3px solid ${accent}` }}
+              >
+                {SECTION_LABELS[section.id] ?? section.id}
+              </h2>
+              {content}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Template 8: Creative Minimal                                       */
+/* ------------------------------------------------------------------ */
+
+function CreativeTemplate({
+  data,
+  sections,
+}: {
+  data: ResumeData;
+  sections: SectionConfig[];
+}) {
+  const accent = data.accentColor ?? '#7c3aed';
+
+  return (
+    <div id="resume-print-area" className="bg-white px-14 py-12 font-sans">
+      {/* Header: centered, large display name */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          {data.personalInfo?.name}
+        </h1>
+        {data.personalInfo && (
+          <p className="mt-2 text-xs text-gray-400 tracking-wide">
+            {[
+              data.personalInfo.email,
+              data.personalInfo.phone,
+              data.personalInfo.location,
+              data.personalInfo.linkedin,
+              data.personalInfo.website,
+            ]
+              .filter(Boolean)
+              .join('  |  ')}
+          </p>
+        )}
+      </div>
+
+      {/* Sections with dot dividers */}
+      <div className="space-y-6">
+        {sections.map((section, idx) => {
+          const content = renderSection(section.id, data, 'creative');
+          if (!content) return null;
+          return (
+            <div key={section.id}>
+              {idx > 0 && (
+                <p className="text-center text-gray-300 text-xs mb-5 tracking-[0.5em]">
+                  &bull; &bull; &bull;
+                </p>
+              )}
+              <h2
+                className="text-sm font-medium italic mb-3 tracking-wide"
+                style={{ color: accent }}
+              >
+                {SECTION_LABELS[section.id] ?? section.id}
+              </h2>
+              {content}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main export: ResumeTemplate                                        */
 /* ------------------------------------------------------------------ */
 
@@ -618,6 +899,10 @@ export function ResumeTemplate({
     modern: ModernTemplate,
     minimal: MinimalTemplate,
     professional: ProfessionalTemplate,
+    compact: CompactTemplate,
+    executive: ExecutiveTemplate,
+    slate: SlateTemplate,
+    creative: CreativeTemplate,
   };
 
   const Template = templateMap[data.templateId] ?? ClassicTemplate;
@@ -770,20 +1055,114 @@ function TemplateMiniPreview({ templateId }: { templateId: TemplateId }) {
     );
   }
 
-  // professional
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="bg-primary-600 rounded px-1.5 py-1.5 flex items-center justify-between">
-        <div className="h-1.5 w-10 rounded-full bg-white/80" />
-        <div className="space-y-0.5">
-          <div className="h-0.5 w-8 rounded-full bg-white/50" />
-          <div className="h-0.5 w-6 rounded-full bg-white/50" />
+  if (templateId === 'professional') {
+    return (
+      <div className="flex flex-col gap-1.5">
+        <div className="bg-primary-600 rounded px-1.5 py-1.5 flex items-center justify-between">
+          <div className="h-1.5 w-10 rounded-full bg-white/80" />
+          <div className="space-y-0.5">
+            <div className="h-0.5 w-8 rounded-full bg-white/50" />
+            <div className="h-0.5 w-6 rounded-full bg-white/50" />
+          </div>
+        </div>
+        <div className="space-y-2 mt-0.5 px-0.5">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="space-y-0.5">
+              <div className={cn(barAccent, 'h-1 w-10')} />
+              <div className={cn(line, 'h-0.5 w-full')} />
+              <div className={cn(line, 'h-0.5 w-4/5')} />
+            </div>
+          ))}
         </div>
       </div>
-      <div className="space-y-2 mt-0.5 px-0.5">
+    );
+  }
+
+  if (templateId === 'compact') {
+    return (
+      <div className="flex flex-col gap-1 pt-1">
+        <div className="flex items-start justify-between">
+          <div className={cn(bar, 'h-1.5 w-10')} />
+          <div className="space-y-0.5">
+            <div className={cn(line, 'h-0.5 w-6')} />
+            <div className={cn(line, 'h-0.5 w-5')} />
+          </div>
+        </div>
+        <div className="space-y-1 mt-1">
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="space-y-0.5">
+              <div className="flex items-center gap-1">
+                <div className={cn(bar, 'h-0.5 w-8')} />
+                <div className="flex-1 border-t border-gray-200" />
+              </div>
+              <div className={cn(line, 'h-0.5 w-full')} />
+              <div className={cn(line, 'h-0.5 w-5/6')} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (templateId === 'executive') {
+    return (
+      <div className="flex flex-col items-center gap-1.5 pt-3">
+        <div className={cn(bar, 'h-2 w-16')} />
+        <div className={cn(barAccent, 'h-0.5 w-6')} />
+        <div className={cn(line, 'h-0.5 w-20')} />
+        <div className="w-full mt-3 space-y-3">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="space-y-0.5">
+              <div className={cn(barAccent, 'h-0.5 w-10')} />
+              <div className={cn(line, 'h-0.5 w-full')} />
+              <div className={cn(line, 'h-0.5 w-4/5')} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (templateId === 'slate') {
+    return (
+      <div className="flex flex-col gap-1.5 relative">
+        <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-primary-400" />
+        <div className="pl-2.5 bg-primary-50/50 rounded-r py-1">
+          <div className={cn(bar, 'h-1.5 w-12')} />
+          <div className={cn(line, 'h-0.5 w-16 mt-0.5')} />
+        </div>
+        <div className="pl-2.5 space-y-2 mt-0.5">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="space-y-0.5">
+              <div className="flex items-center gap-0.5">
+                <div className="w-0.5 h-2 rounded-full bg-primary-400" />
+                <div className={cn(bar, 'h-1 w-10')} />
+              </div>
+              <div className={cn(line, 'h-0.5 w-full')} />
+              <div className={cn(line, 'h-0.5 w-3/4')} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // creative
+  return (
+    <div className="flex flex-col items-center gap-1.5 pt-3">
+      <div className={cn(bar, 'h-2 w-14')} />
+      <div className={cn(line, 'h-0.5 w-16')} />
+      <div className="w-full mt-2 space-y-2.5">
         {[1, 2, 3].map((n) => (
           <div key={n} className="space-y-0.5">
-            <div className={cn(barAccent, 'h-1 w-10')} />
+            {n > 1 && (
+              <div className="flex justify-center gap-1 mb-1">
+                <div className="h-0.5 w-0.5 rounded-full bg-gray-300" />
+                <div className="h-0.5 w-0.5 rounded-full bg-gray-300" />
+                <div className="h-0.5 w-0.5 rounded-full bg-gray-300" />
+              </div>
+            )}
+            <div className={cn(barAccent, 'h-0.5 w-10 mx-auto')} />
             <div className={cn(line, 'h-0.5 w-full')} />
             <div className={cn(line, 'h-0.5 w-4/5')} />
           </div>
