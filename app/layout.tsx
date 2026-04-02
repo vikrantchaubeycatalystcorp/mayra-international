@@ -5,9 +5,10 @@ import { NavbarServer } from "../components/layout/NavbarServer";
 import { FooterServer } from "../components/layout/FooterServer";
 import { FloatingInquiryForm } from "../components/shared/FloatingInquiryForm";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
-import { prisma } from "../lib/db";
+import { Suspense } from "react";
+import { getLayoutMetadata } from "../lib/cached-queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,10 +23,7 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [seo, company] = await Promise.all([
-    prisma.pageSeo.findUnique({ where: { pageSlug: "home" } }),
-    prisma.companyInfo.findFirst(),
-  ]);
+  const { seo, company } = await getLayoutMetadata();
 
   const siteUrl = company?.siteUrl || "https://mayra.in";
   const twitterHandle = company?.twitterHandle || "@mayra_in";
@@ -111,9 +109,13 @@ export default function RootLayout({
         <JsonLd data={websiteJsonLd()} />
       </head>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
-        <NavbarServer />
+        <Suspense fallback={<nav className="h-16 lg:h-[68px] bg-white/80 backdrop-blur-md border-b border-gray-200/50 fixed top-0 inset-x-0 z-50" />}>
+          <NavbarServer />
+        </Suspense>
         <main className="flex-1 pt-16 lg:pt-[68px]">{children}</main>
-        <FooterServer />
+        <Suspense fallback={<footer className="bg-gray-900 h-64" />}>
+          <FooterServer />
+        </Suspense>
         <FloatingInquiryForm />
       </body>
     </html>
