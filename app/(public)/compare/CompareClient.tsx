@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Plus, X, CheckCircle, XCircle, Search } from "lucide-react";
+import { Plus, X, CheckCircle, Search, Loader2 } from "lucide-react";
 import { Breadcrumb } from "../../../components/shared/Breadcrumb";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
@@ -28,28 +28,125 @@ const compareRows = [
   { label: "Accreditations", key: (c: College) => c.accreditation.join(", ") },
 ];
 
-interface CompareClientProps {
-  allColleges: College[];
+interface SearchResult {
+  id: string;
+  name: string;
+  city: string;
+  slug: string;
+  type: string;
+  nirfRank: number | null;
 }
 
-export function CompareClient({ allColleges }: CompareClientProps) {
+function mapApiToCollege(c: Record<string, unknown>): College {
+  return {
+    id: c.id as string,
+    name: c.name as string,
+    slug: c.slug as string,
+    logo: c.logo as string,
+    city: c.city as string,
+    state: c.state as string,
+    streams: c.streams as string[],
+    nirfRank: (c.nirfRank as number | null) ?? undefined,
+    rating: c.rating as number,
+    reviewCount: c.reviewCount as number,
+    established: c.established as number,
+    type: c.type as College["type"],
+    fees: { min: c.feesMin as number, max: c.feesMax as number },
+    avgPackage: (c.avgPackage as number | null) ?? undefined,
+    topPackage: (c.topPackage as number | null) ?? undefined,
+    placementRate: (c.placementRate as number | null) ?? undefined,
+    accreditation: c.accreditation as string[],
+    courses: c.courses as string[],
+    description: c.description as string,
+    highlights: c.highlights as string[],
+    address: c.address as string,
+    website: (c.website as string | null) ?? undefined,
+    phone: (c.phone as string | null) ?? undefined,
+    totalStudents: (c.totalStudents as number | null) ?? undefined,
+    faculty: (c.faculty as number | null) ?? undefined,
+    isFeatured: c.isFeatured as boolean,
+    latitude: (c.latitude as number | null) ?? undefined,
+    longitude: (c.longitude as number | null) ?? undefined,
+    countryCode: c.countryCode as string,
+    countryName: c.countryName as string,
+  };
+}
+
+export function CompareClient() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedColleges, setSelectedColleges] = useState<College[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [addingSlot, setAddingSlot] = useState<number | null>(null);
+  const searchAbortRef = useRef<AbortController | null>(null);
 
-  const selectedColleges = selectedIds
-    .map((id) => allColleges.find((c) => c.id === id))
-    .filter(Boolean) as College[];
+  // Fetch search results with debounce
+  useEffect(() => {
+    if (!searchQuery || searchQuery.length < 2) {
+      setSearchResults([]);
+      return;
+    }
 
-  const filteredSearch = allColleges
-    .filter(
-      (c) =>
-        !selectedIds.includes(c.id) &&
-        (c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.city.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-    .slice(0, 6);
+    searchAbortRef.current?.abort();
+    const controller = new AbortController();
+    searchAbortRef.current = controller;
+
+    const timer = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const res = await fetch(
+          `/api/colleges?search=${encodeURIComponent(searchQuery)}&limit=6`,
+          { signal: controller.signal }
+        );
+        const json = await res.json();
+        setSearchResults(
+          json.data.map((c: Record<string, unknown>) => ({
+            id: c.id,
+            name: c.name,
+            city: c.city,
+            slug: c.slug,
+            type: c.type,
+            nirfRank: c.nirfRank,
+          }))
+        );
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          console.error(err);
+        }
+      } finally {
+        if (!controller.signal.aborted) setSearchLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch full details for selected colleges
+  useEffect(() => {
+    if (selectedIds.length === 0) {
+      setSelectedColleges([]);
+      return;
+    }
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/colleges?ids=${selectedIds.join(",")}&limit=${selectedIds.length}`);
+        const json = await res.json();
+        // Maintain order of selectedIds
+        const mapped = json.data.map(mapApiToCollege);
+        const ordered = selectedIds
+          .map((id) => mapped.find((c: College) => c.id === id))
+          .filter(Boolean) as College[];
+        setSelectedColleges(ordered);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, [selectedIds]);
+
+  const filteredSearch = searchResults.filter((c) => !selectedIds.includes(c.id));
 
   const addCollege = (id: string) => {
     if (selectedIds.length < 3) {
@@ -58,6 +155,7 @@ export function CompareClient({ allColleges }: CompareClientProps) {
     setShowSearch(false);
     setAddingSlot(null);
     setSearchQuery("");
+    setSearchResults([]);
   };
 
   const removeCollege = (id: string) => {
@@ -132,7 +230,12 @@ export function CompareClient({ allColleges }: CompareClientProps) {
                           className="mb-3"
                         />
                         <div className="space-y-1 max-h-48 overflow-y-auto">
-                          {filteredSearch.map((c) => (
+                          {searchLoading && (
+                            <div className="flex justify-center py-3">
+                              <Loader2 className="h-5 w-5 text-primary-500 animate-spin" />
+                            </div>
+                          )}
+                          {!searchLoading && filteredSearch.map((c) => (
                             <button suppressHydrationWarning
                               key={c.id}
                               onClick={() => addCollege(c.id)}
@@ -147,11 +250,14 @@ export function CompareClient({ allColleges }: CompareClientProps) {
                               </div>
                             </button>
                           ))}
-                          {filteredSearch.length === 0 && (
+                          {!searchLoading && searchQuery.length >= 2 && filteredSearch.length === 0 && (
                             <p className="text-sm text-gray-400 text-center py-3">No results found</p>
                           )}
+                          {!searchLoading && searchQuery.length < 2 && (
+                            <p className="text-sm text-gray-400 text-center py-3">Type at least 2 characters to search</p>
+                          )}
                         </div>
-                        <button suppressHydrationWarning onClick={() => { setShowSearch(false); setAddingSlot(null); }} className="mt-2 text-xs text-gray-400 hover:text-gray-600 w-full text-center">Cancel</button>
+                        <button suppressHydrationWarning onClick={() => { setShowSearch(false); setAddingSlot(null); setSearchQuery(""); }} className="mt-2 text-xs text-gray-400 hover:text-gray-600 w-full text-center">Cancel</button>
                       </div>
                     ) : (
                       <button suppressHydrationWarning
