@@ -3,16 +3,28 @@ import { prisma } from "../lib/db";
 
 const SITE_URL = "https://mayra.in";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  const [colleges, courses, exams, news, countries] = await Promise.all([
-    prisma.college.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-    prisma.course.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-    prisma.exam.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-    prisma.newsArticle.findMany({ where: { isActive: true, isLive: true }, select: { slug: true, publishedAt: true } }),
-    prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-  ]);
+  let colleges: { slug: string; updatedAt: Date }[] = [];
+  let courses: { slug: string; updatedAt: Date }[] = [];
+  let exams: { slug: string; updatedAt: Date }[] = [];
+  let news: { slug: string; publishedAt: Date | null }[] = [];
+  let countries: { slug: string; updatedAt: Date }[] = [];
+
+  try {
+    [colleges, courses, exams, news, countries] = await Promise.all([
+      prisma.college.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.course.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.exam.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.newsArticle.findMany({ where: { isActive: true, isLive: true }, select: { slug: true, publishedAt: true } }),
+      prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+    ]);
+  } catch {
+    // DB unavailable during build — return static pages only
+  }
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now, changeFrequency: "daily", priority: 1.0 },
