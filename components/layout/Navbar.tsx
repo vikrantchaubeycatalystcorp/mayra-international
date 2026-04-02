@@ -165,6 +165,11 @@ const navItems: NavItem[] = [
     href: "/map",
     simple: true,
   },
+  {
+    label: "Resume Builder",
+    href: "/resume-builder",
+    simple: true,
+  },
 ];
 
 export function Navbar() {
@@ -383,6 +388,7 @@ export function Navbar() {
                   {item.label === "News" && <Newspaper className="h-4 w-4 text-blue-500" />}
                   {item.label === "Study Abroad" && <Globe className="h-4 w-4 text-purple-500" />}
                   {item.label === "World Map" && <Globe className="h-4 w-4 text-blue-500" />}
+                  {item.label === "Resume Builder" && <Briefcase className="h-4 w-4 text-red-500" />}
                   {item.label}
                 </Link>
               ))}
@@ -393,14 +399,6 @@ export function Navbar() {
               >
                 <Award className="h-4 w-4 text-amber-500" />
                 Compare Colleges
-              </Link>
-              <Link
-                href="/resume-builder"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Briefcase className="h-4 w-4 text-red-500" />
-                Resume Builder
               </Link>
             </div>
           </div>

@@ -35,6 +35,42 @@ export const getNavbarData = unstable_cache(
       prisma.companyInfo.findFirst(),
     ]);
 
+    // Inject Resume Builder link if not already present in DB
+    const hasResumeBuilder = navItems.some(
+      (n) => n.href === "/resume-builder"
+    );
+    if (!hasResumeBuilder) {
+      // Find World Map index to insert right after it
+      const worldMapIdx = navItems.findIndex(
+        (n) => n.href === "/map" || n.label === "World Map"
+      );
+      const resumeBuilderItem = {
+        id: "resume-builder-nav",
+        label: "Resume Builder",
+        href: "/resume-builder",
+        icon: "Briefcase",
+        description: "Build ATS-ready resumes",
+        isMega: false,
+        megaGroupTitle: null,
+        featuredTitle: null,
+        featuredItems: [],
+        target: "_self",
+        section: "main",
+        sortOrder: worldMapIdx >= 0 ? navItems[worldMapIdx].sortOrder + 1 : 99,
+        isActive: true,
+        parentId: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        children: [],
+      } as (typeof navItems)[number];
+
+      if (worldMapIdx >= 0) {
+        navItems.splice(worldMapIdx + 1, 0, resumeBuilderItem);
+      } else {
+        navItems.push(resumeBuilderItem);
+      }
+    }
+
     return {
       navItems,
       logo: companyInfo?.logo || "/images/mayra-logo.png",
