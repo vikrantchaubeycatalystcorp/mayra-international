@@ -55,14 +55,18 @@ export function HeroBanner() {
   };
 
   return (
-    <section className="relative min-h-[88vh] flex items-center bg-hero-gradient overflow-hidden">
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 hero-grid opacity-40" />
+    <section className="relative min-h-[88vh] flex items-center overflow-hidden">
+      {/* Hero Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=90&auto=format&fit=crop')",
+        }}
+      />
 
-      {/* Gradient orbs */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
-      <div className="absolute top-40 right-1/3 w-48 h-48 bg-accent-500/10 rounded-full blur-2xl" />
+      {/* Overlay — keeps image visible while ensuring text is readable */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
 
       <div className="container mx-auto relative z-10 py-20">
         <div className="max-w-4xl mx-auto text-center">

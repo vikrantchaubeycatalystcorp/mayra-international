@@ -1,19 +1,41 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Cpu, Stethoscope, Briefcase, Scale, Monitor, FlaskConical, BarChart3, BookOpen, Building, Pill, Tv, Microscope, Palette, Leaf, PenLine, Heart, type LucideIcon } from "lucide-react";
 import { courses } from "../../data/courses";
 import { formatCurrency } from "../../lib/utils";
 import { cn } from "../../lib/utils";
 
+const streamIconMap: Record<string, LucideIcon> = {
+  Engineering: Cpu,
+  Medical: Stethoscope,
+  Management: Briefcase,
+  Law: Scale,
+  "Computer Science": Monitor,
+  Science: FlaskConical,
+  Commerce: BarChart3,
+  "Arts & Humanities": BookOpen,
+  Architecture: Building,
+  Pharmacy: Pill,
+  Hospitality: Heart,
+  "Media & Communication": Tv,
+  Research: Microscope,
+  Design: Palette,
+  Agriculture: Leaf,
+  Education: PenLine,
+  "Veterinary Sciences": Heart,
+};
+
 function CourseCard({ course }: { course: typeof courses[0] }) {
+  const Icon = streamIconMap[course.stream] ?? BookOpen;
+
   return (
     <Link href={`/courses`}>
       <article className="group bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 p-5 cursor-pointer">
         {/* Icon */}
         <div className={cn(
-          "h-12 w-12 rounded-2xl bg-gradient-to-br flex items-center justify-center text-2xl mb-4 transition-transform group-hover:scale-110 duration-300",
+          "h-12 w-12 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300",
           course.color || "from-blue-600 to-blue-400"
         )}>
-          {course.icon || "📚"}
+          <Icon className="h-5 w-5 text-white" />
         </div>
 
         <h3 className="font-bold text-gray-900 text-base mb-1 group-hover:text-primary-600 transition-colors">
@@ -48,7 +70,6 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
 }
 
 export function FeaturedCourses() {
-  const featuredCourses = courses.filter((c) => c.isFeatured);
   const popularCourses = courses.slice(0, 8);
 
   return (

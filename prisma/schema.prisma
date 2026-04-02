@@ -6,3 +6,824 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum EnquiryStatus {
+  PENDING
+  UNDER_REVIEW
+  RESPONDED
+  CLOSED
+  SPAM
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+// ============================================================
+// ADMIN & USER MODELS
+// ============================================================
+
+model Admin {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          AdminRole @default(EDITOR)
+  avatar        String?
+  phone         String?
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  activities AdminActivity[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  phone         String?
+  password      String?
+  provider      String    @default("email")
+  providerId    String?
+  avatar        String?
+  goal          String?
+  isActive      Boolean   @default(true)
+  isVerified    Boolean   @default(false)
+  savedColleges String[]
+  compareList   String[]
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  enquiries Enquiry[]
+
+  @@index([email])
+  @@index([provider])
+}
+
+model Enquiry {
+  id          String        @id @default(cuid())
+  studentName String
+  email       String
+  phone       String?
+  collegeName String
+  collegeId   String?
+  program     String?
+  message     String        @default("")
+  status      EnquiryStatus @default(PENDING)
+  priority    Priority      @default(NORMAL)
+  assignedTo  String?
+  response    String?
+  respondedAt DateTime?
+  notes       String?
+  source      String        @default("website")
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([collegeId])
+  @@index([userId])
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  isActive       Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  source         String    @default("website")
+  tags           String[]
+
+  @@index([email])
+  @@index([isActive])
+}
+
+model AdminActivity {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+// ============================================================
+// NORMALIZED LOOKUP TABLES
+// ============================================================
+
+model Stream {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String?
+  color     String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+model State {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  code        String  @unique
+  countryCode String  @default("IN")
+  isActive    Boolean @default(true)
+
+  cities City[]
+
+  @@index([countryCode])
+}
+
+model City {
+  id        String  @id @default(cuid())
+  name      String
+  stateId   String
+  state     State   @relation(fields: [stateId], references: [id])
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  @@unique([name, stateId])
+  @@index([stateId])
+}
+
+model AccreditationBody {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  fullName    String?
+  description String?
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  @@index([slug])
+}
+
+model DataSource {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String   @default("manual")
+  url       String?
+  status    String   @default("active")
+  notes     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeadQualification {
+  id        String  @id @default(cuid())
+  label     String  @unique
+  value     String  @unique
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+model LeadInterest {
+  id        String  @id @default(cuid())
+  label     String  @unique
+  value     String  @unique
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+model NewsCategory {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  slug      String  @unique
+  icon      String?
+  color     String?
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+model CollegeType {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+model CourseLevel {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  code      String  @unique
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+model ExamMode {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+}
+
+// ============================================================
+// CONTENT MODELS
+// ============================================================
+
+model College {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  logo          String   @default("")
+  city          String   @default("")
+  state         String   @default("")
+  streams       String[]
+  nirfRank      Int?
+  rating        Float    @default(4.0)
+  reviewCount   Int      @default(50)
+  established   Int      @default(2000)
+  type          String   @default("Private")
+  feesMin       Int      @default(50000)
+  feesMax       Int      @default(500000)
+  avgPackage    Int?
+  topPackage    Int?
+  placementRate Float?
+  accreditation String[]
+  courses       String[]
+  description   String   @default("")
+  highlights    String[]
+  address       String   @default("")
+  website       String?
+  phone         String?
+  totalStudents Int?
+  faculty       Int?
+  isFeatured    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  latitude      Float?
+  longitude     Float?
+  countryCode   String   @default("IN")
+  countryName   String   @default("India")
+  source        String   @default("static")
+  createdBy     String?
+  updatedBy     String?
+  viewCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  gallery       CollegeGallery[]
+  recruiters    CollegeRecruiter[]
+  feeStructures CollegeFeeStructure[]
+  admissionInfo CollegeAdmissionInfo?
+
+  @@index([slug])
+  @@index([streams])
+  @@index([isFeatured])
+  @@index([nirfRank])
+  @@index([isActive])
+  @@index([state])
+  @@index([type])
+  @@index([countryCode])
+}
+
+model CollegeGallery {
+  id        String  @id @default(cuid())
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  caption   String?
+  sortOrder Int     @default(0)
+
+  @@index([collegeId])
+}
+
+model CollegeRecruiter {
+  id        String  @id @default(cuid())
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  name      String
+  logo      String?
+  sortOrder Int     @default(0)
+
+  @@index([collegeId])
+}
+
+model CollegeFeeStructure {
+  id        String  @id @default(cuid())
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  program   String
+  annual    Int
+  hostel    Int?
+  total     Int?
+  sortOrder Int     @default(0)
+
+  @@index([collegeId])
+}
+
+model CollegeAdmissionInfo {
+  id                String   @id @default(cuid())
+  collegeId         String   @unique
+  college           College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  eligibility       String   @default("")
+  process           String   @default("")
+  documentsRequired String[]
+  importantDates    Json     @default("[]")
+  updatedAt         DateTime @updatedAt
+}
+
+model Exam {
+  id                    String   @id @default(cuid())
+  name                  String
+  slug                  String   @unique
+  fullName              String
+  conductingBody        String
+  streams               String[]
+  level                 String
+  registrationStart     String?
+  registrationEnd       String?
+  examDate              String?
+  resultDate            String?
+  eligibility           String   @default("")
+  applicationFeeGeneral Int      @default(0)
+  applicationFeeSCST    Int?
+  mode                  String   @default("Offline")
+  frequency             String   @default("Annual")
+  totalSeats            Int?
+  participatingColleges Int?
+  description           String   @default("")
+  syllabus              Json     @default("[]")
+  isFeatured            Boolean  @default(false)
+  isActive              Boolean  @default(true)
+  source                String   @default("static")
+  createdBy             String?
+  updatedBy             String?
+  viewCount             Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([slug])
+  @@index([streams])
+  @@index([isFeatured])
+  @@index([isActive])
+  @@index([level])
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  stream      String
+  level       String
+  duration    String
+  description String   @default("")
+  topColleges Int      @default(10)
+  avgFees     Int      @default(100000)
+  avgSalary   Int?
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  icon        String?
+  color       String?
+  source      String   @default("static")
+  createdBy   String?
+  updatedBy   String?
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([stream])
+  @@index([level])
+  @@index([isFeatured])
+  @@index([isActive])
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  category    String
+  summary     String   @default("")
+  content     String   @default("")
+  publishedAt String
+  imageUrl    String?
+  imageColor  String   @default("#3B82F6")
+  author      String   @default("Editorial Team")
+  isLive      Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  tags        String[]
+  views       Int?
+  source      String   @default("static")
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+  @@index([isLive])
+  @@index([isActive])
+}
+
+model StudyAbroadCountry {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  flag            String
+  universities    Int      @default(0)
+  avgCost         String
+  popularCourses  String[]
+  description     String   @default("")
+  topUniversities Json     @default("[]")
+  whyStudyHere    String   @default("")
+  visaInfo        String   @default("")
+  scholarships    String   @default("")
+  livingCost      String   @default("")
+  isFeatured      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  source          String   @default("static")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isFeatured])
+  @@index([isActive])
+}
+
+// ============================================================
+// CMS / SITE MANAGEMENT MODELS
+// ============================================================
+
+/// Dynamic site-wide key-value settings
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("string")
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+}
+
+/// Self-referencing tree for dynamic navigation menus
+model NavigationItem {
+  id             String           @id @default(cuid())
+  parentId       String?
+  parent         NavigationItem?  @relation("NavTree", fields: [parentId], references: [id])
+  children       NavigationItem[] @relation("NavTree")
+  label          String
+  href           String
+  icon           String?
+  description    String?
+  target         String           @default("_self")
+  section        String           @default("main")
+  sortOrder      Int              @default(0)
+  isActive       Boolean          @default(true)
+  isMega         Boolean          @default(false)
+  megaGroupTitle String?
+  featuredTitle  String?
+  featuredItems  String[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([parentId])
+  @@index([section])
+  @@index([sortOrder])
+}
+
+/// Footer organized into sections with links
+model FooterSection {
+  id        String       @id @default(cuid())
+  title     String
+  sortOrder Int          @default(0)
+  isActive  Boolean      @default(true)
+  links     FooterLink[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([sortOrder])
+}
+
+model FooterLink {
+  id        String        @id @default(cuid())
+  sectionId String
+  section   FooterSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  label     String
+  href      String
+  sortOrder Int           @default(0)
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([sectionId])
+  @@index([sortOrder])
+}
+
+/// Hero banner with full CMS control over every element
+model HeroBanner {
+  id               String   @id @default(cuid())
+  badgeText        String?
+  badgeLinkText    String?
+  badgeLink        String?
+  heading          String
+  headingHighlight String?
+  subheading       String?
+  bgImage          String?
+  ctaText          String   @default("Search")
+  isActive         Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  stats           HeroStat[]
+  searchTabs      HeroSearchTab[]
+  quickFilters    HeroQuickFilter[]
+  popularSearches HeroPopularSearch[]
+  floatingCards   HeroFloatingCard[]
+}
+
+model HeroStat {
+  id        String     @id @default(cuid())
+  bannerId  String
+  banner    HeroBanner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  icon      String
+  value     String
+  label     String
+  color     String     @default("text-blue-300")
+  sortOrder Int        @default(0)
+
+  @@index([bannerId])
+}
+
+model HeroSearchTab {
+  id          String     @id @default(cuid())
+  bannerId    String
+  banner      HeroBanner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  label       String
+  placeholder String
+  searchPath  String
+  sortOrder   Int        @default(0)
+
+  @@index([bannerId])
+}
+
+model HeroQuickFilter {
+  id        String     @id @default(cuid())
+  bannerId  String
+  banner    HeroBanner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  tab       String
+  label     String
+  href      String
+  sortOrder Int        @default(0)
+
+  @@index([bannerId])
+  @@index([tab])
+}
+
+model HeroPopularSearch {
+  id        String     @id @default(cuid())
+  bannerId  String
+  banner    HeroBanner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  label     String
+  href      String
+  sortOrder Int        @default(0)
+
+  @@index([bannerId])
+}
+
+model HeroFloatingCard {
+  id        String     @id @default(cuid())
+  bannerId  String
+  banner    HeroBanner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  title     String
+  subtitle  String?
+  content   Json?
+  position  String     @default("left")
+  isActive  Boolean    @default(true)
+  sortOrder Int        @default(0)
+
+  @@index([bannerId])
+}
+
+/// Homepage animated stat counters
+model HomeStat {
+  id        String   @id @default(cuid())
+  icon      String
+  value     Int
+  suffix    String   @default("+")
+  label     String
+  sublabel  String?
+  color     String   @default("from-blue-600 to-blue-400")
+  bgColor   String   @default("bg-blue-50")
+  iconColor String   @default("text-blue-600")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Announcement banners
+model Announcement {
+  id        String    @id @default(cuid())
+  text      String
+  linkText  String?
+  link      String?
+  bgColor   String    @default("bg-primary-600")
+  textColor String    @default("text-white")
+  isActive  Boolean   @default(true)
+  startDate DateTime?
+  endDate   DateTime?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+/// Social media links
+model SocialLink {
+  id         String  @id @default(cuid())
+  platform   String  @unique
+  url        String
+  icon       String
+  hoverColor String  @default("hover:text-sky-400")
+  sortOrder  Int     @default(0)
+  isActive   Boolean @default(true)
+
+  @@index([sortOrder])
+}
+
+/// Company/brand information (singleton-like, one active record)
+model CompanyInfo {
+  id            String   @id @default(cuid())
+  name          String   @default("Mayra International")
+  tagline       String   @default("India's most trusted education platform")
+  description   String   @default("")
+  email         String   @default("support@mayra.in")
+  phone         String   @default("1800-123-4567")
+  phoneLabel    String   @default("(Free)")
+  address       String   @default("Bangalore, India")
+  logo          String   @default("/images/mayra-logo.png")
+  footerLogo    String   @default("/images/mayra-logo.png")
+  copyrightText String   @default("Mayra India")
+  foundedYear   Int      @default(2020)
+  siteUrl       String   @default("https://mayra.in")
+  twitterHandle String   @default("@mayra_in")
+  updatedAt     DateTime @updatedAt
+}
+
+/// Per-page SEO metadata
+model PageSeo {
+  id            String   @id @default(cuid())
+  pageSlug      String   @unique
+  title         String
+  description   String
+  keywords      String[]
+  ogImage       String?
+  ogTitle       String?
+  ogDescription String?
+  canonical     String?
+  noIndex       Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+
+  @@index([pageSlug])
+}
+
+/// World map college statistics per country
+model WorldCollegeStat {
+  id           String   @id @default(cuid())
+  countryCode  String   @unique
+  countryName  String
+  collegeCount Int      @default(0)
+  centroidLng  Float
+  centroidLat  Float
+  isActive     Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
+
+  @@index([countryCode])
+}
+
+/// Reusable media assets (images, documents)
+model MediaAsset {
+  id         String   @id @default(cuid())
+  url        String
+  alt        String   @default("")
+  type       String   @default("image")
+  size       Int?
+  width      Int?
+  height     Int?
+  folder     String   @default("general")
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+
+  @@index([folder])
+  @@index([type])
+}
+
+/// Newsletter CTA section content
+model CtaSection {
+  id               String   @id @default(cuid())
+  sectionKey       String   @unique
+  badge            String?
+  heading          String
+  subheading       String?
+  ctaPrimaryText   String?
+  ctaPrimaryLink   String?
+  ctaSecondaryText String?
+  ctaSecondaryLink String?
+  footnote         String?
+  bgGradient       String?
+  isActive         Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}
+
+/// Homepage section configuration (controls visibility, order, titles)
+model HomeSection {
+  id         String   @id @default(cuid())
+  sectionKey String   @unique
+  title      String
+  subtitle   String?
+  ctaLabel   String?
+  ctaLink    String?
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  updatedAt  DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Bottom bar links (Privacy, Terms, etc.)
+model LegalLink {
+  id        String  @id @default(cuid())
+  label     String
+  href      String
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  @@index([sortOrder])
+}
+
+/// Trust badges shown in footer
+model TrustBadge {
+  id          String  @id @default(cuid())
+  label       String
+  icon        String?
+  bgColor     String  @default("bg-green-900/50")
+  borderColor String  @default("border-green-700")
+  textColor   String  @default("text-green-400")
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+
+  @@index([sortOrder])
+}
+
+/// App download links
+model AppDownloadLink {
+  id         String  @id @default(cuid())
+  platform   String  @unique
+  icon       String
+  storeLabel String
+  storeName  String
+  url        String  @default("#")
+  sortOrder  Int     @default(0)
+  isActive   Boolean @default(true)
+
+  @@index([sortOrder])
+}

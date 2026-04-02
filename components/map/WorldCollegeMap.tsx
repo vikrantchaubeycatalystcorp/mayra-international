@@ -12,7 +12,12 @@ import MapGL, {
   type ViewStateChangeEvent,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { CountryCollegeStat } from "../../data/worldCollegeStats";
+interface CountryCollegeStat {
+  countryCode: string;
+  countryName: string;
+  collegeCount: number;
+  centroid: [number, number];
+}
 import { CollegePopupCard } from "./CollegePopupCard";
 import { CountryCollegePanel } from "./CountryCollegePanel";
 import { MapSearchBar } from "./MapSearchBar";

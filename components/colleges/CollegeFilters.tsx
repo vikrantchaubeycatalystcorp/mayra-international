@@ -5,19 +5,20 @@ import { ChevronDown, X, SlidersHorizontal } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useMasterData } from "../../hooks/useMasterData";
 
-const indianStates = [
+const fallbackStates = [
   "Delhi", "Maharashtra", "Tamil Nadu", "Karnataka", "West Bengal",
   "Uttar Pradesh", "Rajasthan", "Gujarat", "Telangana", "Kerala",
   "Bihar", "Madhya Pradesh", "Andhra Pradesh", "Punjab", "Haryana",
 ];
 
-const streams = [
+const fallbackStreams = [
   "Engineering", "Medical", "Management", "Law", "Arts",
   "Science", "Commerce", "Architecture", "Pharmacy", "Nursing",
 ];
 
-const collegeTypes = ["Government", "Private", "Deemed", "Autonomous"];
+const fallbackCollegeTypes = ["Government", "Private", "Deemed", "Autonomous"];
 
 interface CollegeFiltersProps {
   onFiltersChange?: (filters: FilterValues) => void;
@@ -69,6 +70,10 @@ function CollapsibleSection({ title, children, defaultOpen = true, count }: Coll
 }
 
 export function CollegeFilters({ onFiltersChange }: CollegeFiltersProps) {
+  const { data: masterData, loading: masterLoading } = useMasterData();
+  const indianStates = masterData?.states.map((s) => s.name) ?? fallbackStates;
+  const streams = masterData?.streams.map((s) => s.name) ?? fallbackStreams;
+  const collegeTypes = masterData?.collegeTypes.map((t) => t.name) ?? fallbackCollegeTypes;
   const [filters, setFilters] = useState<FilterValues>({
     search: "",
     states: [],

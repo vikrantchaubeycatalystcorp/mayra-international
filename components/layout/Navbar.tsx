@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import type { LucideIcon } from "lucide-react";
 import {
   Search,
   Bell,
@@ -16,11 +17,50 @@ import {
   X,
   Award,
   Briefcase,
+  Cpu,
+  Stethoscope,
+  Scale,
+  BarChart3,
+  FlaskConical,
+  Building2,
+  Landmark,
+  Calculator,
+  Trophy,
+  Wrench,
+  TrendingUp,
+  Monitor,
+  Settings,
+  Heart,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { CommandSearch } from "../search/CommandSearch";
 
-const navItems = [
+type NavSubItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  desc: string;
+};
+
+type NavSection = {
+  title: string;
+  items: NavSubItem[];
+};
+
+type NavItem = {
+  label: string;
+  href: string;
+  simple?: boolean;
+  mega?: {
+    sections: NavSection[];
+    featured?: {
+      title: string;
+      items: string[];
+    };
+  };
+};
+
+const navItems: NavItem[] = [
   {
     label: "Colleges",
     href: "/colleges",
@@ -29,21 +69,21 @@ const navItems = [
         {
           title: "By Stream",
           items: [
-            { label: "Engineering Colleges", href: "/colleges?stream=Engineering", icon: "⚙️", desc: "4500+ colleges" },
-            { label: "Medical Colleges", href: "/colleges?stream=Medical", icon: "🏥", desc: "706 MBBS colleges" },
-            { label: "Management", href: "/colleges?stream=Management", icon: "💼", desc: "Top MBA colleges" },
-            { label: "Law Colleges", href: "/colleges?stream=Law", icon: "⚖️", desc: "NLUs & more" },
-            { label: "Arts & Sciences", href: "/colleges?stream=Arts", icon: "📚", desc: "Liberal arts colleges" },
+            { label: "Engineering Colleges", href: "/colleges?stream=Engineering", icon: Cpu, desc: "4500+ colleges" },
+            { label: "Medical Colleges", href: "/colleges?stream=Medical", icon: Stethoscope, desc: "706 MBBS colleges" },
+            { label: "Management", href: "/colleges?stream=Management", icon: Briefcase, desc: "Top MBA colleges" },
+            { label: "Law Colleges", href: "/colleges?stream=Law", icon: Scale, desc: "NLUs & more" },
+            { label: "Arts & Sciences", href: "/colleges?stream=Arts", icon: BookOpen, desc: "Liberal arts colleges" },
           ],
         },
         {
           title: "By Type",
           items: [
-            { label: "IITs", href: "/colleges?name=iit", icon: "🏛️", desc: "23 IITs across India" },
-            { label: "IIMs", href: "/colleges?name=iim", icon: "📊", desc: "Top B-Schools" },
-            { label: "NITs", href: "/colleges?type=Government", icon: "🔬", desc: "31 NITs" },
-            { label: "Government Colleges", href: "/colleges?type=Government", icon: "🏛️", desc: "Affordable quality" },
-            { label: "Private Universities", href: "/colleges?type=Private", icon: "🎓", desc: "Premium private" },
+            { label: "IITs", href: "/colleges?name=iit", icon: Landmark, desc: "23 IITs across India" },
+            { label: "IIMs", href: "/colleges?name=iim", icon: BarChart3, desc: "Top B-Schools" },
+            { label: "NITs", href: "/colleges?type=Government", icon: FlaskConical, desc: "31 NITs" },
+            { label: "Government Colleges", href: "/colleges?type=Government", icon: Building2, desc: "Affordable quality" },
+            { label: "Private Universities", href: "/colleges?type=Private", icon: GraduationCap, desc: "Premium private" },
           ],
         },
       ],
@@ -61,19 +101,19 @@ const navItems = [
         {
           title: "Engineering Exams",
           items: [
-            { label: "JEE Main 2026", href: "/exams/jee-main", icon: "📐", desc: "Jan & Apr sessions" },
-            { label: "JEE Advanced 2026", href: "/exams/jee-advanced", icon: "🏆", desc: "IIT gateway" },
-            { label: "GATE 2026", href: "/exams/gate", icon: "⚙️", desc: "M.Tech + PSU jobs" },
-            { label: "BITSAT", href: "/exams", icon: "🔧", desc: "BITS Pilani entrance" },
+            { label: "JEE Main 2026", href: "/exams/jee-main", icon: Calculator, desc: "Jan & Apr sessions" },
+            { label: "JEE Advanced 2026", href: "/exams/jee-advanced", icon: Trophy, desc: "IIT gateway" },
+            { label: "GATE 2026", href: "/exams/gate", icon: Cpu, desc: "M.Tech + PSU jobs" },
+            { label: "BITSAT", href: "/exams", icon: Settings, desc: "BITS Pilani entrance" },
           ],
         },
         {
           title: "Medical & Management",
           items: [
-            { label: "NEET UG 2026", href: "/exams/neet-ug", icon: "🩺", desc: "MBBS entrance" },
-            { label: "NEET PG", href: "/exams/neet-pg", icon: "🏥", desc: "MD/MS entrance" },
-            { label: "CAT 2025", href: "/exams/cat", icon: "📈", desc: "IIM admissions" },
-            { label: "CLAT 2025", href: "/exams/clat", icon: "⚖️", desc: "NLU admissions" },
+            { label: "NEET UG 2026", href: "/exams/neet-ug", icon: Stethoscope, desc: "MBBS entrance" },
+            { label: "NEET PG", href: "/exams/neet-pg", icon: Heart, desc: "MD/MS entrance" },
+            { label: "CAT 2025", href: "/exams/cat", icon: TrendingUp, desc: "IIM admissions" },
+            { label: "CLAT 2025", href: "/exams/clat", icon: Scale, desc: "NLU admissions" },
           ],
         },
       ],
@@ -91,20 +131,20 @@ const navItems = [
         {
           title: "UG Programs",
           items: [
-            { label: "B.Tech / B.E.", href: "/courses", icon: "⚙️", desc: "4 year engineering" },
-            { label: "MBBS / BDS", href: "/courses", icon: "🏥", desc: "Medical degrees" },
-            { label: "B.Com / BBA", href: "/courses", icon: "📊", desc: "Commerce programs" },
-            { label: "B.Sc", href: "/courses", icon: "🔬", desc: "Science programs" },
-            { label: "LLB / BA LLB", href: "/courses", icon: "⚖️", desc: "Law degrees" },
+            { label: "B.Tech / B.E.", href: "/courses", icon: Cpu, desc: "4 year engineering" },
+            { label: "MBBS / BDS", href: "/courses", icon: Stethoscope, desc: "Medical degrees" },
+            { label: "B.Com / BBA", href: "/courses", icon: BarChart3, desc: "Commerce programs" },
+            { label: "B.Sc", href: "/courses", icon: FlaskConical, desc: "Science programs" },
+            { label: "LLB / BA LLB", href: "/courses", icon: Scale, desc: "Law degrees" },
           ],
         },
         {
           title: "PG Programs",
           items: [
-            { label: "MBA / PGDM", href: "/courses", icon: "💼", desc: "Management" },
-            { label: "M.Tech / ME", href: "/courses", icon: "🔧", desc: "Engineering PG" },
-            { label: "MCA", href: "/courses", icon: "💻", desc: "Computer applications" },
-            { label: "M.Sc", href: "/courses", icon: "⚗️", desc: "Science PG" },
+            { label: "MBA / PGDM", href: "/courses", icon: Briefcase, desc: "Management" },
+            { label: "M.Tech / ME", href: "/courses", icon: Settings, desc: "Engineering PG" },
+            { label: "MCA", href: "/courses", icon: Monitor, desc: "Computer applications" },
+            { label: "M.Sc", href: "/courses", icon: FlaskConical, desc: "Science PG" },
           ],
         },
       ],
@@ -132,6 +172,7 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -163,14 +204,23 @@ export function Navbar() {
           <div className="flex items-center justify-between h-16 lg:h-[68px]">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <Image
-                src="/images/mayra-logo.png"
-                alt="Mayra logo"
-                width={260}
-                height={78}
-                className="h-16 w-auto"
-                priority
-              />
+              <span className="logo-animated">
+                {!logoError ? (
+                  <Image
+                    src="/images/mayra-logo.png"
+                    alt="Mayra International"
+                    width={260}
+                    height={78}
+                    className="h-16 w-auto"
+                    priority
+                    onError={() => setLogoError(true)}
+                  />
+                ) : (
+                  <span className="text-xl font-bold text-primary-600 px-1">
+                    Mayra International
+                  </span>
+                )}
+              </span>
             </Link>
 
             {/* Desktop Nav */}
@@ -221,9 +271,9 @@ export function Navbar() {
                                     className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-blue-50 group transition-colors"
                                     onClick={() => setActiveMenu(null)}
                                   >
-                                    <span className="text-lg leading-none mt-0.5">
-                                      {subItem.icon}
-                                    </span>
+                                    <div className="h-7 w-7 rounded-md bg-primary-50 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-primary-100 transition-colors">
+                                      <subItem.icon className="h-3.5 w-3.5 text-primary-600" />
+                                    </div>
                                     <div>
                                       <p className="text-sm font-medium text-gray-800 group-hover:text-primary-600 transition-colors">
                                         {subItem.label}
@@ -299,20 +349,6 @@ export function Navbar() {
                 <span className="absolute top-1 right-1 h-2 w-2 bg-accent-500 rounded-full" />
               </button>
 
-              {/* Auth Buttons */}
-              <div className="hidden sm:flex items-center gap-2">
-                <Link href="/sign-in">
-                  <Button variant="ghost" size="sm">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button variant="gradient" size="sm">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-
               {/* Mobile Menu Toggle */}
               <button suppressHydrationWarning
                 onClick={() => setMobileOpen(!mobileOpen)}
@@ -364,14 +400,6 @@ export function Navbar() {
                 <Briefcase className="h-4 w-4 text-red-500" />
                 Resume Builder
               </Link>
-              <div className="pt-3 flex gap-2 px-4">
-                <Link href="/sign-in" className="flex-1">
-                  <Button variant="outline" className="w-full">Sign In</Button>
-                </Link>
-                <Link href="/sign-up" className="flex-1">
-                  <Button variant="gradient" className="w-full">Sign Up</Button>
-                </Link>
-              </div>
             </div>
           </div>
         )}

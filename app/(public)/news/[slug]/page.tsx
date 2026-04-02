@@ -1,44 +1,100 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Clock, Eye, Tag, ArrowRight, ArrowLeft } from "lucide-react";
-import { news } from "../../../../data/news";
+import { Calendar, Clock, Eye, Tag, ArrowRight, ArrowLeft, BookOpen, Award, BarChart2, GraduationCap, FileText, Gift, Briefcase, Globe, Newspaper, School } from "lucide-react";
+import { prisma } from "../../../../lib/db";
 import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { ShareButtons } from "../../../../components/shared/ShareButtons";
 import { LiveBadge } from "../../../../components/shared/LiveBadge";
 import { formatDate, getReadTime } from "../../../../lib/utils";
+import { JsonLd, newsArticleJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+
+export const revalidate = 60;
+
+const categoryIconMap: Record<string, React.ElementType> = {
+  Exams: BookOpen,
+  Results: Award,
+  Rankings: BarChart2,
+  Admissions: GraduationCap,
+  Policy: FileText,
+  Scholarships: Gift,
+  Placements: Briefcase,
+  Careers: BarChart2,
+  "Study Abroad": Globe,
+  School: School,
+};
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return news.map((n) => ({ slug: n.slug }));
+  const articles = await prisma.newsArticle.findMany({
+    where: { isActive: true },
+    select: { slug: true },
+  });
+  return articles.map((n) => ({ slug: n.slug }));
 }
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const article = news.find((n) => n.slug === slug);
+  const article = await prisma.newsArticle.findUnique({ where: { slug } });
   if (!article) return { title: "Article Not Found" };
   return {
     title: article.title,
     description: article.summary,
+    openGraph: {
+      title: article.title,
+      description: article.summary,
+      url: `https://mayra.in/news/${article.slug}`,
+      type: "article",
+      publishedTime: article.publishedAt,
+      authors: [article.author],
+      section: article.category,
+      tags: article.tags,
+    },
+    alternates: {
+      canonical: `https://mayra.in/news/${article.slug}`,
+    },
   };
 }
 
 export default async function NewsDetailPage({ params }: Props) {
   const { slug } = await params;
-  const article = news.find((n) => n.slug === slug);
+  const article = await prisma.newsArticle.findUnique({ where: { slug } });
   if (!article) notFound();
 
+  const relatedArticles = await prisma.newsArticle.findMany({
+    where: {
+      isActive: true,
+      id: { not: article.id },
+      OR: [
+        { category: article.category },
+        { tags: { hasSome: article.tags } },
+      ],
+    },
+    take: 4,
+    orderBy: { publishedAt: "desc" },
+  });
+
+  const latestArticles = await prisma.newsArticle.findMany({
+    where: { isActive: true },
+    take: 5,
+    orderBy: { publishedAt: "desc" },
+  });
+
+  const CategoryIcon = categoryIconMap[article.category] ?? Newspaper;
   const readTime = getReadTime(article.content);
-  const relatedArticles = news
-    .filter((n) => n.id !== article.id && (n.category === article.category || n.tags.some((t) => article.tags.includes(t))))
-    .slice(0, 4);
 
   // Convert markdown-style content to HTML-ish for display
   const paragraphs = article.content.split("\n\n").filter(Boolean);
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <JsonLd data={newsArticleJsonLd(article as any)} />
+      <JsonLd data={breadcrumbJsonLd([
+        { name: "News", url: "/news" },
+        { name: article.category },
+        { name: article.title },
+      ])} />
       <div className="container mx-auto py-8">
         <Breadcrumb
           items={[
@@ -54,8 +110,9 @@ export default async function NewsDetailPage({ params }: Props) {
           <article className="lg:col-span-3">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
               {/* Hero Image */}
-              <div className={`h-64 bg-gradient-to-br ${article.imageColor} relative`}>
-                <div className="absolute inset-0 bg-black/20" />
+              <div className={`h-64 bg-gradient-to-br ${article.imageColor} relative flex items-center justify-center`}>
+                <CategoryIcon className="h-24 w-24 text-white/30" strokeWidth={1} />
+                <div className="absolute inset-0 bg-black/10" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Badge variant="secondary" className="bg-white/90 text-gray-800">
@@ -92,7 +149,7 @@ export default async function NewsDetailPage({ params }: Props) {
                   {article.title}
                 </h1>
 
-                <p className="text-lg text-gray-600 leading-relaxed mb-6 font-medium border-l-4 border-primary-300 pl-4 bg-primary-50/50 py-3 rounded-r-xl">
+                <p className="article-summary text-lg text-gray-600 leading-relaxed mb-6 font-medium border-l-4 border-primary-300 pl-4 bg-primary-50/50 py-3 rounded-r-xl">
                   {article.summary}
                 </p>
 
@@ -205,9 +262,13 @@ export default async function NewsDetailPage({ params }: Props) {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
               <h3 className="font-bold text-gray-900 mb-4 text-sm">Related Articles</h3>
               <div className="space-y-4">
-                {relatedArticles.map((a) => (
+                {relatedArticles.map((a) => {
+                  const RelIcon = categoryIconMap[a.category] ?? Newspaper;
+                  return (
                   <Link key={a.id} href={`/news/${a.slug}`} className="flex gap-3 group">
-                    <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${a.imageColor} flex-shrink-0`} />
+                    <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${a.imageColor} flex-shrink-0 flex items-center justify-center`}>
+                      <RelIcon className="h-6 w-6 text-white/80" strokeWidth={1.5} />
+                    </div>
                     <div>
                       <p className="text-sm font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 leading-snug">
                         {a.title}
@@ -215,7 +276,8 @@ export default async function NewsDetailPage({ params }: Props) {
                       <p className="text-xs text-gray-400 mt-1">{formatDate(a.publishedAt)}</p>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -223,7 +285,7 @@ export default async function NewsDetailPage({ params }: Props) {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
               <h3 className="font-bold text-gray-900 mb-4 text-sm">Latest Updates</h3>
               <div className="space-y-3">
-                {news.slice(0, 5).map((a) => (
+                {latestArticles.map((a) => (
                   <Link key={a.id} href={`/news/${a.slug}`} className="flex gap-2 group">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary-400 flex-shrink-0 mt-2" />
                     <p className="text-sm text-gray-700 group-hover:text-primary-600 transition-colors line-clamp-2 leading-snug">

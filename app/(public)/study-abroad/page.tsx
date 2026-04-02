@@ -1,11 +1,30 @@
 import Link from "next/link";
-import { ExternalLink, Globe, BookOpen, DollarSign, GraduationCap, ArrowRight } from "lucide-react";
-import { studyAbroadCountries } from "../../../data/studyAbroad";
+import { ExternalLink, Globe, BookOpen, DollarSign, GraduationCap, ArrowRight, Users, MapPin, BadgeDollarSign, BadgeCheck, Target, FileText, Send, Trophy, Plane } from "lucide-react";
+import { prisma } from "../../../lib/db";
 import { Breadcrumb } from "../../../components/shared/Breadcrumb";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
+import { JsonLd, studyAbroadHowToJsonLd, studyAbroadFaqJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
 
-function CountryCard({ country }: { country: typeof studyAbroadCountries[0] }) {
+export const revalidate = 60;
+
+interface StudyAbroadCountryRow {
+  id: string;
+  name: string;
+  slug: string;
+  flag: string;
+  universities: number;
+  avgCost: string;
+  popularCourses: string[];
+  description: string;
+  topUniversities: unknown;
+}
+
+function CountryCard({ country }: { country: StudyAbroadCountryRow }) {
+  const rawUnis = Array.isArray(country.topUniversities) ? country.topUniversities : [];
+  const topUniversities = rawUnis.map((u: unknown) =>
+    typeof u === "string" ? u : (u as { name?: string })?.name || String(u)
+  );
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
       {/* Flag Banner */}
@@ -43,7 +62,7 @@ function CountryCard({ country }: { country: typeof studyAbroadCountries[0] }) {
         <div className="mb-4">
           <p className="text-xs text-gray-500 font-medium mb-2">Top Universities</p>
           <ul className="space-y-1">
-            {country.topUniversities.slice(0, 3).map((u) => (
+            {topUniversities.slice(0, 3).map((u) => (
               <li key={u} className="text-xs text-gray-600 flex items-center gap-1.5">
                 <GraduationCap className="h-3 w-3 text-primary-400" />
                 {u}
@@ -61,9 +80,17 @@ function CountryCard({ country }: { country: typeof studyAbroadCountries[0] }) {
   );
 }
 
-export default function StudyAbroadPage() {
+export default async function StudyAbroadPage() {
+  const studyAbroadCountries = await prisma.studyAbroadCountry.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <JsonLd data={studyAbroadHowToJsonLd()} />
+      <JsonLd data={studyAbroadFaqJsonLd()} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Study Abroad" }])} />
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 hero-grid opacity-20" />
@@ -91,7 +118,11 @@ export default function StudyAbroadPage() {
                 Get Free Counseling
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
+              >
                 Explore Scholarships
               </Button>
             </div>
@@ -104,13 +135,15 @@ export default function StudyAbroadPage() {
         <div className="container mx-auto py-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {[
-              { value: "3.3L+", label: "Indians Studying Abroad", icon: "🎓" },
-              { value: "10+", label: "Top Destinations", icon: "🌍" },
-              { value: "$50K+", label: "Scholarships Available", icon: "💰" },
-              { value: "85%", label: "F-1 Visa Approval Rate", icon: "✅" },
+              { value: "3.3L+", label: "Indians Studying Abroad", Icon: GraduationCap },
+              { value: "10+", label: "Top Destinations", Icon: MapPin },
+              { value: "$50K+", label: "Scholarships Available", Icon: BadgeDollarSign },
+              { value: "85%", label: "F-1 Visa Approval Rate", Icon: BadgeCheck },
             ].map((stat) => (
               <div key={stat.label}>
-                <span className="text-2xl mb-1 block">{stat.icon}</span>
+                <div className="h-10 w-10 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <stat.Icon className="h-5 w-5 text-primary-600" />
+                </div>
                 <p className="text-2xl font-black text-gray-900">{stat.value}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
               </div>
@@ -139,15 +172,15 @@ export default function StudyAbroadPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
-              { step: "1", icon: "🎯", title: "Choose University", desc: "Shortlist universities based on ranking, program, and budget" },
-              { step: "2", icon: "📝", title: "Prepare Documents", desc: "SOP, LOR, transcripts, CV, language test scores" },
-              { step: "3", icon: "📬", title: "Apply Online", desc: "Submit applications with required documents and fees" },
-              { step: "4", icon: "🏆", title: "Get Admission", desc: "Receive offer letter and confirm enrollment" },
-              { step: "5", icon: "✈️", title: "Get Visa", desc: "Apply for student visa with admission letter" },
+              { step: "1", Icon: Target, title: "Choose University", desc: "Shortlist universities based on ranking, program, and budget" },
+              { step: "2", Icon: FileText, title: "Prepare Documents", desc: "SOP, LOR, transcripts, CV, language test scores" },
+              { step: "3", Icon: Send, title: "Apply Online", desc: "Submit applications with required documents and fees" },
+              { step: "4", Icon: Trophy, title: "Get Admission", desc: "Receive offer letter and confirm enrollment" },
+              { step: "5", Icon: Plane, title: "Get Visa", desc: "Apply for student visa with admission letter" },
             ].map((item) => (
               <div key={item.step} className="text-center">
-                <div className="h-16 w-16 bg-primary-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">
-                  {item.icon}
+                <div className="h-14 w-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <item.Icon className="h-6 w-6 text-primary-600" />
                 </div>
                 <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
                 <p className="text-xs text-gray-500">{item.desc}</p>

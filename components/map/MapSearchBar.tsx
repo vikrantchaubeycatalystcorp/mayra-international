@@ -2,7 +2,12 @@
 
 import { useState, useRef } from "react";
 import { Search, X, Globe, Building2 } from "lucide-react";
-import type { CountryCollegeStat } from "../../data/worldCollegeStats";
+interface CountryCollegeStat {
+  countryCode: string;
+  countryName: string;
+  collegeCount: number;
+  centroid: [number, number];
+}
 
 interface CollegePoint {
   id: string;

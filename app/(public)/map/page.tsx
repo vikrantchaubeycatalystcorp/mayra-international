@@ -1,36 +1,72 @@
 import type { Metadata } from "next";
 import { Globe, Map as MapIcon, Building2 } from "lucide-react";
-import { worldCollegeStats } from "../../../data/worldCollegeStats";
-import { colleges } from "../../../data/colleges";
+import { prisma } from "../../../lib/db";
 import { MapClientWrapper } from "../../../components/map/MapClientWrapper";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "World College Map | Mayra",
   description: "Explore colleges worldwide on an interactive map. Zoom in to see exact college locations.",
 };
 
-export default function MapPage() {
-  const mapColleges = colleges
-    .filter((c) => c.latitude && c.longitude)
-    .map((c) => ({
-      id: c.id,
-      name: c.name,
-      slug: c.slug,
-      city: c.city,
-      state: c.state,
-      latitude: c.latitude!,
-      longitude: c.longitude!,
-      countryCode: c.countryCode,
-      countryName: c.countryName,
-      nirfRank: c.nirfRank,
-      rating: c.rating,
-      fees: c.fees,
-      streams: c.streams,
-      type: c.type,
-    }));
+export default async function MapPage() {
+  const [worldStats, collegesWithCoords] = await Promise.all([
+    prisma.worldCollegeStat.findMany({ where: { isActive: true } }),
+    prisma.college.findMany({
+      where: {
+        isActive: true,
+        latitude: { not: null },
+        longitude: { not: null },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        city: true,
+        state: true,
+        latitude: true,
+        longitude: true,
+        countryCode: true,
+        countryName: true,
+        nirfRank: true,
+        rating: true,
+        feesMin: true,
+        feesMax: true,
+        streams: true,
+        type: true,
+      },
+    }),
+  ]);
 
-  const totalCountries = worldCollegeStats.length;
-  const totalColleges = worldCollegeStats.reduce((sum, c) => sum + c.collegeCount, 0);
+  // Map DB WorldCollegeStat (centroidLng/centroidLat) to the interface expected
+  // by MapClientWrapper (centroid: [lng, lat])
+  const countriesData = worldStats.map((s) => ({
+    countryCode: s.countryCode,
+    countryName: s.countryName,
+    collegeCount: s.collegeCount,
+    centroid: [s.centroidLng, s.centroidLat] as [number, number],
+  }));
+
+  const mapColleges = collegesWithCoords.map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    city: c.city,
+    state: c.state,
+    latitude: c.latitude!,
+    longitude: c.longitude!,
+    countryCode: c.countryCode,
+    countryName: c.countryName,
+    nirfRank: c.nirfRank ?? undefined,
+    rating: c.rating,
+    fees: { min: c.feesMin, max: c.feesMax },
+    streams: c.streams,
+    type: c.type,
+  }));
+
+  const totalCountries = countriesData.length;
+  const totalColleges = countriesData.reduce((sum, c) => sum + c.collegeCount, 0);
 
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
@@ -59,7 +95,7 @@ export default function MapPage() {
       {/* Map container — fills remaining viewport */}
       <div className="flex-1 relative overflow-hidden">
         <MapClientWrapper
-          countriesData={worldCollegeStats}
+          countriesData={countriesData}
           initialColleges={mapColleges}
         />
       </div>

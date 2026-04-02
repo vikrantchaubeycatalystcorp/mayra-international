@@ -1,18 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, ArrowLeft, X, ArrowRight } from "lucide-react";
 import { useAppStore } from "../../../../lib/store";
-import { colleges } from "../../../../data/colleges";
 import { CollegeCard } from "../../../../components/colleges/CollegeCard";
 import { Button } from "../../../../components/ui/button";
 
 export default function SavedCollegesPage() {
   const { savedColleges, toggleSaved } = useAppStore();
+  const [savedCollegeData, setSavedCollegeData] = useState<any[]>([]);
 
-  const savedCollegeData = savedColleges
-    .map((id) => colleges.find((c) => c.id === id))
-    .filter(Boolean);
+  useEffect(() => {
+    if (savedColleges.length === 0) {
+      setSavedCollegeData([]);
+      return;
+    }
+    const ids = savedColleges.join(",");
+    fetch(`/api/colleges?ids=${encodeURIComponent(ids)}&limit=${savedColleges.length}`)
+      .then((r) => r.json())
+      .then((res) => setSavedCollegeData(res.data || []))
+      .catch(() => setSavedCollegeData([]));
+  }, [savedColleges]);
 
   return (
     <div className="min-h-screen bg-gray-50">

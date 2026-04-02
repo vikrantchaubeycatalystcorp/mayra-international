@@ -2,7 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { Globe } from "lucide-react";
-import type { CountryCollegeStat } from "../../data/worldCollegeStats";
+interface CountryCollegeStat {
+  countryCode: string;
+  countryName: string;
+  collegeCount: number;
+  centroid: [number, number];
+}
 
 interface MapCollegePoint {
   id: string;

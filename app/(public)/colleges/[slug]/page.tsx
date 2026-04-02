@@ -13,38 +13,89 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import { colleges } from "../../../../data/colleges";
+import { prisma } from "../../../../lib/db";
 import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
 import { cn, formatCurrency, getGradientForLetter } from "../../../../lib/utils";
+import { JsonLd, collegeJsonLd, collegeFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+
+export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
+  const colleges = await prisma.college.findMany({
+    where: { isActive: true },
+    select: { slug: true },
+  });
   return colleges.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const college = colleges.find((c) => c.slug === slug);
+  const college = await prisma.college.findUnique({ where: { slug } });
   if (!college) return { title: "College Not Found" };
   return {
-    title: `${college.name} — Admissions, Courses, Fees, Placements`,
-    description: college.description,
+    title: `${college.name} — Admissions, Courses, Fees, Placements ${new Date().getFullYear() + 1}`,
+    description: `${college.name} — ${college.description.slice(0, 140)}. Check NIRF ranking, fee structure, placement record, courses offered, and admission process.`,
+    openGraph: {
+      title: `${college.name} — Admissions, Fees & Placements`,
+      description: college.description.slice(0, 160),
+      url: `https://mayra.in/colleges/${college.slug}`,
+      type: "website",
+    },
+    alternates: {
+      canonical: `https://mayra.in/colleges/${college.slug}`,
+    },
   };
 }
 
 export default async function CollegeDetailPage({ params }: Props) {
   const { slug } = await params;
-  const college = colleges.find((c) => c.slug === slug);
+  const college = await prisma.college.findUnique({
+    where: { slug },
+    include: {
+      gallery: { orderBy: { sortOrder: "asc" } },
+      recruiters: { orderBy: { sortOrder: "asc" } },
+      feeStructures: { orderBy: { sortOrder: "asc" } },
+      admissionInfo: true,
+    },
+  });
   if (!college) notFound();
+
+  const similarColleges = await prisma.college.findMany({
+    where: {
+      isActive: true,
+      id: { not: college.id },
+      streams: { hasSome: college.streams },
+    },
+    take: 4,
+    orderBy: { rating: "desc" },
+  });
 
   const gradient = getGradientForLetter(college.name[0]);
 
+  const defaultRecruiters = ["Google", "Microsoft", "Amazon", "Goldman Sachs", "McKinsey", "BCG", "Flipkart", "Apple", "Deloitte", "KPMG"];
+  const recruiterNames = college.recruiters.length > 0
+    ? college.recruiters.map((r) => r.name)
+    : defaultRecruiters;
+
+  // Build a compatible object for JSON-LD helpers that expect the old interface
+  const collegeSeo = {
+    ...college,
+    fees: { min: college.feesMin, max: college.feesMax },
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <JsonLd data={collegeJsonLd(collegeSeo as any)} />
+      <JsonLd data={collegeFaqJsonLd(collegeSeo as any)} />
+      <JsonLd data={breadcrumbJsonLd([
+        { name: "Colleges", url: "/colleges" },
+        { name: college.name },
+      ])} />
       {/* Hero Section */}
       <div className="bg-white border-b border-gray-100">
         <div className="container mx-auto py-8">
@@ -153,7 +204,7 @@ export default async function CollegeDetailPage({ params }: Props) {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">Annual Fees</span>
                   <span className="font-bold text-gray-900">
-                    {formatCurrency(college.fees.min)} — {formatCurrency(college.fees.max)}
+                    {formatCurrency(college.feesMin)} — {formatCurrency(college.feesMax)}
                   </span>
                 </div>
                 {college.avgPackage && (
@@ -277,7 +328,7 @@ export default async function CollegeDetailPage({ params }: Props) {
                     <div className="space-y-2">
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="text-gray-600">Annual Tuition Fee</span>
-                        <span className="font-semibold">{formatCurrency(college.fees.min)}</span>
+                        <span className="font-semibold">{formatCurrency(college.feesMin)}</span>
                       </div>
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="text-gray-600">Hostel + Mess (Approx.)</span>
@@ -285,7 +336,7 @@ export default async function CollegeDetailPage({ params }: Props) {
                       </div>
                       <div className="flex justify-between py-2">
                         <span className="text-gray-600">Total Annual Cost</span>
-                        <span className="font-bold text-primary-700">{formatCurrency(college.fees.max)}</span>
+                        <span className="font-bold text-primary-700">{formatCurrency(college.feesMax)}</span>
                       </div>
                     </div>
                   </AccordionContent>
@@ -332,7 +383,7 @@ export default async function CollegeDetailPage({ params }: Props) {
 
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm">Top Recruiters</h3>
                 <div className="flex flex-wrap gap-2">
-                  {["Google", "Microsoft", "Amazon", "Goldman Sachs", "McKinsey", "BCG", "Flipkart", "Apple", "Deloitte", "KPMG"].map(
+                  {recruiterNames.map(
                     (company) => (
                       <span
                         key={company}
@@ -360,7 +411,7 @@ export default async function CollegeDetailPage({ params }: Props) {
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-white/30 text-white hover:bg-white/10"
+                className="w-full border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
               >
                 Download Brochure
               </Button>
@@ -408,14 +459,7 @@ export default async function CollegeDetailPage({ params }: Props) {
                 Similar Colleges
               </h3>
               <div className="space-y-3">
-                {colleges
-                  .filter(
-                    (c) =>
-                      c.id !== college.id &&
-                      c.streams.some((s) => college.streams.includes(s))
-                  )
-                  .slice(0, 4)
-                  .map((c) => (
+                {similarColleges.map((c) => (
                     <Link
                       key={c.id}
                       href={`/colleges/${c.slug}`}

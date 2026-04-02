@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { colleges } from "../../../../data/colleges";
+import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -7,35 +7,48 @@ export async function GET(req: NextRequest) {
   const countryCode = searchParams.get("countryCode");
   const bbox = searchParams.get("bbox");
 
-  let filtered = colleges.filter(c => c.latitude && c.longitude);
+  const where: Record<string, unknown> = {
+    isActive: true,
+    latitude: { not: null },
+    longitude: { not: null },
+  };
 
   if (countryCode) {
-    filtered = filtered.filter(c => c.countryCode === countryCode);
+    where.countryCode = countryCode;
   }
 
   if (bbox) {
     const [minLng, minLat, maxLng, maxLat] = bbox.split(",").map(Number);
-    filtered = filtered.filter(c =>
-      c.longitude! >= minLng && c.longitude! <= maxLng &&
-      c.latitude! >= minLat && c.latitude! <= maxLat
-    );
+    where.longitude = { gte: minLng, lte: maxLng };
+    where.latitude = { gte: minLat, lte: maxLat };
   }
 
-  return NextResponse.json(filtered.map(c => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    city: c.city,
-    state: c.state,
-    latitude: c.latitude,
-    longitude: c.longitude,
-    countryCode: c.countryCode,
-    countryName: c.countryName,
-    nirfRank: c.nirfRank,
-    rating: c.rating,
-    fees: c.fees,
-    streams: c.streams,
-    type: c.type,
-    accreditation: c.accreditation,
+  const colleges = await prisma.college.findMany({
+    where,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      city: true,
+      state: true,
+      latitude: true,
+      longitude: true,
+      countryCode: true,
+      countryName: true,
+      nirfRank: true,
+      rating: true,
+      feesMin: true,
+      feesMax: true,
+      streams: true,
+      type: true,
+      accreditation: true,
+    },
+  });
+
+  return NextResponse.json(colleges.map(c => ({
+    ...c,
+    fees: { min: c.feesMin, max: c.feesMax },
+    feesMin: undefined,
+    feesMax: undefined,
   })));
 }

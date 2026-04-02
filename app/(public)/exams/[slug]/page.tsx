@@ -10,33 +10,60 @@ import {
   AlertCircle,
   BookOpen,
 } from "lucide-react";
-import { exams } from "../../../../data/exams";
+import { prisma } from "../../../../lib/db";
 import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
 import { formatDate } from "../../../../lib/utils";
+import { JsonLd, examJsonLd, examFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+
+export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
+  const exams = await prisma.exam.findMany({
+    where: { isActive: true },
+    select: { slug: true },
+  });
   return exams.map((e) => ({ slug: e.slug }));
 }
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const exam = exams.find((e) => e.slug === slug);
+  const exam = await prisma.exam.findUnique({ where: { slug } });
   if (!exam) return { title: "Exam Not Found" };
   return {
-    title: `${exam.name} 2026 — Dates, Syllabus, Eligibility, Application`,
-    description: exam.description,
+    title: `${exam.name} 2026 — Exam Date, Registration, Syllabus, Eligibility`,
+    description: `${exam.name} (${exam.fullName}) 2026: Exam date ${exam.examDate}, conducted by ${exam.conductingBody}. Check registration dates, syllabus, eligibility, application fee ₹${exam.applicationFeeGeneral}, and preparation tips.`,
+    openGraph: {
+      title: `${exam.name} 2026 — Dates, Syllabus & Eligibility`,
+      description: exam.description.slice(0, 160),
+      url: `https://mayra.in/exams/${exam.slug}`,
+      type: "website",
+    },
+    alternates: {
+      canonical: `https://mayra.in/exams/${exam.slug}`,
+    },
   };
 }
 
 export default async function ExamDetailPage({ params }: Props) {
   const { slug } = await params;
-  const exam = exams.find((e) => e.slug === slug);
+  const exam = await prisma.exam.findUnique({ where: { slug } });
   if (!exam) notFound();
+
+  const relatedExams = await prisma.exam.findMany({
+    where: {
+      isActive: true,
+      id: { not: exam.id },
+      streams: { hasSome: exam.streams },
+    },
+    take: 5,
+  });
+
+  const syllabus = (exam.syllabus as { section: string; topics: string[] }[]) || [];
 
   const today = new Date();
   const regEnd = exam.registrationEnd ? new Date(exam.registrationEnd) : null;
@@ -51,8 +78,22 @@ export default async function ExamDetailPage({ params }: Props) {
     { event: "Result Date", date: exam.resultDate, color: "bg-green-50 border-green-200 text-green-700" },
   ].filter((d) => d.date);
 
+  // Build a compatible object for JSON-LD helpers that expect the old interface
+  const examSeo = {
+    ...exam,
+    stream: exam.streams,
+    applicationFee: { general: exam.applicationFeeGeneral, sc_st: exam.applicationFeeSCST },
+    syllabus,
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <JsonLd data={examJsonLd(examSeo as any)} />
+      <JsonLd data={examFaqJsonLd(examSeo as any)} />
+      <JsonLd data={breadcrumbJsonLd([
+        { name: "Exams", url: "/exams" },
+        { name: exam.name },
+      ])} />
       {/* Hero */}
       <div className="bg-white border-b border-gray-100">
         <div className="container mx-auto py-8">
@@ -67,7 +108,7 @@ export default async function ExamDetailPage({ params }: Props) {
           <div className="flex flex-col lg:flex-row items-start gap-6">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                {exam.stream.map((s) => (
+                {exam.streams.map((s) => (
                   <Badge key={s} variant="blue">{s}</Badge>
                 ))}
                 <Badge variant="secondary">{exam.level}</Badge>
@@ -142,12 +183,12 @@ export default async function ExamDetailPage({ params }: Props) {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Application Fee</span>
-                  <span className="font-bold">₹{exam.applicationFee.general.toLocaleString()}</span>
+                  <span className="font-bold">₹{exam.applicationFeeGeneral.toLocaleString()}</span>
                 </div>
-                {exam.applicationFee.sc_st && (
+                {exam.applicationFeeSCST && (
                   <div className="flex justify-between">
                     <span className="text-gray-500">SC/ST Fee</span>
-                    <span className="font-bold">₹{exam.applicationFee.sc_st.toLocaleString()}</span>
+                    <span className="font-bold">₹{exam.applicationFeeSCST.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
@@ -203,7 +244,7 @@ export default async function ExamDetailPage({ params }: Props) {
                 Exam Syllabus
               </h2>
               <Accordion type="multiple" className="space-y-0">
-                {exam.syllabus.map((section, idx) => (
+                {syllabus.map((section, idx) => (
                   <AccordionItem key={idx} value={`section-${idx}`}>
                     <AccordionTrigger className="text-gray-800 font-semibold">
                       {section.section}
@@ -236,7 +277,7 @@ export default async function ExamDetailPage({ params }: Props) {
                   { step: "1", title: "Register Online", desc: `Visit the official website and create a new account with your email and mobile number.` },
                   { step: "2", title: "Fill Application Form", desc: "Enter personal details, academic qualifications, and preferred exam city." },
                   { step: "3", title: "Upload Documents", desc: "Upload scanned photograph, signature, and category certificate as specified." },
-                  { step: "4", title: "Pay Application Fee", desc: `Pay ₹${exam.applicationFee.general.toLocaleString()} via debit/credit card, net banking, or UPI.` },
+                  { step: "4", title: "Pay Application Fee", desc: `Pay ₹${exam.applicationFeeGeneral.toLocaleString()} via debit/credit card, net banking, or UPI.` },
                   { step: "5", title: "Download Confirmation", desc: "Save the confirmation page. Admit card will be issued separately before the exam." },
                 ].map((item) => (
                   <div key={item.step} className="flex items-start gap-4">
@@ -286,14 +327,7 @@ export default async function ExamDetailPage({ params }: Props) {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
               <h3 className="font-bold text-gray-900 mb-4 text-sm">Related Exams</h3>
               <div className="space-y-3">
-                {exams
-                  .filter(
-                    (e) =>
-                      e.id !== exam.id &&
-                      e.stream.some((s) => exam.stream.includes(s))
-                  )
-                  .slice(0, 5)
-                  .map((e) => (
+                {relatedExams.map((e) => (
                     <Link
                       key={e.id}
                       href={`/exams/${e.slug}`}
@@ -306,7 +340,7 @@ export default async function ExamDetailPage({ params }: Props) {
                         <p className="text-xs text-gray-400">{e.level}</p>
                       </div>
                       <Badge variant="secondary" className="text-xs">
-                        {e.stream[0]}
+                        {e.streams[0]}
                       </Badge>
                     </Link>
                   ))}

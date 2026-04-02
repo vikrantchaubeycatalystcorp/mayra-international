@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { MapPin, Star, TrendingUp, CheckCircle, Heart, Plus, Minus } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -15,26 +16,29 @@ interface CollegeCardProps {
 
 export function CollegeCard({ college, className }: CollegeCardProps) {
   const { toggleSaved, isSaved, addToCompare, removeFromCompare, isInCompare, compareList } = useAppStore();
-  const saved = isSaved(college.id);
-  const inCompare = isInCompare(college.id);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  const saved = mounted && isSaved(college.id);
+  const inCompare = mounted && isInCompare(college.id);
   const gradient = getGradientForLetter(college.name[0]);
 
-  const canAddToCompare = compareList.length < 3 || inCompare;
+  const canAddToCompare = !mounted || compareList.length < 3 || inCompare;
 
   return (
     <article
       className={cn(
-        "bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden group",
+        "card-premium overflow-hidden group",
         className
       )}
     >
-      {/* Card Header with gradient logo */}
+      {/* Card Header */}
       <div className="relative p-5 pb-4">
         <div className="flex items-start gap-4">
           {/* Logo */}
           <div
             className={cn(
-              "h-14 w-14 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-black text-2xl flex-shrink-0 shadow-md",
+              "h-14 w-14 rounded-2xl bg-gradient-to-br flex items-center justify-center text-white font-black text-xl flex-shrink-0 shadow-md transition-transform duration-500 group-hover:scale-105 group-hover:shadow-lg",
               gradient
             )}
           >
@@ -46,25 +50,25 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
             <div className="flex items-start justify-between gap-2">
               <Link
                 href={`/colleges/${college.slug}`}
-                className="font-bold text-gray-900 hover:text-primary-600 transition-colors line-clamp-2 text-sm leading-tight group-hover:text-primary-600"
+                className="font-bold text-gray-900 hover:text-indigo-600 transition-colors line-clamp-2 text-sm leading-tight group-hover:text-indigo-600"
               >
                 {college.name}
               </Link>
               <button suppressHydrationWarning
                 onClick={() => toggleSaved(college.id)}
                 className={cn(
-                  "flex-shrink-0 p-1.5 rounded-lg transition-colors",
+                  "flex-shrink-0 p-1.5 rounded-xl transition-all duration-300",
                   saved
-                    ? "text-red-500 bg-red-50"
-                    : "text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    ? "text-red-500 bg-red-50 scale-110"
+                    : "text-gray-300 hover:text-red-500 hover:bg-red-50"
                 )}
                 aria-label={saved ? "Remove from saved" : "Save college"}
               >
-                <Heart className={cn("h-4 w-4", saved && "fill-current")} />
+                <Heart className={cn("h-4 w-4 transition-transform", saved && "fill-current")} />
               </button>
             </div>
 
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1 mt-1.5">
               <MapPin className="h-3 w-3 text-gray-400 flex-shrink-0" />
               <span className="text-xs text-gray-500 truncate">
                 {college.city}, {college.state}
@@ -96,7 +100,7 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
         </div>
 
         {/* Rating */}
-        <div className="flex items-center gap-1.5 mt-2">
+        <div className="flex items-center gap-1.5 mt-2.5">
           <div className="flex items-center gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
@@ -116,33 +120,33 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
             {college.rating.toFixed(1)}
           </span>
           <span className="text-xs text-gray-400">
-            ({college.reviewCount.toLocaleString()} reviews)
+            ({college.reviewCount.toLocaleString()})
           </span>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="mx-5 py-3 border-t border-gray-50 grid grid-cols-3 gap-3">
+      <div className="mx-5 py-3 border-t border-gray-100/50 grid grid-cols-3 gap-3">
         <div className="text-center">
-          <p className="text-xs text-gray-400 mb-0.5">Annual Fees</p>
+          <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wider font-medium">Fees</p>
           <p className="text-sm font-bold text-gray-900">
             {formatCurrency(college.fees.min)}
           </p>
         </div>
         {college.avgPackage && (
-          <div className="text-center border-x border-gray-100">
-            <p className="text-xs text-gray-400 mb-0.5">Avg Package</p>
-            <p className="text-sm font-bold text-green-600">
+          <div className="text-center border-x border-gray-100/50">
+            <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wider font-medium">Avg CTC</p>
+            <p className="text-sm font-bold text-emerald-600">
               {(college.avgPackage / 100000).toFixed(1)} LPA
             </p>
           </div>
         )}
         {college.placementRate && (
           <div className="text-center">
-            <p className="text-xs text-gray-400 mb-0.5">Placement</p>
+            <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wider font-medium">Placed</p>
             <div className="flex items-center justify-center gap-0.5">
-              <TrendingUp className="h-3 w-3 text-blue-500" />
-              <p className="text-sm font-bold text-blue-600">
+              <TrendingUp className="h-3 w-3 text-indigo-500" />
+              <p className="text-sm font-bold text-indigo-600">
                 {college.placementRate}%
               </p>
             </div>
@@ -156,13 +160,13 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
           {college.streams.slice(0, 3).map((stream) => (
             <span
               key={stream}
-              className="px-2 py-0.5 bg-gray-50 border border-gray-100 rounded-full text-xs text-gray-500"
+              className="px-2 py-0.5 bg-gray-50 border border-gray-100/80 rounded-lg text-[10px] text-gray-500 font-medium"
             >
               {stream}
             </span>
           ))}
           {college.streams.length > 3 && (
-            <span className="px-2 py-0.5 text-xs text-gray-400">
+            <span className="px-2 py-0.5 text-[10px] text-gray-400 font-medium">
               +{college.streams.length - 3} more
             </span>
           )}
@@ -172,7 +176,7 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
       {/* Actions */}
       <div className="p-5 pt-3 flex items-center gap-2">
         <Link href={`/colleges/${college.slug}`} className="flex-1">
-          <Button variant="gradient" size="sm" className="w-full text-xs">
+          <Button variant="gradient" size="sm" className="w-full text-xs rounded-xl">
             View Details
           </Button>
         </Link>
@@ -180,8 +184,8 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
           variant="outline"
           size="sm"
           className={cn(
-            "flex-shrink-0 text-xs gap-1 px-3",
-            inCompare && "border-primary-300 bg-primary-50 text-primary-600"
+            "flex-shrink-0 text-xs gap-1 px-3 rounded-xl",
+            inCompare && "border-indigo-300 bg-indigo-50 text-indigo-600"
           )}
           onClick={() =>
             inCompare ? removeFromCompare(college.id) : addToCompare(college.id)
@@ -212,14 +216,14 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
       {/* Apply CTA */}
       {college.isFeatured && (
         <div className="px-5 pb-5">
-          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100">
-            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-            <span className="text-xs text-green-700 font-medium">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100/80">
+            <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+            <span className="text-xs text-emerald-700 font-medium">
               Admissions Open for 2026
             </span>
             <Link
               href={`/colleges/${college.slug}`}
-              className="ml-auto text-xs text-green-600 font-semibold hover:text-green-700 whitespace-nowrap"
+              className="ml-auto text-xs text-emerald-600 font-semibold hover:text-emerald-700 whitespace-nowrap"
             >
               Apply Now →
             </Link>

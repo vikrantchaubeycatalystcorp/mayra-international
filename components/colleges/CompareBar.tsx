@@ -4,23 +4,41 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { X, ArrowRight, Scale } from "lucide-react";
 import { useAppStore } from "../../lib/store";
-import { colleges } from "../../data/colleges";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
+
+interface CompareCollege {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export function CompareBar() {
   const { compareList, removeFromCompare, clearCompare } = useAppStore();
   const [visible, setVisible] = useState(false);
+  const [selectedColleges, setSelectedColleges] = useState<CompareCollege[]>([]);
 
   useEffect(() => {
     setVisible(compareList.length >= 2);
   }, [compareList]);
 
-  if (!visible) return null;
+  useEffect(() => {
+    if (compareList.length === 0) {
+      setSelectedColleges([]);
+      return;
+    }
+    // Fetch college details for the compare list IDs
+    const ids = compareList.join(",");
+    fetch(`/api/colleges?ids=${encodeURIComponent(ids)}&limit=${compareList.length}`)
+      .then((r) => r.json())
+      .then((res) => {
+        const data = res.data || res;
+        setSelectedColleges(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setSelectedColleges([]));
+  }, [compareList]);
 
-  const selectedColleges = compareList
-    .map((id) => colleges.find((c) => c.id === id))
-    .filter(Boolean);
+  if (!visible) return null;
 
   return (
     <div

@@ -3,7 +3,12 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { X, MapPin, Star, ChevronRight, Building2, Globe } from "lucide-react";
-import type { CountryCollegeStat } from "../../data/worldCollegeStats";
+interface CountryCollegeStat {
+  countryCode: string;
+  countryName: string;
+  collegeCount: number;
+  centroid: [number, number];
+}
 
 interface CollegePoint {
   id: string;

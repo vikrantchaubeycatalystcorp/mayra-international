@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Check } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 
@@ -129,10 +129,13 @@ export default function SignInPage() {
         </div>
 
         {/* Benefits */}
-        <div className="mt-6 text-center text-blue-300/60 text-xs space-y-1">
-          <p>✓ Save colleges and exams for easy access</p>
-          <p>✓ Get personalized recommendations</p>
-          <p>✓ Receive exam date alerts</p>
+        <div className="mt-6 text-blue-300/60 text-xs space-y-1.5">
+          {["Save colleges and exams for easy access", "Get personalized recommendations", "Receive exam date alerts"].map((text) => (
+            <div key={text} className="flex items-center justify-center gap-2">
+              <Check className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
+              <span>{text}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -1,25 +1,59 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, Scale, Bell, FileText, BookOpen, ArrowRight, GraduationCap, TrendingUp, Calendar, Sparkles } from "lucide-react";
 import { useAppStore } from "../../../lib/store";
-import { colleges } from "../../../data/colleges";
-import { news } from "../../../data/news";
 import { formatDate, getGradientForLetter } from "../../../lib/utils";
 import { cn } from "../../../lib/utils";
 import { Badge } from "../../../components/ui/badge";
+
+interface DashboardCollege {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  state: string;
+  type: string;
+  nirfRank?: number | null;
+}
+
+interface DashboardNewsArticle {
+  id: string;
+  title: string;
+  slug: string;
+  imageColor: string;
+  publishedAt: string;
+}
 
 export default function DashboardPage() {
   const { savedColleges, compareList } = useAppStore();
   const savedCount = savedColleges.length;
   const compareCount = compareList.length;
 
-  const savedCollegeData = savedColleges
-    .map((id) => colleges.find((c) => c.id === id))
-    .filter(Boolean)
-    .slice(0, 3);
+  const [savedCollegeData, setSavedCollegeData] = useState<DashboardCollege[]>([]);
+  const [latestNews, setLatestNews] = useState<DashboardNewsArticle[]>([]);
 
-  const latestNews = news.slice(0, 3);
+  useEffect(() => {
+    // Fetch saved college details
+    if (savedColleges.length > 0) {
+      const ids = savedColleges.slice(0, 3).join(",");
+      fetch(`/api/colleges?ids=${encodeURIComponent(ids)}&limit=3`)
+        .then((r) => r.json())
+        .then((res) => setSavedCollegeData(res.data || []))
+        .catch(() => setSavedCollegeData([]));
+    } else {
+      setSavedCollegeData([]);
+    }
+  }, [savedColleges]);
+
+  useEffect(() => {
+    // Fetch latest news
+    fetch("/api/news?limit=3")
+      .then((r) => r.json())
+      .then((res) => setLatestNews(res.data || []))
+      .catch(() => setLatestNews([]));
+  }, []);
 
   const stats = [
     { label: "Saved Colleges", value: savedCount, icon: Heart, color: "from-red-500 to-rose-400", bg: "bg-red-50", iconColor: "text-red-500", href: "/dashboard/saved" },

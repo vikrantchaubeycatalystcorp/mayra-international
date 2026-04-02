@@ -25,6 +25,7 @@ export interface College {
   totalStudents?: number;
   faculty?: number;
   isFeatured?: boolean;
+  isActive?: boolean;
   latitude?: number;
   longitude?: number;
   countryCode?: string;
@@ -52,6 +53,7 @@ export interface Exam {
   description: string;
   syllabus: { section: string; topics: string[] }[];
   isFeatured?: boolean;
+  isActive?: boolean;
 }
 
 export interface Course {
@@ -66,6 +68,7 @@ export interface Course {
   avgFees: number;
   avgSalary?: number;
   isFeatured?: boolean;
+  isActive?: boolean;
   icon?: string;
   color?: string;
 }
@@ -81,6 +84,7 @@ export interface NewsArticle {
   imageColor: string;
   author: string;
   isLive?: boolean;
+  isActive?: boolean;
   tags: string[];
   views?: number;
 }
@@ -94,6 +98,7 @@ export interface StudyAbroadCountry {
   popularCourses: string[];
   description: string;
   topUniversities: string[];
+  isActive?: boolean;
 }
 
 export interface FilterState {
