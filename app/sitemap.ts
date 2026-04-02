@@ -8,24 +8,6 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  let colleges: Awaited<ReturnType<typeof prisma.college.findMany>> = [];
-  let courses: Awaited<ReturnType<typeof prisma.course.findMany>> = [];
-  let exams: Awaited<ReturnType<typeof prisma.exam.findMany>> = [];
-  let news: Awaited<ReturnType<typeof prisma.newsArticle.findMany>> = [];
-  let countries: Awaited<ReturnType<typeof prisma.studyAbroadCountry.findMany>> = [];
-
-  try {
-    [colleges, courses, exams, news, countries] = await Promise.all([
-      prisma.college.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-      prisma.course.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-      prisma.exam.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-      prisma.newsArticle.findMany({ where: { isActive: true, isLive: true }, select: { slug: true, publishedAt: true } }),
-      prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
-    ]);
-  } catch {
-    // DB unavailable during build — return static pages only
-  }
-
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE_URL}/colleges`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
@@ -39,40 +21,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/map`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
   ];
 
-  const collegePages: MetadataRoute.Sitemap = colleges.map((c) => ({
-    url: `${SITE_URL}/colleges/${c.slug}`,
-    lastModified: c.updatedAt,
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
+  try {
+    const [colleges, courses, exams, news, countries] = await Promise.all([
+      prisma.college.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.course.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.exam.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+      prisma.newsArticle.findMany({ where: { isActive: true, isLive: true }, select: { slug: true, publishedAt: true } }),
+      prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
+    ]);
 
-  const coursePages: MetadataRoute.Sitemap = courses.map((c) => ({
-    url: `${SITE_URL}/courses/${c.slug}`,
-    lastModified: c.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  const examPages: MetadataRoute.Sitemap = exams.map((e) => ({
-    url: `${SITE_URL}/exams/${e.slug}`,
-    lastModified: e.updatedAt,
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
-  const newsPages: MetadataRoute.Sitemap = news.map((n) => ({
-    url: `${SITE_URL}/news/${n.slug}`,
-    lastModified: n.publishedAt ? new Date(n.publishedAt) : now,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  const countryPages: MetadataRoute.Sitemap = countries.map((c) => ({
-    url: `${SITE_URL}/study-abroad/${c.slug}`,
-    lastModified: c.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  return [...staticPages, ...collegePages, ...coursePages, ...examPages, ...newsPages, ...countryPages];
+    return [
+      ...staticPages,
+      ...colleges.map((c) => ({ url: `${SITE_URL}/colleges/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "weekly" as const, priority: 0.8 })),
+      ...courses.map((c) => ({ url: `${SITE_URL}/courses/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 })),
+      ...exams.map((e) => ({ url: `${SITE_URL}/exams/${e.slug}`, lastModified: e.updatedAt, changeFrequency: "weekly" as const, priority: 0.8 })),
+      ...news.map((n) => ({ url: `${SITE_URL}/news/${n.slug}`, lastModified: n.publishedAt ? new Date(n.publishedAt) : now, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...countries.map((c) => ({ url: `${SITE_URL}/study-abroad/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 })),
+    ];
+  } catch {
+    return staticPages;
+  }
 }
