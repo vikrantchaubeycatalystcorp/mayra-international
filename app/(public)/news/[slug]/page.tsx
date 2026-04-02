@@ -27,11 +27,8 @@ const categoryIconMap: Record<string, React.ElementType> = {
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const articles = await prisma.newsArticle.findMany({
-    where: { isActive: true },
-    select: { slug: true },
-  });
-  return articles.map((n) => ({ slug: n.slug }));
+  // Return empty — pages are generated on-demand and cached via ISR
+  return [];
 }
 
 export async function generateMetadata({ params }: Props) {

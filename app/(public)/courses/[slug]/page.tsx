@@ -59,11 +59,8 @@ const streamIconMap: Record<string, LucideIcon> = {
 };
 
 export async function generateStaticParams() {
-  const courses = await prisma.course.findMany({
-    where: { isActive: true },
-    select: { slug: true },
-  });
-  return courses.map((c) => ({ slug: c.slug }));
+  // Return empty — pages are generated on-demand and cached via ISR
+  return [];
 }
 
 export async function generateMetadata({ params }: Props) {
