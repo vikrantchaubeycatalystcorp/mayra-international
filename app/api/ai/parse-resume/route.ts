@@ -40,10 +40,19 @@ function getFileType(file: File): 'pdf' | 'docx' | null {
 // ---------------------------------------------------------------------------
 
 async function extractTextFromPdf(buffer: Buffer): Promise<string> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdf = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
-  const data = await pdf(buffer);
-  return data.text;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse');
+    const pdf = typeof pdfParse === 'function' ? pdfParse : pdfParse.default;
+    if (typeof pdf !== 'function') {
+      throw new Error(`pdf-parse loaded as ${typeof pdf}, keys: ${Object.keys(pdfParse).join(',')}`);
+    }
+    const data = await pdf(buffer);
+    return data.text;
+  } catch (err) {
+    console.error('PDF extraction inner error:', err);
+    throw err;
+  }
 }
 
 async function extractTextFromDocx(buffer: Buffer): Promise<string> {
@@ -108,8 +117,11 @@ export async function POST(req: NextRequest) {
         fileType === 'pdf'
           ? await extractTextFromPdf(buffer)
           : await extractTextFromDocx(buffer);
-    } catch (extractionError) {
-      console.error('Text extraction failed:', extractionError);
+    } catch (extractionError: unknown) {
+      const errMsg = extractionError instanceof Error ? extractionError.message : String(extractionError);
+      const errStack = extractionError instanceof Error ? extractionError.stack : '';
+      console.error('Text extraction failed:', errMsg);
+      console.error('Stack:', errStack);
       return NextResponse.json(
         {
           error:
@@ -131,6 +143,12 @@ export async function POST(req: NextRequest) {
 
     // Parse the extracted text into structured resume data
     const parsed = parseResumeText(rawText);
+
+    // Log first 10 lines for debugging name extraction
+    const firstLines = rawText.split(/\r?\n/).slice(0, 10);
+    console.log('=== Resume first 10 lines ===');
+    firstLines.forEach((l, i) => console.log(`  [${i}] "${l}"`));
+    console.log('=== Parsed name:', parsed.personal?.name, '===');
 
     return NextResponse.json({ data: parsed });
   } catch (error) {

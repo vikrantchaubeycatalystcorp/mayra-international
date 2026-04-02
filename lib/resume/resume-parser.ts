@@ -62,6 +62,12 @@ const SECTION_KEYWORDS: Record<string, string[]> = {
     'honors',
     'accomplishments',
     'recognition',
+    'key highlights',
+    'highlights',
+    'what i bring',
+    'what i bring to your team',
+    'what i offer',
+    'value proposition',
   ],
   extracurricular: [
     'extracurricular',
@@ -173,7 +179,7 @@ const SINGLE_DATE_RE =
   /(?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+)?\d{4}/i;
 const GPA_RE =
   /(?:(?:CGPA|GPA|C\.G\.P\.A|cumulative)\s*[:\s]*(\d+(?:\.\d+)?)\s*(?:\/\s*\d+)?)|(?:(\d{1,3}(?:\.\d+)?)\s*%)|(?:(\d+(?:\.\d+)?)\s*\/\s*(?:10|4)(?:\.\d+)?)/i;
-const BULLET_RE = /^\s*[•\-\*\>▪▸◦∙⁃]\s*/;
+const BULLET_RE = /^\s*[•\-\*\>▪▸◦∙⁃■□●○►▶✦✧★☆→⇒»]\s*/;
 const DECORATIVE_RE = /^[-=_*~#]{3,}$/;
 const LOCATION_RE =
   /\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)*),\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+)*|[A-Z]{2})\b/;
@@ -264,6 +270,7 @@ function extractAllUrls(text: string): string[] {
 function parsePersonalInfo(
   headerLines: string[],
   fullText: string,
+  allLines: string[],
 ): PersonalInfo {
   const info: PersonalInfo = {
     name: '',
@@ -313,20 +320,111 @@ function parsePersonalInfo(
     }
   }
 
-  // Name - first non-empty line that doesn't look like contact info or header
-  for (const line of headerLines) {
+  // Name - find the line that most looks like a person's name
+  // Strategy: score candidate lines and pick the best one
+  // PDF extraction doesn't guarantee visual order, so scan all lines (header first, then all)
+  const linesToScan = [...headerLines, ...allLines.slice(0, 20)];
+  const nameCandidates: { text: string; score: number }[] = [];
+  const seen = new Set<string>();
+
+  for (const line of linesToScan) {
     const trimmed = line.trim();
     if (!trimmed) continue;
-    if (EMAIL_RE.test(trimmed)) continue;
-    if (PHONE_RE.test(trimmed) && trimmed.replace(PHONE_RE, '').trim().length < 3) continue;
-    if (/^https?:\/\//i.test(trimmed)) continue;
-    if (/linkedin|github/i.test(trimmed) && trimmed.length < 50) continue;
     if (DECORATIVE_RE.test(trimmed)) continue;
-    // Skip lines that are just addresses/location
-    if (/^\d+\s/.test(trimmed) && /street|st|ave|road|rd/i.test(trimmed)) continue;
-    // Likely a name
-    info.name = stripDecorative(trimmed);
-    break;
+
+    // Strip out contact info, bullets, and symbols from the line
+    let candidate = trimmed
+      .replace(EMAIL_RE, '')
+      .replace(PHONE_RE, '')
+      .replace(URL_RE, '')
+      .replace(/linkedin|github/gi, '')
+      .replace(/[|•·,\-–—■□●○►▶✦✧★☆→⇒»▪▸◦∙⁃]+/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+
+    candidate = stripDecorative(candidate);
+
+    if (!candidate || candidate.length < 2) continue;
+    if (seen.has(candidate)) continue;
+    seen.add(candidate);
+    // Skip section headers
+    if (isSectionHeader(candidate)) continue;
+    // Skip purely numeric
+    if (/^[\d\s.+()-]+$/.test(candidate)) continue;
+
+    // Score the candidate as a name
+    let score = 0;
+    const words = candidate.split(/\s+/);
+
+    // Names are typically 2-4 words
+    if (words.length >= 2 && words.length <= 4) score += 30;
+    else if (words.length === 1) score += 5;
+    else if (words.length > 4) score -= 10;
+
+    // Names are short (under 40 chars)
+    if (candidate.length <= 30) score += 20;
+    else if (candidate.length <= 40) score += 10;
+    else score -= 15;
+
+    // All words capitalized (title case or ALL CAPS) is very name-like
+    const allCapitalized = words.every((w) => /^[A-Z]/.test(w));
+    if (allCapitalized) score += 25;
+
+    // ALL CAPS is common for names in resumes
+    if (candidate === candidate.toUpperCase() && /[A-Z]/.test(candidate)) score += 15;
+
+    // Names shouldn't contain common non-name words
+    const nonNameWords = /\b(the|and|with|for|from|this|that|your|team|bring|what|how|why|consultant|engineer|developer|manager|analyst|intern|designer|summary|objective|experience|education|skills|profile|career|present|january|february|march|april|may|june|july|august|september|october|november|december)\b/i;
+    if (nonNameWords.test(candidate)) score -= 40;
+
+    // Penalize institution/college names
+    const institutionWords = /\b(university|institute|college|school|academy|iit|nit|iim|bits|vit|iiit|iisc|polytechnic|sies|siescoms?|nmims|kjsce|djsce|vesit|sakec)\b/i;
+    if (institutionWords.test(candidate)) score -= 50;
+
+    // Penalize degree abbreviations (MCA, BCA, MBA, B.Tech, etc.)
+    const degreeWords = /\b(MCA|BCA|MBA|BBA|B\.?Tech|M\.?Tech|B\.?E|M\.?E|B\.?Sc|M\.?Sc|Ph\.?D|BBI|BMS|BAF|B\.?Com|M\.?Com|B\.?A|M\.?A|HSC|SSC|CBSE|ICSE|Diploma|Bachelor|Master|Certificate)\b/i;
+    if (degreeWords.test(candidate)) score -= 50;
+
+    // Penalize role/title-like lines
+    const roleWords = /\b(software|technical|senior|junior|lead|full.?stack|front.?end|back.?end|data|cloud|devops|project|product|business|marketing|human|resource|finance|accounting|operations|research|associate)\b/i;
+    if (roleWords.test(candidate)) score -= 25;
+
+    // Names are mostly alphabetic
+    const alphaRatio = (candidate.match(/[a-zA-Z]/g) || []).length / candidate.length;
+    if (alphaRatio > 0.85) score += 15;
+    else if (alphaRatio < 0.5) score -= 20;
+
+    // Each word in a name should be all-alpha (no numbers)
+    const allWordsAlpha = words.every((w) => /^[a-zA-Z.']+$/.test(w));
+    if (allWordsAlpha) score += 15;
+
+    if (score > 0) {
+      nameCandidates.push({ text: candidate, score });
+    }
+  }
+
+  // Use email as a hint to boost matching candidates
+  // e.g. vikrantchaubey33@gmail.com → "vikrant", "chaubey"
+  const emailNameHints: string[] = [];
+  if (info.email) {
+    const localPart = info.email.split('@')[0].replace(/[._\d]+/g, ' ').trim().toLowerCase();
+    emailNameHints.push(...localPart.split(/\s+/).filter((w) => w.length >= 3));
+  }
+
+  if (emailNameHints.length > 0) {
+    for (const c of nameCandidates) {
+      const lower = c.text.toLowerCase();
+      const matches = emailNameHints.filter((h) => lower.includes(h));
+      if (matches.length > 0) {
+        c.score += 40 * matches.length; // Strong boost for email name match
+      }
+    }
+  }
+
+  // Pick the highest scoring candidate
+  if (nameCandidates.length > 0) {
+    nameCandidates.sort((a, b) => b.score - a.score);
+    info.name = nameCandidates[0].text;
   }
 
   // Location - look in first 8 lines for city/state patterns
@@ -865,7 +963,7 @@ export function parseResumeText(rawText: string): Partial<ResumeData> {
   const lines = rawText.split(/\r?\n/);
   const { header, sections } = splitIntoSections(lines);
 
-  const personal = parsePersonalInfo(header, rawText);
+  const personal = parsePersonalInfo(header, rawText, lines);
 
   const summary = sections.summary
     ? parseSummary(sections.summary)

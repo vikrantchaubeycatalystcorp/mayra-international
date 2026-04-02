@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  serverExternalPackages: ['pdf-parse', 'mammoth'],
   experimental: {
     optimizePackageImports: [
       "lucide-react",

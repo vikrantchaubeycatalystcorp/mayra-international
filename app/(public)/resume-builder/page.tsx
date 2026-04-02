@@ -374,7 +374,14 @@ function ResumeBuilderContent() {
         const err = await res.json();
         throw new Error(err.error || 'Failed to parse resume');
       }
-      const parsed = await res.json();
+      const json = await res.json();
+      const parsed = json.data || json;
+
+      console.log('=== Parsed resume data ===', JSON.stringify(parsed.personal, null, 2));
+      console.log('=== Sections found ===', Object.keys(parsed).filter(k => {
+        const v = parsed[k];
+        return v && (typeof v === 'string' ? v.length > 0 : Array.isArray(v) ? v.length > 0 : Object.keys(v).some(kk => v[kk]));
+      }));
 
       // Apply parsed data to store
       const store = useResumeStore.getState();
