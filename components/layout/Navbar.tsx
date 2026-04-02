@@ -194,12 +194,14 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100"
-            : "bg-white"
+            ? "navbar-scrolled backdrop-blur-2xl shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.06)]"
+            : "navbar-top"
         }`}
       >
+        {/* Top accent line */}
+        <div className={`h-[2px] bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-600 transition-opacity duration-500 ${scrolled ? "opacity-100" : "opacity-0"}`} />
         <div className="container mx-auto">
           <div className="flex items-center justify-between h-16 lg:h-[68px]">
             {/* Logo */}

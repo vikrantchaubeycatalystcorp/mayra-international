@@ -153,6 +153,19 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   }
 
+  /* Premium Navbar States */
+  .navbar-top {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(249,250,251,0.95) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .navbar-scrolled {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+  }
+
   /* Hero Grid / Mesh Background */
   .hero-grid {
     background-image:

@@ -125,12 +125,17 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
         className={cn(
           "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
           scrolled
-            ? "bg-white/98 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl"
-            : "bg-white border-b border-gray-100/80"
+            ? "navbar-scrolled backdrop-blur-2xl shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.06)]"
+            : "navbar-top"
         )}
       >
+        {/* Top accent gradient line */}
+        <div className={cn(
+          "h-[2px] bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-600 transition-opacity duration-500",
+          scrolled ? "opacity-100" : "opacity-0"
+        )} />
         <div className="container mx-auto">
-          <div className="flex items-center justify-between h-[72px]">
+          <div className="flex items-center justify-between h-[68px]">
             {/* Logo — Premium Animated */}
             <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
               {!logoError ? (
@@ -190,13 +195,13 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
                     <Link
                       href={item.href}
                       className={cn(
-                        "relative flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold rounded-lg transition-all duration-200 mx-0.5",
+                        "relative flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-semibold rounded-xl transition-all duration-250 mx-0.5",
                         isActive
-                          ? "text-indigo-700 bg-indigo-50/80"
-                          : "text-gray-700 hover:text-indigo-700 hover:bg-gray-50"
+                          ? "text-indigo-700 bg-gradient-to-b from-indigo-50/90 to-indigo-100/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_1px_2px_rgba(99,102,241,0.1)]"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
                       )}
                     >
-                      {ItemIcon && <ItemIcon className={cn("h-3.5 w-3.5", isActive ? "text-indigo-500" : "text-gray-400")} />}
+                      {ItemIcon && <ItemIcon className={cn("h-3.5 w-3.5 transition-colors", isActive ? "text-indigo-500" : "text-gray-400 group-hover:text-gray-500")} />}
                       {item.label}
                       {hasChildren && (
                         <ChevronDown
@@ -206,9 +211,9 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
                           )}
                         />
                       )}
-                      {/* Active indicator dot */}
+                      {/* Active indicator line */}
                       {isActive && (
-                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" />
+                        <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-6 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.4)]" />
                       )}
                     </Link>
 
@@ -338,16 +343,16 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
             </nav>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               {/* Search Button */}
               <button
                 suppressHydrationWarning
                 onClick={() => setSearchOpen(true)}
-                className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-400 text-sm transition-all duration-300 group hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-600"
+                className="hidden md:flex items-center gap-2.5 px-4 py-2 rounded-full bg-gray-50/80 border border-gray-200/60 text-gray-400 text-sm transition-all duration-300 group hover:border-indigo-200 hover:bg-white hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] hover:text-indigo-600"
               >
-                <Search className="h-3.5 w-3.5" />
+                <Search className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
                 <span className="hidden xl:block text-[13px]">Search...</span>
-                <kbd className="hidden xl:flex items-center ml-2 px-1.5 py-0.5 rounded-md bg-white border border-gray-200/80 text-[10px] font-mono text-gray-400 shadow-sm">
+                <kbd className="hidden xl:flex items-center ml-1.5 px-1.5 py-0.5 rounded-md bg-white/80 border border-gray-200/60 text-[10px] font-mono text-gray-400">
                   ⌘K
                 </kbd>
               </button>
@@ -356,7 +361,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               <button
                 suppressHydrationWarning
                 onClick={() => setSearchOpen(true)}
-                className="md:hidden h-9 w-9 rounded-xl flex items-center justify-center bg-gray-50 border border-gray-200/80 text-gray-500 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300"
+                className="md:hidden h-9 w-9 rounded-full flex items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] transition-all duration-300"
               >
                 <Search className="h-4 w-4" />
               </button>
@@ -364,18 +369,19 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               {/* Notification Bell */}
               <button
                 suppressHydrationWarning
-                className="hidden lg:flex h-9 w-9 rounded-xl items-center justify-center bg-gray-50 border border-gray-200/80 text-gray-500 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300 relative"
+                className="hidden lg:flex h-9 w-9 rounded-full items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] transition-all duration-300 relative"
               >
                 <Bell className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-full ring-2 ring-white flex items-center justify-center">
-                  <span className="h-1.5 w-1.5 bg-white rounded-full" />
-                </span>
+                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-gradient-to-r from-red-500 to-orange-400 rounded-full ring-2 ring-white animate-pulse" />
               </button>
+
+              {/* Divider */}
+              <div className="hidden lg:block h-6 w-px bg-gray-200/80 mx-1" />
 
               {/* CTA Button — Desktop */}
               <Link
                 href="/sign-in"
-                className="hidden lg:flex items-center gap-1.5 ml-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[13px] font-semibold shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 active:scale-[0.97]"
+                className="hidden lg:flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 text-white text-[13px] font-semibold shadow-[0_2px_8px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_4px_16px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] hover:brightness-110 transition-all duration-300 active:scale-[0.97]"
               >
                 Get Started
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -385,7 +391,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               <button
                 suppressHydrationWarning
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden h-9 w-9 rounded-xl flex items-center justify-center bg-gray-50 border border-gray-200/80 text-gray-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300"
+                className="lg:hidden h-9 w-9 rounded-full flex items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-600 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300"
               >
                 {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </button>
