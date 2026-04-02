@@ -7,6 +7,8 @@ import { FloatingInquiryForm } from "../components/shared/FloatingInquiryForm";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
 import { prisma } from "../lib/db";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
