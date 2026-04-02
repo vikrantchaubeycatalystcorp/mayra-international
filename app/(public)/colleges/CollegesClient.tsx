@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { LayoutGrid, List, SortAsc, Filter, X } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { LayoutGrid, List, SortAsc, Filter, X, Loader2 } from "lucide-react";
 import { CollegeCard } from "../../../components/colleges/CollegeCard";
 import { CollegeFilters } from "../../../components/colleges/CollegeFilters";
 import { CollegeTable } from "../../../components/colleges/CollegeTable";
@@ -17,88 +17,161 @@ import {
 import { Button } from "../../../components/ui/button";
 import { cn } from "../../../lib/utils";
 import type { College } from "../../../types";
-import type { FilterState } from "../../../types";
 
 type ViewMode = "grid" | "table";
 type SortOption = "nirf" | "name" | "fees-asc" | "fees-desc" | "rating" | "placement";
 
+const PAGE_SIZE = 9;
+
 interface CollegesClientProps {
-  colleges: College[];
+  totalCount: number;
 }
 
-export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
+interface FilterState {
+  search: string;
+  states: string[];
+  streams: string[];
+  types: string[];
+  feesMax: number;
+  ratingMin: number;
+}
+
+interface ApiResponse {
+  data: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    logo: string;
+    city: string;
+    state: string;
+    streams: string[];
+    nirfRank: number | null;
+    rating: number;
+    reviewCount: number;
+    established: number;
+    type: string;
+    feesMin: number;
+    feesMax: number;
+    avgPackage: number | null;
+    topPackage: number | null;
+    placementRate: number | null;
+    accreditation: string[];
+    courses: string[];
+    description: string;
+    highlights: string[];
+    address: string;
+    website: string | null;
+    phone: string | null;
+    totalStudents: number | null;
+    faculty: number | null;
+    isFeatured: boolean;
+    latitude: number | null;
+    longitude: number | null;
+    countryCode: string;
+    countryName: string;
+  }>;
+  total: number;
+  page: number;
+  pages: number;
+}
+
+function mapToCollege(c: ApiResponse["data"][number]): College {
+  return {
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    logo: c.logo,
+    city: c.city,
+    state: c.state,
+    streams: c.streams,
+    nirfRank: c.nirfRank ?? undefined,
+    rating: c.rating,
+    reviewCount: c.reviewCount,
+    established: c.established,
+    type: c.type as College["type"],
+    fees: { min: c.feesMin, max: c.feesMax },
+    avgPackage: c.avgPackage ?? undefined,
+    topPackage: c.topPackage ?? undefined,
+    placementRate: c.placementRate ?? undefined,
+    accreditation: c.accreditation,
+    courses: c.courses,
+    description: c.description,
+    highlights: c.highlights,
+    address: c.address,
+    website: c.website ?? undefined,
+    phone: c.phone ?? undefined,
+    totalStudents: c.totalStudents ?? undefined,
+    faculty: c.faculty ?? undefined,
+    isFeatured: c.isFeatured,
+    latitude: c.latitude ?? undefined,
+    longitude: c.longitude ?? undefined,
+    countryCode: c.countryCode,
+    countryName: c.countryName,
+  };
+}
+
+export function CollegesClient({ totalCount }: CollegesClientProps) {
   const [view, setView] = useState<ViewMode>("grid");
   const [sort, setSort] = useState<SortOption>("nirf");
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Partial<FilterState>>({});
 
-  const PAGE_SIZE = 9;
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [total, setTotal] = useState(totalCount);
+  const [totalPages, setTotalPages] = useState(Math.ceil(totalCount / PAGE_SIZE));
+  const [loading, setLoading] = useState(true);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const filtered = useMemo(() => {
-    let result = [...allColleges];
+  const fetchColleges = useCallback(async () => {
+    // Cancel previous in-flight request
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.city.toLowerCase().includes(q) ||
-          c.state.toLowerCase().includes(q)
-      );
+    setLoading(true);
+
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    params.set("limit", String(PAGE_SIZE));
+    params.set("sort", sort);
+
+    if (filters.search) params.set("search", filters.search);
+    if (filters.streams?.length) params.set("streams", filters.streams.join(","));
+    if (filters.types?.length) params.set("types", filters.types.join(","));
+    if (filters.states?.length) params.set("states", filters.states.join(","));
+    if (filters.feesMax !== undefined && filters.feesMax < 2000000) params.set("feesMax", String(filters.feesMax));
+    if (filters.ratingMin !== undefined && filters.ratingMin > 0) params.set("ratingMin", String(filters.ratingMin));
+
+    try {
+      const res = await fetch(`/api/colleges?${params}`, { signal: controller.signal });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const json: ApiResponse = await res.json();
+      setColleges(json.data.map(mapToCollege));
+      setTotal(json.total);
+      setTotalPages(json.pages);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        console.error("Failed to fetch colleges:", err);
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
+  }, [page, sort, filters]);
 
-    if (filters.states && filters.states.length > 0) {
-      result = result.filter((c) => filters.states!.includes(c.state));
-    }
+  useEffect(() => {
+    fetchColleges();
+  }, [fetchColleges]);
 
-    if (filters.streams && filters.streams.length > 0) {
-      result = result.filter((c) =>
-        filters.streams!.some((s) => c.streams.includes(s))
-      );
-    }
+  // Debounce filter changes: reset page to 1
+  const handleFiltersChange = useCallback((newFilters: Partial<FilterState>) => {
+    setFilters(newFilters);
+    setPage(1);
+  }, []);
 
-    if (filters.types && filters.types.length > 0) {
-      result = result.filter((c) => filters.types!.includes(c.type));
-    }
-
-    if (filters.feesMax && filters.feesMax < 2000000) {
-      result = result.filter((c) => c.fees.min <= filters.feesMax!);
-    }
-
-    if (filters.ratingMin && filters.ratingMin > 0) {
-      result = result.filter((c) => c.rating >= filters.ratingMin!);
-    }
-
-    // Sort
-    switch (sort) {
-      case "nirf":
-        result.sort((a, b) => (a.nirfRank ?? 9999) - (b.nirfRank ?? 9999));
-        break;
-      case "name":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "fees-asc":
-        result.sort((a, b) => a.fees.min - b.fees.min);
-        break;
-      case "fees-desc":
-        result.sort((a, b) => b.fees.min - a.fees.min);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "placement":
-        result.sort(
-          (a, b) => (b.placementRate ?? 0) - (a.placementRate ?? 0)
-        );
-        break;
-    }
-
-    return result;
-  }, [allColleges, filters, sort]);
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paginated = colleges;
 
   return (
     <>
@@ -115,7 +188,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                 <p className="text-gray-500 mt-1 text-sm">
                   Showing{" "}
                   <span className="font-semibold text-gray-900">
-                    {filtered.length}
+                    {total.toLocaleString()}
                   </span>{" "}
                   colleges based on your preferences
                 </p>
@@ -145,7 +218,8 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
 
                 {/* View Toggle */}
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                  <button suppressHydrationWarning
+                  <button
+                    suppressHydrationWarning
                     onClick={() => setView("grid")}
                     className={cn(
                       "p-2 transition-colors",
@@ -156,7 +230,8 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                   >
                     <LayoutGrid className="h-4 w-4" />
                   </button>
-                  <button suppressHydrationWarning
+                  <button
+                    suppressHydrationWarning
                     onClick={() => setView("table")}
                     className={cn(
                       "p-2 transition-colors",
@@ -194,7 +269,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
               )}
             >
               <div className="lg:sticky lg:top-20">
-                <CollegeFilters onFiltersChange={setFilters} />
+                <CollegeFilters onFiltersChange={handleFiltersChange} />
               </div>
             </div>
 
@@ -212,19 +287,18 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                       <X className="h-5 w-5 text-gray-500" />
                     </button>
                   </div>
-                  <CollegeFilters
-                    onFiltersChange={(f) => {
-                      setFilters(f);
-                      setPage(1);
-                    }}
-                  />
+                  <CollegeFilters onFiltersChange={handleFiltersChange} />
                 </div>
               </div>
             )}
 
             {/* Main Content */}
             <div className="flex-1 min-w-0">
-              {view === "grid" ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
+                </div>
+              ) : view === "grid" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                   {paginated.map((college) => (
                     <CollegeCard key={college.id} college={college} />
@@ -234,7 +308,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                 <CollegeTable colleges={paginated} />
               )}
 
-              {filtered.length === 0 && (
+              {!loading && paginated.length === 0 && (
                 <div className="text-center py-20">
                   <p className="text-gray-400 text-lg mb-2">
                     No colleges match your filters
@@ -246,9 +320,10 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
               )}
 
               {/* Pagination */}
-              {totalPages > 1 && (
+              {!loading && totalPages > 1 && (
                 <div className="mt-10 flex items-center justify-center gap-2">
-                  <button suppressHydrationWarning
+                  <button
+                    suppressHydrationWarning
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
                     className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition-colors"
@@ -265,7 +340,8 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                         ? totalPages - 6 + i
                         : page - 3 + i;
                     return (
-                      <button suppressHydrationWarning
+                      <button
+                        suppressHydrationWarning
                         key={p}
                         onClick={() => setPage(p)}
                         className={cn(
@@ -279,7 +355,8 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                       </button>
                     );
                   })}
-                  <button suppressHydrationWarning
+                  <button
+                    suppressHydrationWarning
                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
                     className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition-colors"
