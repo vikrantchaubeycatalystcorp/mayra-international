@@ -213,7 +213,7 @@ export function Navbar() {
                     alt="Mayra International"
                     width={260}
                     height={78}
-                    className="h-16 w-auto"
+                    className="h-10 sm:h-14 lg:h-16 w-auto"
                     priority
                     onError={() => setLogoError(true)}
                   />
@@ -255,11 +255,11 @@ export function Navbar() {
                   {/* Mega Menu */}
                   {!item.simple && item.mega && activeMenu === item.label && (
                     <div
-                      className="absolute top-full left-0 mt-1 w-[560px] bg-white rounded-2xl shadow-xl border border-gray-100 p-5 animate-slide-down z-50"
+                      className="absolute top-full left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 mt-1 w-[calc(100vw-2rem)] sm:w-[560px] bg-white rounded-2xl shadow-xl border border-gray-100 p-5 animate-slide-down z-50"
                       onMouseEnter={() => handleMenuEnter(item.label)}
                       onMouseLeave={handleMenuLeave}
                     >
-                      <div className="grid grid-cols-2 gap-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                         {item.mega.sections.map((section) => (
                           <div key={section.title}>
                             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
@@ -368,7 +368,7 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white">
+          <div className="lg:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-64px)] overflow-y-auto">
             <div className="container mx-auto py-4 space-y-1">
               {navItems.map((item) => (
                 <Link

@@ -82,7 +82,7 @@ export function FloatingInquiryForm() {
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-50 w-[300px] shadow-premium-lg rounded-3xl overflow-hidden transition-all duration-500 ease-out-expo"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] shadow-premium-lg rounded-3xl overflow-hidden transition-all duration-500 ease-out-expo"
       style={{ maxHeight: minimized ? "52px" : "80vh" }}
     >
       {/* Header — always visible */}

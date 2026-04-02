@@ -48,7 +48,7 @@ export function CompareBar() {
       )}
     >
       <div className="container mx-auto py-3 px-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Scale className="h-5 w-5 text-primary-600" />
             <span className="font-bold text-gray-900 text-sm hidden sm:block">
@@ -95,7 +95,7 @@ export function CompareBar() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-between sm:justify-end">
             <button suppressHydrationWarning
               onClick={clearCompare}
               className="text-xs text-gray-500 hover:text-gray-700 transition-colors hidden sm:block"

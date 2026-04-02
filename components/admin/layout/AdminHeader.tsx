@@ -163,7 +163,7 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
             {/* Notification Panel */}
             {notifOpen && (
-              <div className="absolute right-0 top-full mt-2 w-[380px] bg-white rounded-2xl shadow-2xl border border-gray-200/60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+              <div className="absolute right-[-0.5rem] sm:right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-gray-200/60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
                 style={{ boxShadow: "0 16px 48px -8px rgba(0,0,0,0.12), 0 4px 16px -4px rgba(0,0,0,0.08)" }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -257,7 +257,7 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-200/60 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+              <div className="absolute right-[-0.5rem] sm:right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-64 bg-white rounded-2xl shadow-2xl border border-gray-200/60 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
                 style={{ boxShadow: "0 16px 48px -8px rgba(0,0,0,0.12), 0 4px 16px -4px rgba(0,0,0,0.08)" }}>
                 {/* User Info */}
                 <div className="px-4 py-3.5 border-b border-gray-100">

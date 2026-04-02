@@ -69,9 +69,9 @@ export default async function MapPage() {
   const totalColleges = countriesData.reduce((sum, c) => sum + c.collegeCount, 0);
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
+    <div className="flex flex-col min-h-0" style={{ height: "calc(100vh - 64px)" }}>
       {/* Top stats bar */}
-      <div className="bg-slate-900 border-b border-slate-700 px-6 py-2.5 flex items-center gap-6 flex-shrink-0">
+      <div className="bg-slate-900 border-b border-slate-700 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center gap-3 sm:gap-6 flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-2">
           <MapIcon className="h-4 w-4 text-blue-400" />
           <span className="text-white font-bold text-sm">World College Map</span>
@@ -87,7 +87,7 @@ export default async function MapPage() {
             <span className="text-slate-300">{totalColleges.toLocaleString()}+ Colleges</span>
           </div>
         </div>
-        <div className="ml-auto text-xs text-slate-500">
+        <div className="ml-auto text-xs text-slate-500 hidden md:block">
           Click a country to explore · Zoom in for college locations
         </div>
       </div>

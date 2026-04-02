@@ -86,8 +86,8 @@ export function CollegeTable({ colleges }: CollegeTableProps) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-card">
-      <table className="w-full text-sm">
+    <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-card touch-pan-x">
+      <table className="w-full text-sm min-w-[800px]">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-100">
             {cols.map((col) => (

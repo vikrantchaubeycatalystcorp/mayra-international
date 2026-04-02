@@ -107,7 +107,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
         <div className="bg-white border-b border-gray-100">
           <div className="container mx-auto py-6">
             <Breadcrumb items={[{ label: "Colleges" }]} />
-            <div className="flex items-start justify-between mt-3">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between mt-3 gap-3">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
                   Colleges in India
@@ -120,7 +120,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                   colleges based on your preferences
                 </p>
               </div>
-              <div className="flex items-center gap-3 mt-1">
+              <div className="flex items-center gap-3">
                 {/* Sort */}
                 <Select
                   value={sort}
@@ -193,7 +193,7 @@ export function CollegesClient({ colleges: allColleges }: CollegesClientProps) {
                 "hidden lg:block"
               )}
             >
-              <div className="sticky top-24">
+              <div className="lg:sticky lg:top-20">
                 <CollegeFilters onFiltersChange={setFilters} />
               </div>
             </div>

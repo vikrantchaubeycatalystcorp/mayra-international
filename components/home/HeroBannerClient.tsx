@@ -79,9 +79,9 @@ function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Large gradient orbs */}
-      <div className="absolute -top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full bg-indigo-500/20 blur-[120px] animate-morph" />
-      <div className="absolute -bottom-1/4 -right-1/4 w-[500px] h-[500px] rounded-full bg-purple-500/15 blur-[100px] animate-morph" style={{ animationDelay: "-4s" }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-indigo-400/10 blur-[80px] animate-float-slow" />
+      <div className="absolute -top-1/4 -left-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full bg-indigo-500/20 blur-[120px] animate-morph" />
+      <div className="absolute -bottom-1/4 -right-1/4 w-[250px] h-[250px] md:w-[500px] md:h-[500px] rounded-full bg-purple-500/15 blur-[100px] animate-morph" style={{ animationDelay: "-4s" }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-indigo-400/10 blur-[80px] animate-float-slow" />
       {/* Small floating particles */}
       <div className="absolute top-[15%] left-[10%] w-2 h-2 rounded-full bg-indigo-400/40 animate-float" />
       <div className="absolute top-[25%] right-[15%] w-1.5 h-1.5 rounded-full bg-purple-400/40 animate-float-delayed" />
@@ -172,7 +172,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
   };
 
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
       {/* Background Image */}
       {data.bgImage && (
         <div
@@ -237,7 +237,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
           {data.stats.length > 0 && (
             <div
               className={cn(
-                "flex items-center justify-center gap-8 sm:gap-12 mb-12 transition-all duration-700 delay-300",
+                "flex items-center justify-center gap-4 sm:gap-8 lg:gap-12 mb-12 transition-all duration-700 delay-300",
                 loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               )}
             >
@@ -249,7 +249,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                       <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/[0.08]">
                         <Icon className={cn("h-3.5 w-3.5", stat.color)} />
                       </div>
-                      <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                      <span className="text-lg sm:text-2xl md:text-3xl font-black text-white tracking-tight">
                         <AnimatedCounter value={stat.value} />
                       </span>
                     </div>
@@ -293,7 +293,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                 </div>
 
                 {/* Search Input */}
-                <div className="flex gap-2.5">
+                <div className="flex flex-col sm:flex-row gap-2.5">
                   <div className="relative flex-1 group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-400" />
                     <input
@@ -311,7 +311,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                   </div>
                   <Button
                     onClick={handleSearch}
-                    className="h-[52px] px-7 text-sm font-bold rounded-2xl flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98]"
+                    className="h-[52px] px-5 sm:px-7 w-full sm:w-auto text-sm font-bold rounded-2xl flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {data.ctaText}
                     <ArrowRight className="h-4 w-4 ml-1" />

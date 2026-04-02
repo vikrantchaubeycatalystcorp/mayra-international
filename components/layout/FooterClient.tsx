@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { cn } from "../../lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
   Twitter, Linkedin, Youtube, Instagram, Facebook,
@@ -92,7 +93,10 @@ export function FooterClient({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-indigo-500/5 blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto py-16 relative">
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${Math.min(sections.length + 2, 6)} gap-10`}>
+        <div className={cn(
+            "grid grid-cols-1 sm:grid-cols-2 gap-10",
+            sections.length + 2 <= 4 ? "lg:grid-cols-4" : sections.length + 2 <= 5 ? "lg:grid-cols-5" : "lg:grid-cols-6"
+          )}>
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-5">

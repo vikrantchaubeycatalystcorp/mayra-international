@@ -44,8 +44,8 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
 
   return (
     <div
-      className={`absolute top-0 right-0 h-full w-80 bg-white shadow-2xl z-20 flex flex-col transform transition-transform duration-300 ease-out ${
-        open ? "translate-x-0" : "translate-x-full"
+      className={`absolute bottom-0 sm:top-0 right-0 h-[70vh] sm:h-full w-full sm:w-80 bg-white shadow-2xl z-20 flex flex-col transform transition-transform duration-300 ease-out rounded-t-2xl sm:rounded-none ${
+        open ? "translate-y-0 sm:translate-x-0" : "translate-y-full sm:translate-x-full sm:translate-y-0"
       }`}
     >
       {/* Panel header */}

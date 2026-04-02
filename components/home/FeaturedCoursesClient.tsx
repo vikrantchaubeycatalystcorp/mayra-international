@@ -94,18 +94,18 @@ export function FeaturedCoursesClient({
     <section className="section-padding bg-gradient-to-b from-gray-50/50 via-white to-white relative" ref={ref}>
       <div className="absolute inset-0 mesh-bg pointer-events-none" />
       <div className="container mx-auto relative">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">{title}</h2>
-            <p className="text-gray-500 mt-2 text-base max-w-lg">{subtitle}</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">{title}</h2>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base max-w-lg">{subtitle}</p>
           </div>
-          <Link href={ctaLink} className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 transition-all duration-300 whitespace-nowrap group">
+          <Link href={ctaLink} className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 transition-all duration-300 whitespace-nowrap group flex-shrink-0">
             {ctaLabel}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
-        <div className={cn("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children", revealed && "revealed")}>
+        <div className={cn("grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children", revealed && "revealed")}>
           {courses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}

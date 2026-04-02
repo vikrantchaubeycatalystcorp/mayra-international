@@ -112,7 +112,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <NavbarServer />
-        <main className="flex-1 pt-[72px]">{children}</main>
+        <main className="flex-1 pt-16 lg:pt-[68px]">{children}</main>
         <FooterServer />
         <FloatingInquiryForm />
       </body>

@@ -163,10 +163,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   let currentIdx = 0;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[8vh] sm:pt-[15vh]" onClick={onClose}>
       <div className="absolute inset-0 command-backdrop" />
       <div
-        className="relative w-full max-w-[580px] mx-4 bg-white rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden"
+        className="relative w-full max-w-[580px] mx-4 bg-white rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
         style={{ boxShadow: "0 25px 65px -5px rgba(0,0,0,0.25), 0 8px 20px -8px rgba(0,0,0,0.15)" }}
       >

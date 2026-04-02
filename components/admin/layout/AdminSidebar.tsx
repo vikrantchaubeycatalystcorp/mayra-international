@@ -186,7 +186,7 @@ export function AdminSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }:
         className={cn(
           "fixed top-0 left-0 z-50 h-full flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
           "bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white",
-          collapsed ? "w-[72px]" : "w-[270px]",
+          collapsed && !mobileOpen ? "w-[72px]" : "w-[270px]",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
