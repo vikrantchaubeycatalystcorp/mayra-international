@@ -8,11 +8,11 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  let colleges: { slug: string; updatedAt: Date }[] = [];
-  let courses: { slug: string; updatedAt: Date }[] = [];
-  let exams: { slug: string; updatedAt: Date }[] = [];
-  let news: { slug: string; publishedAt: Date | null }[] = [];
-  let countries: { slug: string; updatedAt: Date }[] = [];
+  let colleges: Awaited<ReturnType<typeof prisma.college.findMany>> = [];
+  let courses: Awaited<ReturnType<typeof prisma.course.findMany>> = [];
+  let exams: Awaited<ReturnType<typeof prisma.exam.findMany>> = [];
+  let news: Awaited<ReturnType<typeof prisma.newsArticle.findMany>> = [];
+  let countries: Awaited<ReturnType<typeof prisma.studyAbroadCountry.findMany>> = [];
 
   try {
     [colleges, courses, exams, news, countries] = await Promise.all([
