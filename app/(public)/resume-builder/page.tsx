@@ -5,7 +5,7 @@ import {
   FileText, User, GraduationCap, Briefcase, Wrench, Eye, Download,
   ChevronLeft, ChevronRight, Check, Plus, Trash2, Palette, LayoutTemplate,
   Target, AlertCircle, AlertTriangle, Lightbulb, RotateCcw, FolderKanban,
-  Award, Trophy, X, GripVertical, Sparkles, Loader2, FileDown, ClipboardCheck,
+  Award, Trophy, X, GripVertical, Sparkles, Loader2, FileDown, ClipboardCheck, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,6 +185,11 @@ function ResumeBuilderContent() {
   const [jdResult, setJdResult] = useState<any>(null);
   const [jdLoading, setJdLoading] = useState(false);
 
+  // --- Upload Resume state ---
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
   // --- Auto-save indicator ---
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving'>('saved');
 
@@ -354,6 +359,148 @@ function ResumeBuilderContent() {
       URL.revokeObjectURL(url);
     } catch (err) {
       alert('DOCX export is not available yet. Please use PDF download instead.');
+    }
+  }
+
+  // --- Resume Upload Handler ---
+  async function handleResumeUpload(file: File) {
+    setUploadError('');
+    setUploadLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/ai/parse-resume', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to parse resume');
+      }
+      const parsed = await res.json();
+
+      // Apply parsed data to store
+      const store = useResumeStore.getState();
+
+      // Personal info
+      if (parsed.personal) {
+        const p = parsed.personal;
+        if (p.name) store.updatePersonal('name', p.name);
+        if (p.email) store.updatePersonal('email', p.email);
+        if (p.phone) store.updatePersonal('phone', p.phone);
+        if (p.location) store.updatePersonal('location', p.location);
+        if (p.linkedin) store.updatePersonal('linkedin', p.linkedin);
+        if (p.github) store.updatePersonal('github', p.github);
+        if (p.portfolio) store.updatePersonal('portfolio', p.portfolio);
+        if (p.objective) store.updatePersonal('objective', p.objective);
+      }
+
+      // Summary
+      if (parsed.summary) store.updateSummary(parsed.summary);
+
+      // For arrays, we need to use set directly on the store
+      const state = useResumeStore.getState();
+
+      // Education - clear existing and add parsed ones
+      if (parsed.education?.length > 0) {
+        state.education.forEach(e => store.removeEducation(e.id));
+        parsed.education.forEach((edu: any) => {
+          store.addEducation();
+          const newEdu = useResumeStore.getState().education;
+          const last = newEdu[newEdu.length - 1];
+          if (edu.institution) store.updateEducation(last.id, 'institution', edu.institution);
+          if (edu.degree) store.updateEducation(last.id, 'degree', edu.degree);
+          if (edu.field) store.updateEducation(last.id, 'field', edu.field);
+          if (edu.startDate) store.updateEducation(last.id, 'startDate', edu.startDate);
+          if (edu.endDate) store.updateEducation(last.id, 'endDate', edu.endDate);
+          if (edu.cgpa) store.updateEducation(last.id, 'cgpa', edu.cgpa);
+          if (edu.achievements) store.updateEducation(last.id, 'achievements', edu.achievements);
+        });
+      }
+
+      // Experience
+      if (parsed.experience?.length > 0) {
+        state.experience.forEach(e => store.removeExperience(e.id));
+        parsed.experience.forEach((exp: any) => {
+          store.addExperience();
+          const newExp = useResumeStore.getState().experience;
+          const last = newExp[newExp.length - 1];
+          if (exp.company) store.updateExperience(last.id, 'company', exp.company);
+          if (exp.role) store.updateExperience(last.id, 'role', exp.role);
+          if (exp.startDate) store.updateExperience(last.id, 'startDate', exp.startDate);
+          if (exp.endDate) store.updateExperience(last.id, 'endDate', exp.endDate);
+          if (exp.current) store.updateExperience(last.id, 'current', true);
+          if (exp.bullets?.length > 0) {
+            store.removeExperienceBullet(last.id, 0);
+            exp.bullets.forEach((bullet: string) => {
+              store.addExperienceBullet(last.id);
+              const updatedExp = useResumeStore.getState().experience.find(e => e.id === last.id);
+              if (updatedExp) store.updateExperienceBullet(last.id, updatedExp.bullets.length - 1, bullet);
+            });
+          }
+        });
+      }
+
+      // Projects
+      if (parsed.projects?.length > 0) {
+        state.projects.forEach(p => store.removeProject(p.id));
+        parsed.projects.forEach((proj: any) => {
+          store.addProject();
+          const newProj = useResumeStore.getState().projects;
+          const last = newProj[newProj.length - 1];
+          if (proj.name) store.updateProject(last.id, 'name', proj.name);
+          if (proj.techStack) store.updateProject(last.id, 'techStack', Array.isArray(proj.techStack) ? proj.techStack.join(', ') : proj.techStack);
+          if (proj.link) store.updateProject(last.id, 'link', proj.link);
+          if (proj.bullets?.length > 0) {
+            store.removeProjectBullet(last.id, 0);
+            proj.bullets.forEach((bullet: string) => {
+              store.addProjectBullet(last.id);
+              const updatedProj = useResumeStore.getState().projects.find(p => p.id === last.id);
+              if (updatedProj) store.updateProjectBullet(last.id, updatedProj.bullets.length - 1, bullet);
+            });
+          }
+        });
+      }
+
+      // Skills
+      if (parsed.skills?.length > 0) {
+        while (useResumeStore.getState().skills.length > 0) {
+          store.removeSkillGroup(0);
+        }
+        parsed.skills.forEach((group: any) => {
+          store.addSkillGroup(group.category || 'General');
+          const idx = useResumeStore.getState().skills.length - 1;
+          if (group.skills?.length > 0) store.updateSkillGroup(idx, group.skills);
+        });
+      }
+
+      // Certifications
+      if (parsed.certifications?.length > 0) {
+        parsed.certifications.forEach((cert: any) => {
+          store.addCertification();
+          const newCerts = useResumeStore.getState().certifications;
+          const last = newCerts[newCerts.length - 1];
+          if (cert.name) store.updateCertification(last.id, 'name', cert.name);
+          if (cert.issuer) store.updateCertification(last.id, 'issuer', cert.issuer);
+          if (cert.date) store.updateCertification(last.id, 'date', cert.date);
+          if (cert.link) store.updateCertification(last.id, 'link', cert.link);
+        });
+      }
+
+      // Achievements
+      if (parsed.achievements?.length > 0) {
+        parsed.achievements.forEach((ach: any) => {
+          store.addAchievement();
+          const newAch = useResumeStore.getState().achievements;
+          const last = newAch[newAch.length - 1];
+          if (ach.title) store.updateAchievement(last.id, 'title', ach.title);
+          if (ach.description) store.updateAchievement(last.id, 'description', ach.description);
+        });
+      }
+
+      setShowUpload(false);
+      setActiveSection('personal');
+    } catch (err: any) {
+      setUploadError(err.message || 'Failed to parse resume');
+    } finally {
+      setUploadLoading(false);
     }
   }
 
@@ -749,6 +896,10 @@ function ResumeBuilderContent() {
               <span className={cn("text-xs font-medium transition-colors", saveStatus === 'saving' ? "text-amber-500" : "text-green-500")}>
                 {saveStatus === 'saving' ? 'Saving...' : 'Saved'}
               </span>
+              <Button variant="outline" onClick={() => setShowUpload(true)} className="gap-1.5 hidden sm:flex">
+                <Upload className="h-4 w-4" />
+                Import
+              </Button>
               <ScoreChip />
               <button onClick={() => setShowJdMatch(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-xs font-semibold text-gray-700 hidden sm:flex" suppressHydrationWarning>
                 <ClipboardCheck className="h-4 w-4 text-indigo-500" />JD Match
@@ -760,6 +911,26 @@ function ResumeBuilderContent() {
             </div>
           </div>
         </div>
+
+        {!personal.name && !personal.email && (
+          <div className="container mx-auto px-4 mb-4 mt-4">
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-white shadow-sm">
+                  <Upload className="h-5 w-5 text-indigo-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Already have a resume?</p>
+                  <p className="text-xs text-gray-500">Upload your PDF or DOCX and we'll fill everything in automatically</p>
+                </div>
+              </div>
+              <Button variant="outline" onClick={() => setShowUpload(true)} className="gap-1.5 shrink-0">
+                <Upload className="h-4 w-4" />
+                Import Resume
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="container mx-auto px-4 py-6">
           <div className="flex gap-6">
@@ -1036,6 +1207,79 @@ function ResumeBuilderContent() {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Upload Resume Modal */}
+        {showUpload && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => !uploadLoading && setShowUpload(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full" onClick={e => e.stopPropagation()}>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-900">Import Existing Resume</h2>
+                    <p className="text-sm text-gray-500 mt-1">Upload your PDF or DOCX resume and we'll extract all the data</p>
+                  </div>
+                  <button onClick={() => !uploadLoading && setShowUpload(false)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning>
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {uploadError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                    {uploadError}
+                  </div>
+                )}
+
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-indigo-300 transition-colors">
+                  {uploadLoading ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="h-10 w-10 text-indigo-500 animate-spin" />
+                      <p className="text-sm font-medium text-gray-700">Parsing your resume...</p>
+                      <p className="text-xs text-gray-400">Extracting data and mapping to sections</p>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer flex flex-col items-center gap-3">
+                      <div className="p-4 rounded-full bg-indigo-50">
+                        <Upload className="h-8 w-8 text-indigo-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Drop your resume here or click to browse</p>
+                        <p className="text-xs text-gray-400 mt-1">Supports PDF and DOCX files up to 5MB</p>
+                      </div>
+                      <input
+                        type="file"
+                        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        className="hidden"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) handleResumeUpload(file);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">What gets imported:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Personal Info', 'Education', 'Experience', 'Projects', 'Skills', 'Summary', 'Certifications', 'Achievements'].map(item => (
+                      <div key={item} className="flex items-center gap-2 text-xs text-gray-600">
+                        <Check className="h-3 w-3 text-green-500 shrink-0" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-xs text-amber-700">
+                    <strong>Note:</strong> Importing will replace your current data. The parser works best with well-structured resumes. You can edit any extracted data after import.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
