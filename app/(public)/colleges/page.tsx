@@ -2,15 +2,47 @@ import { prisma } from "../../../lib/db";
 import { CollegesClient } from "./CollegesClient";
 import type { College } from "../../../types";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function CollegesPage() {
   const dbColleges = await prisma.college.findMany({
     where: { isActive: true },
     orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logo: true,
+      city: true,
+      state: true,
+      streams: true,
+      nirfRank: true,
+      rating: true,
+      reviewCount: true,
+      established: true,
+      type: true,
+      feesMin: true,
+      feesMax: true,
+      avgPackage: true,
+      topPackage: true,
+      placementRate: true,
+      accreditation: true,
+      courses: true,
+      description: true,
+      highlights: true,
+      address: true,
+      website: true,
+      phone: true,
+      totalStudents: true,
+      faculty: true,
+      isFeatured: true,
+      latitude: true,
+      longitude: true,
+      countryCode: true,
+      countryName: true,
+    },
   });
 
-  // Map DB model (feesMin/feesMax) to the College interface (fees: { min, max })
   const colleges: College[] = dbColleges.map((c) => ({
     id: c.id,
     name: c.name,
