@@ -10,9 +10,14 @@ export async function StatsSectionServer() {
     prisma.homeSection.findUnique({ where: { sectionKey: "stats" } }),
   ]);
 
+  // Guard against accidental duplicate seed rows by keeping first stat per label.
+  const uniqueStats = Array.from(
+    new Map(stats.map((stat) => [stat.label.trim().toLowerCase(), stat])).values()
+  );
+
   return (
     <StatsSectionClient
-      stats={stats}
+      stats={uniqueStats}
       title={section?.title || "Trusted by Millions of Students"}
       subtitle={section?.subtitle || "India's most comprehensive education portal with verified data and expert guidance"}
     />
