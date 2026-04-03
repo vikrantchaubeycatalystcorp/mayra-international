@@ -253,7 +253,7 @@ export default function AdminDashboard() {
 
   // Skeleton pulse
   const Skeleton = ({ className }: { className?: string }) => (
-    <div className={cn("bg-gray-100 rounded-lg animate-pulse", className)} />
+    <span className={cn("block bg-gray-100 rounded-lg animate-pulse", className)} />
   );
 
   return (
