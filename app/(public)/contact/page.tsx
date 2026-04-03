@@ -21,7 +21,7 @@ const contactInfo = [
   {
     icon: Phone,
     label: "Call Us",
-    value: "+91 8700-XXX-XXX",
+    value: "+91 7506799678",
     subtext: "Mon-Sat, 9 AM - 7 PM IST",
     color: "from-blue-500 to-indigo-600",
   },
@@ -35,8 +35,8 @@ const contactInfo = [
   {
     icon: MapPin,
     label: "Visit Us",
-    value: "New Delhi, India",
-    subtext: "By appointment only",
+    value: "Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703",
+    subtext: "Palm Beach Road, Sector 19D, Maharashtra",
     color: "from-orange-500 to-red-500",
   },
   {

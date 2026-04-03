@@ -22,8 +22,18 @@ export function organizationJsonLd() {
       "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses with expert guidance.",
     contactPoint: {
       "@type": "ContactPoint",
+      telephone: "+91-7506799678",
+      email: "info@mayrainternational.com",
       contactType: "customer support",
       availableLanguage: ["English", "Hindi"],
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Office No 613, 6th Floor, Satra Plaza, Palm Beach Road, Phase 2, Sector 19D",
+      addressLocality: "Vashi, Navi Mumbai",
+      postalCode: "400703",
+      addressRegion: "Maharashtra",
+      addressCountry: "IN",
     },
   };
 }

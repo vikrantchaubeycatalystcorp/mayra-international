@@ -68,15 +68,15 @@ export function Footer() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Mail className="h-4 w-4 text-primary-400" />
-                <span>support@mayrainternational.com</span>
+                <span>info@mayrainternational.com</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Phone className="h-4 w-4 text-primary-400" />
-                <span>1800-123-4567 (Free)</span>
+                <span>+91 7506799678</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <MapPin className="h-4 w-4 text-primary-400" />
-                <span>Bangalore, India</span>
+                <span>Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703</span>
               </div>
             </div>
             <div className="flex items-center gap-3 mt-5">
@@ -200,7 +200,7 @@ export function Footer() {
       <div className="border-t border-gray-800">
         <div className="container mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} Mayra India. All rights reserved.
+            © {new Date().getFullYear()} Mayra International. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-500">
             <Link href="#" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>

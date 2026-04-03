@@ -105,17 +105,37 @@ export const getFooterData = unstable_cache(
       prisma.appDownloadLink.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } }),
     ]);
 
-    const company = companyInfo || {
+    const defaultAddress =
+      "Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703";
+    const defaultTagline =
+      "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.";
+
+    const company = {
       name: "Mayra International",
-      tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.",
-      email: "support@mayrainternational.com",
-      phone: "1800-123-4567",
-      phoneLabel: "(Free)",
-      address: "Bangalore, India",
+      tagline: defaultTagline,
+      email: "info@mayrainternational.com",
+      phone: "+91 7506799678",
+      phoneLabel: "",
+      address: defaultAddress,
       footerLogo: "/images/mayra-logo.png",
       copyrightText: "Mayra International",
       foundedYear: 2020,
+      ...companyInfo,
     };
+
+    // Guard against stale legacy content from older CMS seeds.
+    if (!company.address || /bangalore,\s*india/i.test(company.address)) {
+      company.address = defaultAddress;
+    }
+    if (!company.email || /@mayra\.in$/i.test(company.email)) {
+      company.email = "info@mayrainternational.com";
+    }
+    if (!company.name || /\b(?:myra|mayra)\s+india\b/i.test(company.name)) {
+      company.name = "Mayra International";
+    }
+    if (!company.copyrightText || /\b(?:myra|mayra)\s+india\b/i.test(company.copyrightText)) {
+      company.copyrightText = "Mayra International";
+    }
 
     return { company, footerSections, socialLinks, legalLinks, trustBadges, appDownloads };
   },

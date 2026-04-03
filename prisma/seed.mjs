@@ -9,16 +9,16 @@ async function main() {
   console.log("  → Company Info");
   await prisma.companyInfo.upsert({
     where: { id: "company-main" },
-    update: { siteUrl: "https://www.mayrainternational.com", email: "support@mayrainternational.com", twitterHandle: "@mayraintl", copyrightText: "Mayra International" },
+    update: { siteUrl: "https://www.mayrainternational.com", email: "info@mayrainternational.com", twitterHandle: "@mayraintl", copyrightText: "Mayra International" },
     create: {
       id: "company-main",
       name: "Mayra International",
       tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.",
       description: "India's most trusted education portal",
-      email: "support@mayrainternational.com",
-      phone: "1800-123-4567",
-      phoneLabel: "(Free)",
-      address: "Bangalore, India",
+      email: "info@mayrainternational.com",
+      phone: "+91 7506799678",
+      phoneLabel: "",
+      address: "Office No 613, 6th Floor, Satra Plaza, Palm Beach Road, Phase 2, Sector 19D, Vashi, Navi Mumbai-400703, Maharashtra",
       logo: "/images/mayra-logo.png",
       footerLogo: "/images/mayra-logo.png",
       copyrightText: "Mayra International",

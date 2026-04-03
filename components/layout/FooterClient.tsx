@@ -85,6 +85,10 @@ export function FooterClient({
   trustBadges,
   appDownloads,
 }: Props) {
+  const safeCopyrightText = (company.copyrightText || "Mayra International")
+    .replace(/\b(?:myra|mayra)\s+india\b/gi, "Mayra International")
+    .trim();
+
   return (
     <footer className="relative bg-[#0a0a12] text-gray-300 overflow-hidden">
       {/* Subtle top gradient accent */}
@@ -223,7 +227,7 @@ export function FooterClient({
       <div className="border-t border-white/[0.05]">
         <div className="container mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-600">
-            &copy; {new Date().getFullYear()} {company.copyrightText}. All rights reserved.
+            &copy; {new Date().getFullYear()} {safeCopyrightText}. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-xs text-gray-600">
             {legalLinks.map((link) => (
