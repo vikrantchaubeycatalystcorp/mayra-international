@@ -129,7 +129,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
-        <meta name="google-site-verification" content="BvoI1CdDNvTp3m2ti5xMYQNDhNkz4HkQ46zDqBKiJoM" />
+        <meta name="google-site-verification" content="rjceF4dV_VTYq5WSXdlb1UxWTK8SfDSS_SRgsOjQW5E" />
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <JsonLd data={organizationJsonLd()} />
