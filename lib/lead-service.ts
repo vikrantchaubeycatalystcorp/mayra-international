@@ -26,6 +26,18 @@ export async function createLeadFromForm(
 
   const data = parsed.data;
 
+  // Store only the validated fields as raw payload (not the unvalidated body)
+  const safePayload = {
+    name: data.name,
+    email: data.email || null,
+    phone: data.phone,
+    city: data.city || null,
+    state: data.state || null,
+    currentClass: data.currentClass || null,
+    courseInterest: data.courseInterest || null,
+    message: data.message || null,
+  };
+
   const lead = await prisma.lead.create({
     data: {
       source,
@@ -37,7 +49,7 @@ export async function createLeadFromForm(
       currentClass: data.currentClass || null,
       courseInterested: data.courseInterest || null,
       message: data.message || null,
-      rawPayload: body as object,
+      rawPayload: safePayload,
       adminEmailStatus: "PENDING",
       studentEmailStatus: "PENDING",
       status: "NEW",

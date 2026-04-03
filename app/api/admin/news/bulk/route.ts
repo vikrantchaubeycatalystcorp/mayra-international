@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/db";
+import { requireAdmin } from "@/lib/admin/middleware";
+import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAdmin(request, "news", "import");
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { articles } = await request.json();
     if (!Array.isArray(articles) || articles.length === 0) {
       return NextResponse.json({ success: false, error: "articles array is required" }, { status: 400 });
+    }
+
+    if (articles.length > 500) {
+      return NextResponse.json({ success: false, error: "Maximum 500 articles per batch" }, { status: 400 });
     }
 
     let created = 0;
@@ -38,6 +47,13 @@ export async function POST(request: NextRequest) {
         skipped++;
       }
     }
+
+    await logActivity({
+      adminId: auth.admin.id,
+      action: "IMPORT",
+      entity: "NewsArticle",
+      details: `Bulk imported ${created} articles (${skipped} skipped) out of ${articles.length}`,
+    });
 
     revalidateEntity("News");
     return NextResponse.json({ success: true, data: { created, skipped, total: articles.length } });

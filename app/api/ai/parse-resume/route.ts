@@ -144,12 +144,6 @@ export async function POST(req: NextRequest) {
     // Parse the extracted text into structured resume data
     const parsed = parseResumeText(rawText);
 
-    // Log first 10 lines for debugging name extraction
-    const firstLines = rawText.split(/\r?\n/).slice(0, 10);
-    console.log('=== Resume first 10 lines ===');
-    firstLines.forEach((l, i) => console.log(`  [${i}] "${l}"`));
-    console.log('=== Parsed name:', parsed.personal?.name, '===');
-
     return NextResponse.json({ data: parsed });
   } catch (error) {
     console.error('Resume parse error:', error);

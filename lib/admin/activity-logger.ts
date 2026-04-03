@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 
 interface LogActivityParams {
   adminId: string;
-  action: "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT" | "EXPORT" | "ACTIVATE" | "DEACTIVATE";
+  action: "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT" | "EXPORT" | "IMPORT" | "ACTIVATE" | "DEACTIVATE";
   entity: string;
   entityId?: string;
   details?: string;

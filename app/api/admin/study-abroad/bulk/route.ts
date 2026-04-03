@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/db";
+import { requireAdmin } from "@/lib/admin/middleware";
+import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
 import slugify from "slugify";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAdmin(request, "study-abroad", "import");
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { countries } = await request.json();
     if (!Array.isArray(countries) || countries.length === 0) {
       return NextResponse.json({ success: false, error: "countries array is required" }, { status: 400 });
+    }
+
+    if (countries.length > 500) {
+      return NextResponse.json({ success: false, error: "Maximum 500 countries per batch" }, { status: 400 });
     }
 
     let created = 0;
@@ -43,6 +52,13 @@ export async function POST(request: NextRequest) {
         skipped++;
       }
     }
+
+    await logActivity({
+      adminId: auth.admin.id,
+      action: "IMPORT",
+      entity: "StudyAbroadCountry",
+      details: `Bulk imported ${created} countries (${skipped} skipped) out of ${countries.length}`,
+    });
 
     revalidateEntity("StudyAbroad");
     return NextResponse.json({ success: true, data: { created, skipped, total: countries.length } });

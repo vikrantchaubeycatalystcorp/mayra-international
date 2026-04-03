@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/db";
+import { requireAdmin } from "@/lib/admin/middleware";
+import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAdmin(request, "colleges", "import");
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { colleges } = await request.json();
 
     if (!Array.isArray(colleges) || colleges.length === 0) {
       return NextResponse.json({ success: false, error: "colleges array is required" }, { status: 400 });
+    }
+
+    if (colleges.length > 500) {
+      return NextResponse.json({ success: false, error: "Maximum 500 colleges per batch" }, { status: 400 });
     }
 
     let created = 0;
@@ -58,6 +67,13 @@ export async function POST(request: NextRequest) {
         skipped++;
       }
     }
+
+    await logActivity({
+      adminId: auth.admin.id,
+      action: "IMPORT",
+      entity: "College",
+      details: `Bulk imported ${created} colleges (${skipped} skipped) out of ${colleges.length}`,
+    });
 
     revalidateEntity("College");
     return NextResponse.json({

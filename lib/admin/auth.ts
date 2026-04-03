@@ -3,13 +3,19 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import type { AdminJWTPayload } from "@/types/admin";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.ADMIN_JWT_SECRET || "admin-jwt-secret-change-in-production-min32chars"
-);
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable: ${name}. Set it in .env or your deployment config.`
+    );
+  }
+  return value;
+}
 
-const REFRESH_SECRET = new TextEncoder().encode(
-  process.env.ADMIN_JWT_REFRESH_SECRET || "admin-refresh-secret-change-in-prod-min32chars"
-);
+const JWT_SECRET = new TextEncoder().encode(getRequiredEnv("ADMIN_JWT_SECRET"));
+
+const REFRESH_SECRET = new TextEncoder().encode(getRequiredEnv("ADMIN_JWT_REFRESH_SECRET"));
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12);

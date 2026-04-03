@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
-  const q = body.query || "";
+  const q = typeof body.query === "string" ? body.query.slice(0, 200) : "";
   const url = new URL(req.url);
   url.searchParams.set("q", q);
   return GET(new NextRequest(url, { method: "GET" }));
