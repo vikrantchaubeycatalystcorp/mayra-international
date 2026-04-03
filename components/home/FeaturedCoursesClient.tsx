@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Cpu, Stethoscope, Briefcase, Scale, Monitor, FlaskConical, BarChart3, BookOpen, Building, Pill, Tv, Microscope, Palette, Leaf, PenLine, Heart, type LucideIcon } from "lucide-react";
 import { formatCurrency, cn } from "../../lib/utils";
-import { usePretextHeights } from "../../hooks/usePretext";
-import { FONT_COURSE_DESC, LH_RELAXED } from "../../lib/pretext";
 
 const streamIconMap: Record<string, LucideIcon> = {
   Engineering: Cpu, Medical: Stethoscope, Management: Briefcase, Law: Scale,
@@ -30,7 +28,7 @@ type CourseData = {
   color: string | null;
 };
 
-function CourseCard({ course, descMinHeight }: { course: CourseData; descMinHeight?: number }) {
+function CourseCard({ course }: { course: CourseData }) {
   const Icon = streamIconMap[course.stream] ?? BookOpen;
 
   return (
@@ -45,7 +43,6 @@ function CourseCard({ course, descMinHeight }: { course: CourseData; descMinHeig
         <h3 className="font-bold text-gray-900 text-base mb-1.5 group-hover:text-indigo-600 transition-colors tracking-tight">{course.name}</h3>
         <p
           className="text-xs text-gray-500 mb-4 line-clamp-2 leading-relaxed flex-1"
-          style={descMinHeight ? { minHeight: `${Math.ceil(descMinHeight)}px` } : undefined}
         >{course.description.slice(0, 80)}...</p>
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="bg-gray-50/80 rounded-xl p-2.5 text-center border border-gray-100/50">
@@ -95,27 +92,6 @@ export function FeaturedCoursesClient({
     return () => observer.disconnect();
   }, []);
 
-  // Pretext: batch-measure truncated descriptions for uniform card heights.
-  const descTexts = useMemo(
-    () => courses.map((c) => c.description.slice(0, 80) + "..."),
-    [courses],
-  );
-
-  // lineHeightPx = 12px (font-size) × 1.625 (leading-relaxed) = 19.5
-  const descLineHeightPx = 12 * LH_RELAXED;
-
-  const { heights: descHeights, ready: pretextReady, containerRef: gridRef } =
-    usePretextHeights({
-      texts: descTexts,
-      font: FONT_COURSE_DESC,
-      lineHeightPx: descLineHeightPx,
-      fallbackWidth: 220,
-    });
-
-  const maxDescHeight = pretextReady
-    ? Math.max(...descHeights, 0)
-    : undefined;
-
   return (
     <section className="section-padding bg-gradient-to-b from-gray-50/50 via-white to-white relative" ref={ref}>
       <div className="absolute inset-0 mesh-bg pointer-events-none" />
@@ -131,9 +107,9 @@ export function FeaturedCoursesClient({
           </Link>
         </div>
 
-        <div ref={gridRef} className={cn("grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children", revealed && "revealed")}>
+        <div className={cn("grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children", revealed && "revealed")}>
           {courses.map((course) => (
-            <CourseCard key={course.id} course={course} descMinHeight={maxDescHeight} />
+            <CourseCard key={course.id} course={course} />
           ))}
         </div>
 

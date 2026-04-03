@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CollegeCard } from "../colleges/CollegeCard";
 import { cn } from "../../lib/utils";
-import { usePretextHeights } from "../../hooks/usePretext";
-import { FONT_CARD_TITLE, LH_TIGHT } from "../../lib/pretext";
 
 type CollegeData = {
   id: string;
@@ -69,31 +67,6 @@ export function TopCollegesClient({ colleges, totalCount, title, subtitle, ctaLa
       ? colleges.slice(0, 8)
       : colleges.filter((c) => c.streams.includes(activeTab)).slice(0, 8);
 
-  // Pre-measure college name heights with Pretext for consistent card sizing.
-  const collegeNames = useMemo(
-    () => filteredColleges.map((c) => c.name),
-    [filteredColleges],
-  );
-
-  // lineHeightPx = 14px (font-size) × 1.25 (leading-tight) = 17.5
-  const lineHeightPx = 14 * LH_TIGHT;
-
-  const { heights: titleHeights, ready: pretextReady, containerRef: gridRef } =
-    usePretextHeights({
-      texts: collegeNames,
-      font: FONT_CARD_TITLE,
-      lineHeightPx,
-      fallbackWidth: 200,
-    });
-
-  // Per-row: find the max title height so all cards in a row align.
-  // Grid columns: 1 / sm:2 / lg:3 / xl:4 — we use the measured heights
-  // directly and let CSS line-clamp-2 cap at 2 lines, but pass the max
-  // height so cards stay uniform.
-  const maxTitleHeight = pretextReady
-    ? Math.max(...titleHeights, 0)
-    : undefined;
-
   const mapCollege = (c: CollegeData) => ({
     ...c,
     type: c.type as "Government" | "Private" | "Deemed" | "Autonomous",
@@ -141,9 +114,9 @@ export function TopCollegesClient({ colleges, totalCount, title, subtitle, ctaLa
           ))}
         </div>
 
-        <div ref={gridRef} className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children", revealed && "revealed")}>
+        <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children", revealed && "revealed")}>
           {filteredColleges.map((college) => (
-            <CollegeCard key={college.id} college={mapCollege(college)} titleMinHeight={maxTitleHeight} />
+            <CollegeCard key={college.id} college={mapCollege(college)} />
           ))}
         </div>
 

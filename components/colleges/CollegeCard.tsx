@@ -12,7 +12,6 @@ import type { College } from "../../types";
 interface CollegeCardProps {
   college: College;
   className?: string;
-  /** Minimum height (px) for the title area — set by Pretext batch measurement for row alignment. */
   titleMinHeight?: number;
 }
 
