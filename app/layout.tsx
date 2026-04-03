@@ -3,7 +3,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavbarServer } from "../components/layout/NavbarServer";
 import { FooterServer } from "../components/layout/FooterServer";
-import { FloatingInquiryForm } from "../components/shared/FloatingInquiryForm";
+import dynamic from "next/dynamic";
+
+const FloatingInquiryForm = dynamic(
+  () => import("../components/shared/FloatingInquiryForm").then((m) => m.FloatingInquiryForm),
+  { loading: () => null }
+);
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
 import { Suspense } from "react";
 import { getLayoutMetadata } from "../lib/cached-queries";
@@ -116,6 +121,8 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="BvoI1CdDNvTp3m2ti5xMYQNDhNkz4HkQ46zDqBKiJoM" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
       </head>

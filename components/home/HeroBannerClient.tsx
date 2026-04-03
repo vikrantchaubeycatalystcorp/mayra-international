@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Search, TrendingUp, Award, Users, BookOpen, ArrowRight, Sparkles, ChevronRight, type LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
@@ -175,9 +176,14 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
     <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
       {/* Background Image */}
       {data.bgImage && (
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url('${data.bgImage}')` }}
+        <Image
+          src={data.bgImage}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+          quality={75}
         />
       )}
       {/* Dark overlay on top of image */}

@@ -361,6 +361,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               <button
                 suppressHydrationWarning
                 onClick={() => setSearchOpen(true)}
+                aria-label="Search"
                 className="md:hidden h-9 w-9 rounded-full flex items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] transition-all duration-300"
               >
                 <Search className="h-4 w-4" />
@@ -369,6 +370,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               {/* Notification Bell */}
               <button
                 suppressHydrationWarning
+                aria-label="Notifications"
                 className="hidden lg:flex h-9 w-9 rounded-full items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] transition-all duration-300 relative"
               >
                 <Bell className="h-4 w-4" />
@@ -391,6 +393,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               <button
                 suppressHydrationWarning
                 onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 className="lg:hidden h-9 w-9 rounded-full flex items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-600 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300"
               >
                 {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -453,6 +456,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
                           <button
                             suppressHydrationWarning
                             onClick={() => setMobileExpanded(isExpanded ? null : item.label)}
+                            aria-label={isExpanded ? `Collapse ${item.label}` : `Expand ${item.label}`}
                             className="h-9 w-9 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all mr-2"
                           >
                             <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", isExpanded && "rotate-180")} />

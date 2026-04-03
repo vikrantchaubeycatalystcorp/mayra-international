@@ -108,23 +108,23 @@ export function FooterClient({
                 className="h-12 w-auto"
               />
             </Link>
-            <p className="text-sm text-gray-500 leading-relaxed mb-6">
+            <p className="text-sm text-gray-400 leading-relaxed mb-6">
               {company.tagline}
             </p>
             <div className="space-y-2.5">
-              <div className="flex items-center gap-2.5 text-sm text-gray-500 hover:text-gray-300 transition-colors">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
                 <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
                   <Mail className="h-3.5 w-3.5 text-indigo-400" />
                 </div>
                 <span>{company.email}</span>
               </div>
-              <div className="flex items-center gap-2.5 text-sm text-gray-500 hover:text-gray-300 transition-colors">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
                 <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
                   <Phone className="h-3.5 w-3.5 text-indigo-400" />
                 </div>
                 <span>{company.phone} {company.phoneLabel}</span>
               </div>
-              <div className="flex items-center gap-2.5 text-sm text-gray-500 hover:text-gray-300 transition-colors">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
                 <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
                   <MapPin className="h-3.5 w-3.5 text-indigo-400" />
                 </div>
@@ -139,7 +139,7 @@ export function FooterClient({
                     key={social.id}
                     href={social.url}
                     aria-label={social.platform}
-                    className="h-9 w-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-500 hover:text-white transition-all duration-300"
+                    className="h-9 w-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300"
                   >
                     {Icon ? <Icon className="h-4 w-4" /> : <span className="text-xs">{social.platform}</span>}
                   </a>
@@ -151,15 +151,15 @@ export function FooterClient({
           {/* Dynamic Footer Sections */}
           {sections.map((section) => (
             <div key={section.id}>
-              <h4 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+              <h2 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
                 {section.title}
-              </h4>
+              </h2>
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.id}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-500 hover:text-white transition-colors duration-200"
+                      className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -171,10 +171,10 @@ export function FooterClient({
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+            <h2 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
               Stay Updated
-            </h4>
-            <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+            </h2>
+            <p className="text-sm text-gray-400 mb-5 leading-relaxed">
               Get latest exam dates, results, and admission news straight to your inbox.
             </p>
             <div className="space-y-2.5">

@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
   // Enable compression and optimize output
   compress: true,
   poweredByHeader: false,
+  // Reduce legacy JS polyfills for modern browsers
+  ...(process.env.NODE_ENV === "production" && {
+    reactStrictMode: true,
+  }),
 };
 
 export default nextConfig;

@@ -206,7 +206,7 @@ export function FloatingInquiryForm() {
                   onValueChange={(v) => handleSelect("currentClass", v)}
                   required
                 >
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-8 text-xs" aria-label="Current class or qualification">
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,7 +228,7 @@ export function FloatingInquiryForm() {
                   onValueChange={(v) => handleSelect("courseInterest", v)}
                   required
                 >
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-8 text-xs" aria-label="Course interest">
                     <SelectValue placeholder="Select course" />
                   </SelectTrigger>
                   <SelectContent>

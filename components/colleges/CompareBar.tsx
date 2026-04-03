@@ -75,6 +75,7 @@ export function CompareBar() {
                   </span>
                   <button suppressHydrationWarning
                     onClick={() => removeFromCompare(college.id)}
+                    aria-label={`Remove ${college.name} from comparison`}
                     className="text-primary-400 hover:text-primary-700 transition-colors"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -98,6 +99,7 @@ export function CompareBar() {
           <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-between sm:justify-end">
             <button suppressHydrationWarning
               onClick={clearCompare}
+              aria-label="Clear comparison list"
               className="text-xs text-gray-500 hover:text-gray-700 transition-colors hidden sm:block"
             >
               Clear
