@@ -5,6 +5,22 @@ const SITE_URL = "https://www.mayrainternational.com";
 
 export const dynamic = "force-dynamic";
 
+function isValidDate(date: Date): boolean {
+  return !Number.isNaN(date.getTime());
+}
+
+function parseSafeDate(value: string | Date | null | undefined, fallback: Date): Date {
+  if (!value) return fallback;
+  const parsed = value instanceof Date ? value : new Date(value);
+  return isValidDate(parsed) ? parsed : fallback;
+}
+
+function normalizeSlug(slug: string | null | undefined): string | null {
+  if (!slug) return null;
+  const trimmed = slug.trim();
+  return trimmed.length > 0 ? encodeURIComponent(trimmed) : null;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
@@ -30,13 +46,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true } }),
     ]);
 
+    const collegePages = colleges.flatMap((c) => {
+      const slug = normalizeSlug(c.slug);
+      if (!slug) return [];
+      return [{ url: `${SITE_URL}/colleges/${slug}`, lastModified: parseSafeDate(c.updatedAt, now), changeFrequency: "weekly" as const, priority: 0.8 }];
+    });
+
+    const coursePages = courses.flatMap((c) => {
+      const slug = normalizeSlug(c.slug);
+      if (!slug) return [];
+      return [{ url: `${SITE_URL}/courses/${slug}`, lastModified: parseSafeDate(c.updatedAt, now), changeFrequency: "monthly" as const, priority: 0.7 }];
+    });
+
+    const examPages = exams.flatMap((e) => {
+      const slug = normalizeSlug(e.slug);
+      if (!slug) return [];
+      return [{ url: `${SITE_URL}/exams/${slug}`, lastModified: parseSafeDate(e.updatedAt, now), changeFrequency: "weekly" as const, priority: 0.8 }];
+    });
+
+    const newsPages = news.flatMap((n) => {
+      const slug = normalizeSlug(n.slug);
+      if (!slug) return [];
+      return [{ url: `${SITE_URL}/news/${slug}`, lastModified: parseSafeDate(n.publishedAt, now), changeFrequency: "monthly" as const, priority: 0.6 }];
+    });
+
+    const countryPages = countries.flatMap((c) => {
+      const slug = normalizeSlug(c.slug);
+      if (!slug) return [];
+      return [{ url: `${SITE_URL}/study-abroad/${slug}`, lastModified: parseSafeDate(c.updatedAt, now), changeFrequency: "monthly" as const, priority: 0.7 }];
+    });
+
     return [
       ...staticPages,
-      ...colleges.map((c) => ({ url: `${SITE_URL}/colleges/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "weekly" as const, priority: 0.8 })),
-      ...courses.map((c) => ({ url: `${SITE_URL}/courses/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 })),
-      ...exams.map((e) => ({ url: `${SITE_URL}/exams/${e.slug}`, lastModified: e.updatedAt, changeFrequency: "weekly" as const, priority: 0.8 })),
-      ...news.map((n) => ({ url: `${SITE_URL}/news/${n.slug}`, lastModified: n.publishedAt ? new Date(n.publishedAt) : now, changeFrequency: "monthly" as const, priority: 0.6 })),
-      ...countries.map((c) => ({ url: `${SITE_URL}/study-abroad/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 })),
+      ...collegePages,
+      ...coursePages,
+      ...examPages,
+      ...newsPages,
+      ...countryPages,
     ];
   } catch {
     return staticPages;
