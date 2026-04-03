@@ -33,17 +33,23 @@ interface NotifItem {
   id: string;
   type: "enquiry" | "system" | "success" | "warning";
   title: string;
-  description: string;
-  time: string;
+  message: string;
+  createdAt: string;
   read: boolean;
 }
 
-const SAMPLE_NOTIFICATIONS: NotifItem[] = [
-  { id: "1", type: "enquiry", title: "New enquiry received", description: "A student has enquired about IIT Delhi admissions", time: "2m ago", read: false },
-  { id: "2", type: "success", title: "College data imported", description: "Successfully imported 12 new college entries", time: "15m ago", read: false },
-  { id: "3", type: "system", title: "System update", description: "Portal v2.4 deployed with performance improvements", time: "1h ago", read: true },
-  { id: "4", type: "warning", title: "Storage usage 85%", description: "Media library storage nearing capacity", time: "3h ago", read: true },
-];
+function formatTimeAgo(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "Just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHrs = Math.floor(diffMin / 60);
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  const diffDays = Math.floor(diffHrs / 24);
+  return `${diffDays}d ago`;
+}
 
 const NOTIF_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   enquiry: { icon: MessageSquare, color: "text-blue-500", bg: "bg-blue-50" },
@@ -58,11 +64,31 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const [notifications, setNotifications] = useState(SAMPLE_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<NotifItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/notifications?limit=10");
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json.success) {
+        setNotifications(json.data.notifications);
+        setUnreadCount(json.data.unreadCount);
+      }
+    } catch {
+      // silently fail
+    }
+  }, []);
+
+  // Fetch on mount and poll every 30 seconds
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -95,8 +121,14 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
     router.push("/admin/login");
   };
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAllRead = async () => {
+    try {
+      await fetch("/api/admin/notifications", { method: "PATCH" });
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch {
+      // silently fail
+    }
   };
 
   return (
@@ -183,6 +215,12 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
                 {/* Notification List */}
                 <div className="max-h-[360px] overflow-y-auto admin-sidebar-scroll">
+                  {notifications.length === 0 && (
+                    <div className="px-5 py-8 text-center">
+                      <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-xs text-gray-400">No notifications yet</p>
+                    </div>
+                  )}
                   {notifications.map((notif) => {
                     const config = NOTIF_ICONS[notif.type];
                     return (
@@ -205,10 +243,10 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                             )}
                           </div>
-                          <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-1">{notif.description}</p>
+                          <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-1">{notif.message}</p>
                           <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
                             <Clock className="w-2.5 h-2.5" />
-                            {notif.time}
+                            {formatTimeAgo(notif.createdAt)}
                           </p>
                         </div>
                       </div>

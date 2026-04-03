@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { processLeadEmails } from "./email-service";
 import { leadSubmitSchema } from "@/types/admin";
+import { createAdminNotification } from "./admin/notify";
 
 interface CreateLeadResult {
   success: boolean;
@@ -60,6 +61,16 @@ export async function createLeadFromForm(
     processLeadEmails(lead.id).catch((err) =>
       console.error("Lead email processing failed:", err)
     );
+
+    const notifTitle = source === "INQUIRY" ? "New enquiry received" : "New counselling request";
+    const notifMessage = `${data.name} ${source === "INQUIRY" ? "enquired" : "requested free counselling"}${data.courseInterest ? ` about ${data.courseInterest}` : ""}`;
+    createAdminNotification({
+      type: "enquiry",
+      title: notifTitle,
+      message: notifMessage,
+      entityType: "Lead",
+      entityId: lead.id,
+    }).catch(() => {});
   }
 
   return { success: true };

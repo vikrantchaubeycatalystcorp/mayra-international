@@ -185,6 +185,21 @@ model AdminActivity {
   @@index([createdAt])
 }
 
+model AdminNotification {
+  id        String   @id @default(cuid())
+  type      String   // enquiry, system, success, warning
+  title     String
+  message   String
+  entityType String? // Lead, Newsletter, College, etc.
+  entityId  String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read])
+  @@index([createdAt])
+  @@map("admin_notification")
+}
+
 // ============================================================
 // NORMALIZED LOOKUP TABLES
 // ============================================================
