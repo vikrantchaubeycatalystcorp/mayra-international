@@ -1,32 +1,42 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   ChevronLeft, ChevronRight, Flag, Send, AlertTriangle,
-  X, CheckCircle2, LayoutGrid, Eye, EyeOff,
+  X, CheckCircle2, LayoutGrid, Eye, EyeOff, Search,
+  Maximize2, Minimize2, ShieldCheck, CircleDot, HelpCircle,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTestStore } from "../../lib/mock-tests/store";
 import { saveAttempt } from "../../lib/mock-tests/leaderboard";
+import { generateAnalytics } from "../../lib/mock-tests/analytics";
 import { TestTimer } from "./TestTimer";
 import { QuestionNav } from "./QuestionNav";
-import type { MockExam, TestAttempt } from "../../lib/mock-tests/types";
+import { CommandPalette } from "./CommandPalette";
+import type { MockExam, TestAttempt, ConfidenceLevel } from "../../lib/mock-tests/types";
 
 interface Props {
   exam: MockExam;
   onComplete: (attempt: TestAttempt) => void;
 }
 
+const confidenceOptions: { level: ConfidenceLevel; label: string; icon: React.ElementType; color: string; bg: string }[] = [
+  { level: "sure", label: "Sure", icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200 hover:bg-emerald-100" },
+  { level: "maybe", label: "Maybe", icon: CircleDot, color: "text-amber-600", bg: "bg-amber-50 border-amber-200 hover:bg-amber-100" },
+  { level: "guess", label: "Guess", icon: HelpCircle, color: "text-red-500", bg: "bg-red-50 border-red-200 hover:bg-red-100" },
+];
+
 export function TestInterface({ exam, onComplete }: Props) {
-  const router = useRouter();
   const {
     status, currentQuestionIndex, answers, timeRemaining,
-    startTest, selectAnswer, toggleMark, nextQuestion, prevQuestion, goToQuestion, submitTest, resetTest,
+    startTest, selectAnswer, clearAnswer, setConfidence, toggleMark,
+    nextQuestion, prevQuestion, goToQuestion, submitTest, resetTest,
   } = useTestStore();
 
   const [showNav, setShowNav] = useState(true);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [userName, setUserName] = useState("");
 
   // Start test on mount
@@ -46,13 +56,61 @@ export function TestInterface({ exam, onComplete }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRemaining, status]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      // Command palette
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setShowCommandPalette((v) => !v);
+        return;
+      }
+      // Slash also opens command palette
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !(e.target instanceof HTMLInputElement)) {
+        e.preventDefault();
+        setShowCommandPalette(true);
+        return;
+      }
+      // Arrow keys for navigation (when not in input)
+      if (e.target instanceof HTMLInputElement) return;
+      if (e.key === "ArrowLeft" || e.key === "p") prevQuestion();
+      if (e.key === "ArrowRight" || e.key === "n") nextQuestion();
+      // Number keys 1-4 for options
+      if (["1", "2", "3", "4"].includes(e.key)) {
+        const q = exam.questions[currentQuestionIndex];
+        const optIdx = parseInt(e.key) - 1;
+        if (q?.options[optIdx]) selectAnswer(q.id, q.options[optIdx].id);
+      }
+      // M for mark
+      if (e.key === "m") {
+        const q = exam.questions[currentQuestionIndex];
+        if (q) toggleMark(q.id);
+      }
+      // F for fullscreen
+      if (e.key === "f" && !e.ctrlKey) toggleFullscreen();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestionIndex, exam]);
+
   const handleSubmit = useCallback(() => {
     const name = userName || "Anonymous Student";
     if (typeof window !== "undefined") localStorage.setItem("mock_test_username", name);
     const attempt = submitTest(name);
+    // Generate analytics and attach
+    attempt.analytics = generateAnalytics(attempt, exam);
     saveAttempt(attempt);
     onComplete(attempt);
-  }, [userName, submitTest, onComplete]);
+  }, [userName, submitTest, onComplete, exam]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen?.().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  }, []);
 
   if (status !== "in-progress" || !exam) return null;
 
@@ -63,6 +121,9 @@ export function TestInterface({ exam, onComplete }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-gray-50">
+      {/* Command Palette */}
+      <CommandPalette open={showCommandPalette} onClose={() => setShowCommandPalette(false)} />
+
       {/* Top Bar */}
       <div className="flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-4">
@@ -78,8 +139,28 @@ export function TestInterface({ exam, onComplete }: Props) {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Command Palette Trigger */}
+          <button
+            onClick={() => setShowCommandPalette(true)}
+            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span>Jump to...</span>
+            <kbd className="ml-1 rounded bg-gray-100 px-1 py-0.5 text-[10px] font-mono">Ctrl+K</kbd>
+          </button>
+
           <TestTimer />
+
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={toggleFullscreen}
+            className="hidden sm:flex rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            title="Toggle fullscreen"
+          >
+            {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+          </button>
+
           <button
             onClick={() => setShowNav(!showNav)}
             className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 sm:hidden"
@@ -175,26 +256,54 @@ export function TestInterface({ exam, onComplete }: Props) {
                     >
                       {letter}
                     </span>
-                    <span className={`text-sm sm:text-base ${isSelected ? "text-indigo-900 font-medium" : "text-gray-700"}`}>
+                    <span className={`flex-1 text-sm sm:text-base ${isSelected ? "text-indigo-900 font-medium" : "text-gray-700"}`}>
                       {option.text}
                     </span>
                     {isSelected && (
                       <CheckCircle2 className="ml-auto h-5 w-5 text-indigo-600 shrink-0" />
                     )}
+                    {/* Keyboard hint */}
+                    <span className="hidden sm:inline text-[10px] text-gray-300 shrink-0 font-mono">{idx + 1}</span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Clear Selection */}
-            {currentAnswer?.selectedOptionId && (
-              <button
-                onClick={() => selectAnswer(currentQuestion.id, "")}
-                className="mt-3 text-xs text-gray-400 hover:text-red-500 transition-colors"
-              >
-                Clear selection
-              </button>
-            )}
+            {/* Confidence Tags + Clear */}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {currentAnswer?.selectedOptionId && (
+                <>
+                  {/* Confidence Tags */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-gray-400 mr-1">Confidence:</span>
+                    {confidenceOptions.map(({ level, label, icon: Icon, color, bg }) => (
+                      <button
+                        key={level}
+                        onClick={() => setConfidence(currentQuestion.id, level)}
+                        className={`flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all ${
+                          currentAnswer.confidence === level
+                            ? `${bg} ${color} shadow-sm ring-1 ring-current/20`
+                            : "border-gray-200 text-gray-400 hover:bg-gray-50"
+                        }`}
+                      >
+                        <Icon className="h-3 w-3" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="h-4 w-px bg-gray-200" />
+
+                  {/* Clear Selection */}
+                  <button
+                    onClick={() => clearAnswer(currentQuestion.id)}
+                    className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    Clear selection
+                  </button>
+                </>
+              )}
+            </div>
 
             {/* Navigation Buttons */}
             <div className="mt-8 flex items-center justify-between">
@@ -228,6 +337,15 @@ export function TestInterface({ exam, onComplete }: Props) {
                 </Button>
               )}
             </div>
+
+            {/* Keyboard Shortcuts Hint */}
+            <div className="mt-4 flex flex-wrap justify-center gap-3 text-[10px] text-gray-300">
+              <span><kbd className="px-1 py-0.5 rounded bg-gray-100 font-mono text-gray-400">1-4</kbd> select option</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-gray-100 font-mono text-gray-400">&larr;&rarr;</kbd> navigate</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-gray-100 font-mono text-gray-400">m</kbd> mark</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-gray-100 font-mono text-gray-400">/</kbd> jump to</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-gray-100 font-mono text-gray-400">f</kbd> fullscreen</span>
+            </div>
           </div>
         </div>
 
@@ -253,6 +371,21 @@ export function TestInterface({ exam, onComplete }: Props) {
           </button>
         )}
       </div>
+
+      {/* Mobile Nav Drawer */}
+      {showNav && (
+        <div className="sm:hidden fixed inset-0 z-[55] bg-black/40" onClick={() => setShowNav(false)}>
+          <div className="absolute right-0 top-0 bottom-0 w-72 bg-white p-4 overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-gray-700">Questions</h3>
+              <button onClick={() => setShowNav(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <QuestionNav />
+          </div>
+        </div>
+      )}
 
       {/* Submit Confirmation Dialog */}
       {showSubmitDialog && (
@@ -281,6 +414,12 @@ export function TestInterface({ exam, onComplete }: Props) {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Marked for Review</span>
                 <span className="font-bold text-amber-600">{markedCount}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Confidence Tagged</span>
+                <span className="font-bold text-indigo-600">
+                  {Array.from(answers.values()).filter((a) => a.confidence).length}
+                </span>
               </div>
             </div>
 
