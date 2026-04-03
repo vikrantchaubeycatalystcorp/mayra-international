@@ -1,1 +1,1 @@
-export const emailClient = {};
+export { getEmailConfig, processLeadEmails } from "./email-service";

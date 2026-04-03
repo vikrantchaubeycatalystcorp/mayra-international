@@ -69,7 +69,7 @@ export function FloatingInquiryForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      await fetch("/api/enquiry", {
+      await fetch("/api/free-counselling", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -128,7 +128,7 @@ const NAV_SECTIONS: {
     label: "Leads",
     icon: MessageSquare,
     items: [
-      { href: "/admin/enquiries", label: "Enquiries", icon: MessageSquare, badge: "new" },
+      { href: "/admin/leads", label: "Leads", icon: ClipboardList },
       { href: "/admin/users", label: "Users", icon: Users },
       { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
     ],
@@ -137,6 +137,7 @@ const NAV_SECTIONS: {
     label: "Platform",
     icon: Settings,
     items: [
+      { href: "/admin/setup", label: "Email Setup", icon: Mail, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/admins", label: "Admin Users", icon: Shield, roles: ["SUPER_ADMIN"] },
       { href: "/admin/settings", label: "Settings", icon: Settings, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/logs", label: "Activity Logs", icon: Activity, roles: ["SUPER_ADMIN", "ADMIN"] },

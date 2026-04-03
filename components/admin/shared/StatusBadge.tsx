@@ -21,6 +21,16 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; bor
   draft: { bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400", border: "border-gray-200/60" },
   published: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-400", border: "border-blue-200/60" },
   archived: { bg: "bg-slate-50", text: "text-slate-600", dot: "bg-slate-400", border: "border-slate-200/60" },
+  // Lead statuses
+  NEW: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400", border: "border-amber-200/60" },
+  CONTACTED: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-400", border: "border-blue-200/60" },
+  // Email delivery statuses
+  SENT: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-400", border: "border-emerald-200/60" },
+  FAILED: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-400", border: "border-red-200/60" },
+  SKIPPED: { bg: "bg-slate-50", text: "text-slate-600", dot: "bg-slate-400", border: "border-slate-200/60" },
+  // Lead sources
+  INQUIRY: { bg: "bg-indigo-50", text: "text-indigo-700", dot: "bg-indigo-400", border: "border-indigo-200/60" },
+  FREE_COUNSELLING: { bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-400", border: "border-purple-200/60" },
 };
 
 const DEFAULT_CONFIG = { bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400", border: "border-gray-200/60" };

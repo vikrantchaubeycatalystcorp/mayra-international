@@ -17,6 +17,7 @@ export type Resource =
   | "news"
   | "study-abroad"
   | "enquiries"
+  | "leads"
   | "newsletter"
   | "users"
   | "admins"
@@ -32,6 +33,7 @@ const PERMISSION_MAP: Record<AdminRole, Record<Resource, Permission[]>> = {
     news: ["view", "create", "edit", "delete", "publish", "export", "manage"],
     "study-abroad": ["view", "create", "edit", "delete", "manage"],
     enquiries: ["view", "create", "edit", "delete", "export", "manage"],
+    leads: ["view", "create", "edit", "delete", "export", "manage"],
     newsletter: ["view", "manage", "export", "delete"],
     users: ["view", "manage", "export", "delete"],
     admins: ["view", "create", "edit", "delete", "manage"],
@@ -46,6 +48,7 @@ const PERMISSION_MAP: Record<AdminRole, Record<Resource, Permission[]>> = {
     news: ["view", "create", "edit", "delete", "publish", "export"],
     "study-abroad": ["view", "create", "edit", "delete"],
     enquiries: ["view", "edit", "export", "delete"],
+    leads: ["view", "edit", "export", "delete"],
     newsletter: ["view", "manage", "export"],
     users: ["view", "manage", "export"],
     admins: [],
@@ -60,6 +63,7 @@ const PERMISSION_MAP: Record<AdminRole, Record<Resource, Permission[]>> = {
     news: ["view", "create", "edit", "publish"],
     "study-abroad": ["view", "create", "edit"],
     enquiries: ["view", "edit"],
+    leads: ["view", "edit"],
     newsletter: ["view"],
     users: ["view"],
     admins: [],
@@ -74,6 +78,7 @@ const PERMISSION_MAP: Record<AdminRole, Record<Resource, Permission[]>> = {
     news: ["view"],
     "study-abroad": ["view"],
     enquiries: ["view"],
+    leads: ["view"],
     newsletter: ["view", "export"],
     users: ["view"],
     admins: [],

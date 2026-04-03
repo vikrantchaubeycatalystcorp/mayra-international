@@ -33,6 +33,24 @@ enum Priority {
   URGENT
 }
 
+enum LeadSource {
+  INQUIRY
+  FREE_COUNSELLING
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+enum EmailDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
 // ============================================================
 // ADMIN & USER MODELS
 // ============================================================
@@ -108,6 +126,33 @@ model Enquiry {
   @@index([createdAt])
   @@index([collegeId])
   @@index([userId])
+}
+
+model Lead {
+  id                 String              @id @default(cuid())
+  source             LeadSource
+  fullName           String
+  email              String?
+  phone              String
+  city               String?
+  state              String?
+  currentClass       String?
+  courseInterested    String?
+  message            String?
+  rawPayload         Json?
+  adminEmailStatus   EmailDeliveryStatus @default(PENDING)
+  studentEmailStatus EmailDeliveryStatus @default(PENDING)
+  emailFailureReason String?
+  status             LeadStatus          @default(NEW)
+  notes              String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@map("lead")
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
 }
 
 model NewsletterSubscriber {

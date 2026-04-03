@@ -4,7 +4,7 @@ import { createLeadFromForm } from "@/lib/lead-service";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const result = await createLeadFromForm(body, "INQUIRY");
+    const result = await createLeadFromForm(body, "FREE_COUNSELLING");
 
     if (!result.success) {
       return NextResponse.json(
@@ -15,10 +15,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Inquiry submitted successfully",
+      message: "Counselling request submitted successfully",
     });
   } catch (error) {
-    console.error("Inquiry submission error:", error);
+    console.error("Free counselling submission error:", error);
     return NextResponse.json(
       { success: false, error: { code: "SERVER_ERROR", message: "Something went wrong. Please try again." } },
       { status: 500 }

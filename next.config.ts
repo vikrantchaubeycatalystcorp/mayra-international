@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  serverExternalPackages: ['pdf-parse', 'mammoth'],
+  serverExternalPackages: ['pdf-parse', 'mammoth', '@prisma/client', '.prisma/client'],
   experimental: {
     optimizePackageImports: [
       "lucide-react",

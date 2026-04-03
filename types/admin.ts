@@ -212,6 +212,43 @@ export const enquiryResponseSchema = z.object({
 });
 
 // ============================================================
+// LEAD ENUMS & SCHEMAS
+// ============================================================
+
+export const LEAD_SOURCES = ["INQUIRY", "FREE_COUNSELLING"] as const;
+export type LeadSource = (typeof LEAD_SOURCES)[number];
+
+export const LEAD_STATUSES = ["NEW", "CONTACTED", "CLOSED"] as const;
+export type LeadStatus = (typeof LEAD_STATUSES)[number];
+
+export const EMAIL_DELIVERY_STATUSES = ["PENDING", "SENT", "FAILED", "SKIPPED"] as const;
+export type EmailDeliveryStatus = (typeof EMAIL_DELIVERY_STATUSES)[number];
+
+export const leadSubmitSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: z.union([z.string().email("Invalid email"), z.literal("")]).optional(),
+  phone: z.string().min(7, "Valid phone required").max(20),
+  city: z.string().max(100).optional().default(""),
+  state: z.string().max(100).optional().default(""),
+  currentClass: z.string().max(200).optional().default(""),
+  courseInterest: z.string().max(200).optional().default(""),
+  message: z.string().max(5000).optional().default(""),
+});
+
+export const leadStatusUpdateSchema = z.object({
+  status: z.enum(LEAD_STATUSES).optional(),
+  notes: z.string().max(5000).optional(),
+});
+
+export const emailSetupSchema = z.object({
+  toEmail: z.string().email("Invalid admin email"),
+  fromEmail: z.string().email("Invalid sender email"),
+  replyToEmail: z.string().email("Invalid reply-to email").optional().or(z.literal("")),
+  emailEnabled: z.boolean(),
+  studentAutoReplyEnabled: z.boolean(),
+});
+
+// ============================================================
 // TYPES
 // ============================================================
 
@@ -223,6 +260,9 @@ export type ExamFormInput = z.infer<typeof examFormSchema>;
 export type NewsFormInput = z.infer<typeof newsFormSchema>;
 export type StudyAbroadFormInput = z.infer<typeof studyAbroadFormSchema>;
 export type EnquiryResponseInput = z.infer<typeof enquiryResponseSchema>;
+export type LeadSubmitInput = z.infer<typeof leadSubmitSchema>;
+export type LeadStatusUpdateInput = z.infer<typeof leadStatusUpdateSchema>;
+export type EmailSetupInput = z.infer<typeof emailSetupSchema>;
 
 export interface AdminJWTPayload {
   id: string;
