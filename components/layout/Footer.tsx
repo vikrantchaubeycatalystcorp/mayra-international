@@ -63,7 +63,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
-              India&apos;s most trusted education platform. Helping students discover the right college, exam, and career since 2020.
+              India&apos;s most trusted education platform. Helping students discover the right college, exam, and career since 2015.
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-gray-400">

@@ -108,7 +108,7 @@ export const getFooterData = unstable_cache(
     const defaultAddress =
       "Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703";
     const defaultTagline =
-      "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.";
+      "India's most trusted education platform. Helping students discover the right college, exam, and career since 2015.";
 
     const company = {
       name: "Mayra International",
@@ -119,7 +119,7 @@ export const getFooterData = unstable_cache(
       address: defaultAddress,
       footerLogo: "/images/mayra-logo.png",
       copyrightText: "Mayra International",
-      foundedYear: 2020,
+      foundedYear: 2015,
       ...companyInfo,
     };
 
@@ -135,6 +135,12 @@ export const getFooterData = unstable_cache(
     }
     if (!company.copyrightText || /\b(?:myra|mayra)\s+india\b/i.test(company.copyrightText)) {
       company.copyrightText = "Mayra International";
+    }
+    if (!company.tagline || /since\s+2020/i.test(company.tagline)) {
+      company.tagline = defaultTagline;
+    }
+    if (!company.foundedYear || company.foundedYear === 2020) {
+      company.foundedYear = 2015;
     }
 
     return { company, footerSections, socialLinks, legalLinks, trustBadges, appDownloads };

@@ -296,7 +296,7 @@ CREATE TABLE "CompanyInfo" (
     "logo" TEXT NOT NULL DEFAULT '/images/mayra-logo.png',
     "footerLogo" TEXT NOT NULL DEFAULT '/images/mayra-logo.png',
     "copyrightText" TEXT NOT NULL DEFAULT 'Mayra International',
-    "foundedYear" INTEGER NOT NULL DEFAULT 2020,
+    "foundedYear" INTEGER NOT NULL DEFAULT 2015,
     "siteUrl" TEXT NOT NULL DEFAULT 'https://mayra.in',
     "twitterHandle" TEXT NOT NULL DEFAULT '@mayra_in',
     "updatedAt" TIMESTAMP(3) NOT NULL,

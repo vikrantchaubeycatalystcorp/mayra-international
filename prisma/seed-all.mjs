@@ -198,7 +198,7 @@ async function seedCMS() {
     create: {
       id: "company-main",
       name: "Mayra International",
-      tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.",
+      tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2015.",
       description: "India's most trusted education portal",
       email: "info@mayrainternational.com",
       phone: "+91 7506799678",
@@ -207,7 +207,7 @@ async function seedCMS() {
       logo: "/images/mayra-logo.png",
       footerLogo: "/images/mayra-logo.png",
       copyrightText: "Mayra International",
-      foundedYear: 2020,
+      foundedYear: 2015,
       siteUrl: "https://www.mayrainternational.com",
       twitterHandle: "@mayraintl",
     },

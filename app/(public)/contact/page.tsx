@@ -208,6 +208,71 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      {/* Map Section */}
+      <section className="pb-20 lg:pb-28">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
+              Find Us on the{" "}
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Map
+              </span>
+            </h2>
+            <p className="text-sm text-gray-500">
+              Office No 613, 6th Floor, Satra Plaza, Palm Beach Road, Sector 19D, Vashi, Navi Mumbai - 400703
+            </p>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
+            {/* Map Header Bar */}
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-4 flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-white/20 flex items-center justify-center">
+                <MapPin className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white">Our Office Location</p>
+                <p className="text-xs text-orange-100">Satra Plaza, Vashi, Navi Mumbai</p>
+              </div>
+            </div>
+
+            {/* Embedded Map */}
+            <div className="relative w-full h-[350px] sm:h-[420px] lg:h-[450px]">
+              <iframe
+                title="Mayra International Office Location — Satra Plaza, Vashi, Navi Mumbai"
+                src="https://maps.google.com/maps?q=Satra+Plaza,+Palm+Beach+Rd,+Sector+19D,+Vashi,+Navi+Mumbai,+Maharashtra+400703&z=17&output=embed"
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            {/* Map Footer with directions link */}
+            <div className="px-6 py-4 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">
+                    Office No 613, 6th Floor, Satra Plaza
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Palm Beach Road, Sector 19D, Vashi, Navi Mumbai - 400703, Maharashtra
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://www.google.com/maps/dir//Satra+Plaza,+Palm+Beach+Rd,+Sector+19D,+Vashi,+Navi+Mumbai,+Maharashtra+400703"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold hover:shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
+              >
+                <MapPin className="h-4 w-4" />
+                Get Directions
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

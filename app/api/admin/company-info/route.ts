@@ -55,7 +55,7 @@ export async function PUT(req: NextRequest) {
           logo: body.logo ?? "/images/mayra-logo.png",
           footerLogo: body.footerLogo ?? "/images/mayra-logo.png",
           copyrightText: body.copyrightText ?? "Mayra International",
-          foundedYear: body.foundedYear ?? 2020,
+          foundedYear: body.foundedYear ?? 2015,
           siteUrl: body.siteUrl ?? "https://www.mayrainternational.com",
           twitterHandle: body.twitterHandle ?? "@mayraintl",
         },

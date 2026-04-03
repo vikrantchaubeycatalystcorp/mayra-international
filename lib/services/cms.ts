@@ -77,7 +77,7 @@ export async function getCompanyInfo() {
     logo: "/images/mayra-logo.png",
     footerLogo: "/images/mayra-logo.png",
     copyrightText: "Mayra International",
-    foundedYear: 2020,
+    foundedYear: 2015,
     siteUrl: "https://www.mayrainternational.com",
     twitterHandle: "@mayraintl",
   };

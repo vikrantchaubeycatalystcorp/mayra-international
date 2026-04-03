@@ -703,7 +703,7 @@ model CompanyInfo {
   logo          String   @default("/images/mayra-logo.png")
   footerLogo    String   @default("/images/mayra-logo.png")
   copyrightText String   @default("Mayra International")
-  foundedYear   Int      @default(2020)
+  foundedYear   Int      @default(2015)
   siteUrl       String   @default("https://www.mayrainternational.com")
   twitterHandle String   @default("@mayraintl")
   updatedAt     DateTime @updatedAt
