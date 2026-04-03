@@ -12,9 +12,11 @@ import type { College } from "../../types";
 interface CollegeCardProps {
   college: College;
   className?: string;
+  /** Minimum height (px) for the title area — set by Pretext batch measurement for row alignment. */
+  titleMinHeight?: number;
 }
 
-export function CollegeCard({ college, className }: CollegeCardProps) {
+export function CollegeCard({ college, className, titleMinHeight }: CollegeCardProps) {
   const { toggleSaved, isSaved, addToCompare, removeFromCompare, isInCompare, compareList } = useAppStore();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -51,6 +53,7 @@ export function CollegeCard({ college, className }: CollegeCardProps) {
               <Link
                 href={`/colleges/${college.slug}`}
                 className="font-bold text-gray-900 hover:text-indigo-600 transition-colors line-clamp-2 text-sm leading-tight group-hover:text-indigo-600"
+                style={titleMinHeight ? { minHeight: `${Math.ceil(titleMinHeight)}px` } : undefined}
               >
                 {college.name}
               </Link>
