@@ -68,7 +68,6 @@ const NAV_SECTIONS: {
     icon: LayoutDashboard,
     items: [
       { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     ],
   },
   {
