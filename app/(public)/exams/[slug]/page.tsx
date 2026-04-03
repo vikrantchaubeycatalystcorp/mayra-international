@@ -37,11 +37,11 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: `${exam.name} 2026 — Dates, Syllabus & Eligibility`,
       description: exam.description.slice(0, 160),
-      url: `https://mayra.in/exams/${exam.slug}`,
+      url: `https://www.mayrainternational.com/exams/${exam.slug}`,
       type: "website",
     },
     alternates: {
-      canonical: `https://mayra.in/exams/${exam.slug}`,
+      canonical: `https://www.mayrainternational.com/exams/${exam.slug}`,
     },
   };
 }

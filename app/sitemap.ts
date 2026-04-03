@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "../lib/db";
 
-const SITE_URL = "https://mayra.in";
+const SITE_URL = "https://www.mayrainternational.com";
 
 export const dynamic = "force-dynamic";
 

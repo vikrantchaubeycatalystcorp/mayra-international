@@ -68,7 +68,7 @@ export function Footer() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Mail className="h-4 w-4 text-primary-400" />
-                <span>support@mayra.in</span>
+                <span>support@mayrainternational.com</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Phone className="h-4 w-4 text-primary-400" />

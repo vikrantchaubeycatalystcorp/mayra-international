@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     title: "Education Articles & Guides",
     description:
       "Expert articles on admissions, career planning, study tips, and entrance exam preparation.",
-    url: "https://mayra.in/articles",
+    url: "https://www.mayrainternational.com/articles",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/articles",
+    canonical: "https://www.mayrainternational.com/articles",
   },
 };
 

@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     title: "Free Resume Builder — Create Professional CV",
     description:
       "Build and download a professional resume for free. Multiple templates for students and freshers.",
-    url: "https://mayra.in/resume-builder",
+    url: "https://www.mayrainternational.com/resume-builder",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/resume-builder",
+    canonical: "https://www.mayrainternational.com/resume-builder",
   },
 };
 

@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     title: "Compare Colleges — Side-by-Side Analysis",
     description:
       "Compare top colleges side by side on rankings, fees, placements, and more.",
-    url: "https://mayra.in/compare",
+    url: "https://www.mayrainternational.com/compare",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/compare",
+    canonical: "https://www.mayrainternational.com/compare",
   },
 };
 

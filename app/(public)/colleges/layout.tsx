@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: "Top Colleges in India 2026 — Rankings, Fees, Placements",
     description:
       "Explore 25,000+ colleges with NIRF rankings, fees, placements, and reviews. Find your dream college.",
-    url: "https://mayra.in/colleges",
+    url: "https://www.mayrainternational.com/colleges",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/colleges",
+    canonical: "https://www.mayrainternational.com/colleges",
   },
 };
 

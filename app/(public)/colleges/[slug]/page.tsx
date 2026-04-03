@@ -40,11 +40,11 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: `${college.name} — Admissions, Fees & Placements`,
       description: college.description.slice(0, 160),
-      url: `https://mayra.in/colleges/${college.slug}`,
+      url: `https://www.mayrainternational.com/colleges/${college.slug}`,
       type: "website",
     },
     alternates: {
-      canonical: `https://mayra.in/colleges/${college.slug}`,
+      canonical: `https://www.mayrainternational.com/colleges/${college.slug}`,
     },
   };
 }

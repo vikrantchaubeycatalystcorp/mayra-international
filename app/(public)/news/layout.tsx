@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: "Education News India 2026 — Latest Updates",
     description:
       "Stay updated with the latest education news on exams, admissions, results, rankings, and scholarships.",
-    url: "https://mayra.in/news",
+    url: "https://www.mayrainternational.com/news",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/news",
+    canonical: "https://www.mayrainternational.com/news",
   },
 };
 

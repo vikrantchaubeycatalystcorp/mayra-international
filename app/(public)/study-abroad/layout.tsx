@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     title: "Study Abroad from India 2026 — Complete Guide",
     description:
       "Explore top study abroad destinations. Compare universities, costs, scholarships, and visa requirements.",
-    url: "https://mayra.in/study-abroad",
+    url: "https://www.mayrainternational.com/study-abroad",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/study-abroad",
+    canonical: "https://www.mayrainternational.com/study-abroad",
   },
 };
 

@@ -25,17 +25,20 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const { seo, company } = await getLayoutMetadata();
 
-  const siteUrl = company?.siteUrl || "https://mayra.in";
-  const twitterHandle = company?.twitterHandle || "@mayra_in";
+  const siteUrl = company?.siteUrl || "https://www.mayrainternational.com";
+  const twitterHandle = company?.twitterHandle || "@mayraintl";
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: seo?.title || "Mayra — Find Your Dream College in India | 25,000+ Colleges",
-      template: "%s | Mayra",
+      default: seo?.title || "Mayra International — Find Your Dream College in India | 25,000+ Colleges",
+      template: "%s | Mayra International",
     },
-    description: seo?.description || "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses. Get expert guidance for JEE, NEET, CAT, GATE, and more.",
+    description: seo?.description || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses. Get expert guidance for JEE, NEET, CAT, GATE, and more.",
     keywords: seo?.keywords || [
+      "Mayra International",
+      "mayrainternational",
+      "mayra international education",
       "education portal india",
       "college admissions india",
       "JEE Main 2026",
@@ -52,22 +55,22 @@ export async function generateMetadata(): Promise<Metadata> {
       "college fees comparison",
       "placement statistics",
     ],
-    authors: [{ name: company?.name || "Mayra Team" }],
-    creator: company?.name || "Mayra",
+    authors: [{ name: company?.name || "Mayra International" }],
+    creator: company?.name || "Mayra International",
     publisher: company?.name || "Mayra International",
     openGraph: {
       type: "website",
       locale: "en_IN",
       url: siteUrl,
-      siteName: company?.name || "Mayra",
-      title: seo?.ogTitle || "Mayra — Find Your Dream College in India",
-      description: seo?.ogDescription || "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
+      siteName: company?.name || "Mayra International",
+      title: seo?.ogTitle || "Mayra International — Find Your Dream College in India",
+      description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
       images: [
         {
           url: seo?.ogImage || "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${company?.name || "Mayra"} — India's Most Trusted Education Portal`,
+          alt: `${company?.name || "Mayra International"} — India's Most Trusted Education Portal`,
         },
       ],
     },
@@ -75,8 +78,8 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       site: twitterHandle,
       creator: twitterHandle,
-      title: seo?.ogTitle || "Mayra — Find Your Dream College in India",
-      description: seo?.ogDescription || "India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
+      title: seo?.ogTitle || "Mayra International — Find Your Dream College in India",
+      description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
       images: [seo?.ogImage || "/og-image.png"],
     },
     robots: {

@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: article.title,
       description: article.summary,
-      url: `https://mayra.in/news/${article.slug}`,
+      url: `https://www.mayrainternational.com/news/${article.slug}`,
       type: "article",
       publishedTime: article.publishedAt,
       authors: [article.author],
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props) {
       tags: article.tags,
     },
     alternates: {
-      canonical: `https://mayra.in/news/${article.slug}`,
+      canonical: `https://www.mayrainternational.com/news/${article.slug}`,
     },
   };
 }

@@ -70,16 +70,16 @@ export async function getCompanyInfo() {
     name: "Mayra International",
     tagline: "India's most trusted education platform",
     description: "",
-    email: "support@mayra.in",
+    email: "support@mayrainternational.com",
     phone: "1800-123-4567",
     phoneLabel: "(Free)",
     address: "Bangalore, India",
     logo: "/images/mayra-logo.png",
     footerLogo: "/images/mayra-logo.png",
-    copyrightText: "Mayra India",
+    copyrightText: "Mayra International",
     foundedYear: 2020,
-    siteUrl: "https://mayra.in",
-    twitterHandle: "@mayra_in",
+    siteUrl: "https://www.mayrainternational.com",
+    twitterHandle: "@mayraintl",
   };
 }
 

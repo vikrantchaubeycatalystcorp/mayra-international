@@ -73,11 +73,11 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: `${course.name} — Fees, Duration & Career Scope`,
       description: course.description.slice(0, 160),
-      url: `https://mayra.in/courses/${course.slug}`,
+      url: `https://www.mayrainternational.com/courses/${course.slug}`,
       type: "website",
     },
     alternates: {
-      canonical: `https://mayra.in/courses/${course.slug}`,
+      canonical: `https://www.mayrainternational.com/courses/${course.slug}`,
     },
   };
 }

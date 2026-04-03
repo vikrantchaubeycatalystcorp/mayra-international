@@ -108,12 +108,12 @@ export const getFooterData = unstable_cache(
     const company = companyInfo || {
       name: "Mayra International",
       tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.",
-      email: "support@mayra.in",
+      email: "support@mayrainternational.com",
       phone: "1800-123-4567",
       phoneLabel: "(Free)",
       address: "Bangalore, India",
       footerLogo: "/images/mayra-logo.png",
-      copyrightText: "Mayra India",
+      copyrightText: "Mayra International",
       foundedYear: 2020,
     };
 

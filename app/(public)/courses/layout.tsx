@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: "Courses in India 2026 — Duration, Fees, Career Scope",
     description:
       "Explore 800+ UG, PG, Diploma, and PhD courses. Compare fees, eligibility, and career prospects.",
-    url: "https://mayra.in/courses",
+    url: "https://www.mayrainternational.com/courses",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/courses",
+    canonical: "https://www.mayrainternational.com/courses",
   },
 };
 

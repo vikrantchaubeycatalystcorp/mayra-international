@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     title: "Entrance Exams in India 2026 — Dates, Syllabus, Registration",
     description:
       "Complete guide to 500+ entrance exams. Get dates, registration links, syllabus, and preparation tips.",
-    url: "https://mayra.in/exams",
+    url: "https://www.mayrainternational.com/exams",
     type: "website",
   },
   alternates: {
-    canonical: "https://mayra.in/exams",
+    canonical: "https://www.mayrainternational.com/exams",
   },
 };
 

@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: ["/colleges/", "/courses/", "/exams/", "/news/", "/study-abroad/"],
       },
     ],
-    sitemap: "https://mayra.in/sitemap.xml",
+    sitemap: "https://www.mayrainternational.com/sitemap.xml",
   };
 }

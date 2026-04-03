@@ -1,7 +1,7 @@
 import type { College, Course, Exam, NewsArticle, StudyAbroadCountry } from "../types";
 
-const SITE_URL = "https://mayra.in";
-const SITE_NAME = "Mayra";
+const SITE_URL = "https://www.mayrainternational.com";
+const SITE_NAME = "Mayra International";
 const ORG_LOGO = `${SITE_URL}/logo.png`;
 
 // ── Organization Schema (root level) ───────────────────────────────────────
@@ -13,9 +13,9 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: ORG_LOGO,
     sameAs: [
-      "https://twitter.com/mayra_in",
-      "https://facebook.com/mayra.in",
-      "https://instagram.com/mayra.in",
+      "https://twitter.com/mayraintl",
+      "https://facebook.com/mayrainternational",
+      "https://instagram.com/mayrainternational",
       "https://linkedin.com/company/mayra-international",
     ],
     description:
