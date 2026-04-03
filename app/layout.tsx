@@ -91,6 +91,15 @@ export async function generateMetadata(): Promise<Metadata> {
       description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
       images: [seo?.ogImage || "/og-image.png"],
     },
+    icons: {
+      icon: [
+        { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        { url: "/icons/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      ],
+      shortcut: ["/icons/favicon-32x32.png"],
+      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
     verification: {
       google: "BvoI1CdDNvTp3m2ti5xMYQNDhNkz4HkQ46zDqBKiJoM",
     },

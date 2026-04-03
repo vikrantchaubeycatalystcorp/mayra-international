@@ -6,7 +6,6 @@ import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import {
   Search,
-  Bell,
   ChevronDown,
   GraduationCap,
   BookOpen,
@@ -214,11 +213,11 @@ export function Navbar() {
               <span className="logo-animated">
                 {!logoError ? (
                   <Image
-                    src="/images/mayra-logo.png"
+                    src="/images/mayra-logo-clean.png"
                     alt="Mayra International"
                     width={260}
                     height={78}
-                    className="h-10 sm:h-14 lg:h-16 w-auto"
+                    className="h-10 sm:h-14 lg:h-16 w-auto mix-blend-multiply"
                     priority
                     onError={() => setLogoError(true)}
                   />
@@ -350,11 +349,13 @@ export function Navbar() {
                 <Search className="h-5 w-5" />
               </button>
 
-              {/* Notification */}
-              <button suppressHydrationWarning className="hidden lg:flex p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-accent-500 rounded-full" />
-              </button>
+              {/* Contact Us CTA */}
+              <Link
+                href="/contact"
+                className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors"
+              >
+                Contact Us
+              </Link>
 
               {/* Mobile Menu Toggle */}
               <button suppressHydrationWarning

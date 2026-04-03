@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Search,
-  Bell,
   ChevronDown,
   GraduationCap,
   BookOpen,
@@ -42,7 +41,7 @@ const iconMap: Record<string, LucideIcon> = {
   GraduationCap, BookOpen, FileText, Globe, Newspaper, Award, Briefcase,
   Cpu, Stethoscope, Scale, BarChart3, FlaskConical, Building2, Landmark,
   Calculator, Trophy, Wrench, TrendingUp, Monitor, Settings, Heart, Search,
-  Bell, Menu, X,
+  Menu, X,
 };
 
 function getIcon(name?: string | null): LucideIcon | null {
@@ -92,6 +91,7 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const logoSrc = logo === "/images/mayra-logo.png" ? "/images/mayra-logo-clean.png" : logo;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -135,18 +135,18 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
           scrolled ? "opacity-100" : "opacity-0"
         )} />
         <div className="container mx-auto">
-          <div className="flex items-center justify-between h-[68px]">
+          <div className="flex items-center justify-between h-[76px]">
             {/* Logo — Premium Animated */}
             <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
               {!logoError ? (
                 <span className="navbar-logo-reveal relative inline-flex items-center overflow-hidden">
                   <Image
-                    src={logo}
+                    src={logoSrc}
                     alt={siteName}
-                    width={320}
-                    height={96}
-                    className="h-[48px] w-auto"
-                    style={{ minHeight: "48px" }}
+                    width={420}
+                    height={126}
+                    className="h-[60px] w-auto mix-blend-multiply"
+                    style={{ minHeight: "60px" }}
                     priority
                     onError={() => setLogoError(true)}
                   />
@@ -367,26 +367,13 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
                 <Search className="h-4 w-4" />
               </button>
 
-              {/* Notification Bell */}
-              <button
-                suppressHydrationWarning
-                aria-label="Notifications"
-                className="hidden lg:flex h-9 w-9 rounded-full items-center justify-center bg-gray-50/80 border border-gray-200/60 text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 hover:shadow-[0_2px_8px_rgba(99,102,241,0.08)] transition-all duration-300 relative"
-              >
-                <Bell className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-gradient-to-r from-red-500 to-orange-400 rounded-full ring-2 ring-white animate-pulse" />
-              </button>
-
-              {/* Divider */}
-              <div className="hidden lg:block h-6 w-px bg-gray-200/80 mx-1" />
-
-              {/* CTA Button — Desktop */}
+              {/* Contact Us CTA — Desktop */}
               <Link
-                href="/sign-in"
+                href="/contact"
                 className="hidden lg:flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 text-white text-[13px] font-semibold shadow-[0_2px_8px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_4px_16px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] hover:brightness-110 transition-all duration-300 active:scale-[0.97]"
               >
-                Get Started
-                <ArrowRight className="h-3.5 w-3.5" />
+                <Phone className="h-3.5 w-3.5" />
+                Contact Us
               </Link>
 
               {/* Mobile Menu Toggle */}
@@ -487,17 +474,13 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
               {/* Mobile CTA */}
               <div className="mt-3 pt-3 border-t border-gray-100 px-2 space-y-2">
                 <Link
-                  href="/sign-in"
+                  href="/contact"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/20"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Get Started Free
-                  <ArrowRight className="h-4 w-4" />
+                  <Phone className="h-4 w-4" />
+                  Contact Us
                 </Link>
-                <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400 py-1">
-                  <Phone className="h-3 w-3" />
-                  Call: 1800-XXX-XXXX (Toll Free)
-                </div>
               </div>
             </div>
           </div>
