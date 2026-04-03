@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Search, TrendingUp, Award, Users, BookOpen, ArrowRight, Sparkles, ChevronRight, type LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
@@ -130,14 +129,9 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
   const tabs = data.searchTabs;
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const [query, setQuery] = useState("");
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(true);
   const [inputFocused, setInputFocused] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 100);
-    return () => clearTimeout(t);
-  }, []);
 
   const activeTab = tabs[activeTabIdx] || tabs[0];
   const tabQuickFilters = data.quickFilters.filter((f) => f.tab === activeTab?.label);
@@ -173,24 +167,9 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
   };
 
   return (
-    <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
-      {/* Background Image */}
-      {data.bgImage && (
-        <Image
-          src={data.bgImage}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-          quality={75}
-        />
-      )}
-      {/* Dark overlay on top of image */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0520]/90 via-[#12103a]/85 to-[#1a1145]/90" />
+    <>
       <FloatingOrbs />
       <div className="absolute inset-0 hero-grid opacity-20" />
-      {/* Subtle noise texture */}
       <div className="absolute inset-0 noise-overlay" />
 
       <div className="container mx-auto relative z-10 py-24 lg:py-28">
@@ -287,7 +266,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                       key={tab.id}
                       onClick={() => setActiveTabIdx(idx)}
                       className={cn(
-                        "flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-300",
+                        "flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 min-h-[44px]",
                         activeTabIdx === idx
                           ? "bg-white text-gray-900 shadow-lg shadow-black/10"
                           : "text-white/60 hover:text-white hover:bg-white/[0.06]"
@@ -332,7 +311,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                         suppressHydrationWarning
                         key={filter.id}
                         onClick={() => handleQuickFilter(filter.href)}
-                        className="px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.16] border border-white/[0.1] hover:border-white/[0.2] text-white/70 hover:text-white text-xs font-medium transition-all duration-300"
+                        className="px-3.5 py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.16] border border-white/[0.1] hover:border-white/[0.2] text-white/70 hover:text-white text-xs font-medium transition-all duration-300 min-h-[44px] inline-flex items-center"
                       >
                         {filter.label}
                       </button>
@@ -389,6 +368,6 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
 
       {/* Bottom Gradient Fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent" />
-    </section>
+    </>
   );
 }

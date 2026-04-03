@@ -107,8 +107,8 @@ export function FooterClient({
               <Image
                 src={company.footerLogo}
                 alt={company.name}
-                width={170}
-                height={52}
+                width={1024}
+                height={558}
                 className="h-12 w-auto"
               />
             </Link>
@@ -185,20 +185,20 @@ export function FooterClient({
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-600 focus-visible:ring-indigo-500/30 focus-visible:border-indigo-500/50 rounded-xl h-11"
+                className="bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-500 focus-visible:ring-indigo-500/30 focus-visible:border-indigo-500/50 rounded-xl h-11"
               />
               <Button variant="gradient" className="w-full rounded-xl h-11">
                 Subscribe Free
               </Button>
             </div>
-            <p className="text-xs text-gray-600 mt-2.5">
+            <p className="text-xs text-gray-400 mt-2.5">
               No spam. Unsubscribe anytime.
             </p>
 
             {/* App Download */}
             {appDownloads.length > 0 && (
               <div className="mt-7">
-                <p className="text-[10px] text-gray-600 uppercase tracking-[0.15em] mb-3 font-medium">Download App</p>
+                <p className="text-[10px] text-gray-400 uppercase tracking-[0.15em] mb-3 font-medium">Download App</p>
                 <div className="flex gap-2">
                   {appDownloads.map((app) => {
                     const Icon = getIcon(app.icon);
@@ -210,7 +210,7 @@ export function FooterClient({
                       >
                         {Icon ? <Icon className="h-4 w-4 text-gray-400" /> : null}
                         <div>
-                          <p className="text-[10px] text-gray-600 leading-none">{app.storeLabel}</p>
+                          <p className="text-[10px] text-gray-400 leading-none">{app.storeLabel}</p>
                           <p className="text-xs font-semibold text-white leading-none mt-0.5">{app.storeName}</p>
                         </div>
                       </a>
@@ -226,10 +226,10 @@ export function FooterClient({
       {/* Bottom Bar */}
       <div className="border-t border-white/[0.05]">
         <div className="container mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-400">
             &copy; {new Date().getFullYear()} {safeCopyrightText}. All rights reserved.
           </p>
-          <div className="flex items-center gap-5 text-xs text-gray-600">
+          <div className="flex items-center gap-5 text-xs text-gray-400">
             {legalLinks.map((link) => (
               <Link
                 key={link.id}
@@ -246,7 +246,7 @@ export function FooterClient({
               return (
                 <span
                   key={badge.id}
-                  className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.03] border border-white/[0.06] rounded-lg text-xs text-gray-500 font-medium"
+                  className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.03] border border-white/[0.06] rounded-lg text-xs text-gray-400 font-medium"
                 >
                   {Icon && <Icon className="h-3.5 w-3.5" />}
                   {badge.label}

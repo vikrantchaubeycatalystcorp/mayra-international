@@ -143,11 +143,13 @@ export function NavbarClient({ navItems, logo, siteName }: Props) {
                   <Image
                     src={logoSrc}
                     alt={siteName}
-                    width={420}
-                    height={126}
+                    width={1024}
+                    height={558}
+                    sizes="(max-width: 768px) 150px, 200px"
                     className="h-[60px] w-auto mix-blend-multiply"
                     style={{ minHeight: "60px" }}
                     priority
+                    fetchPriority="high"
                     onError={() => setLogoError(true)}
                   />
                   <span className="navbar-logo-shimmer" />

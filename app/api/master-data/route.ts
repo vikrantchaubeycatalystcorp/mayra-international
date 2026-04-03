@@ -97,6 +97,10 @@ export async function GET(req: NextRequest) {
         leadQualifications,
         leadInterests,
       },
+    }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
     });
   } catch (error) {
     console.error("Fetch master data error:", error);

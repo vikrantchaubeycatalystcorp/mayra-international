@@ -265,7 +265,7 @@ export function FloatingInquiryForm() {
                 {loading ? "Submitting..." : "Get Free Counselling"}
               </Button>
 
-              <p className="text-[10px] text-gray-400 text-center">
+              <p className="text-[10px] text-gray-500 text-center">
                 By submitting, you agree to our privacy policy. We won&apos;t spam you.
               </p>
             </form>
