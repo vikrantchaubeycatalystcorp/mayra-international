@@ -35,6 +35,39 @@ export const getNavbarData = unstable_cache(
       prisma.companyInfo.findFirst(),
     ]);
 
+    // Inject Mock Tests link if not already present in DB
+    const hasMockTests = navItems.some((n) => n.href === "/mock-tests");
+    if (!hasMockTests) {
+      const worldMapIdx = navItems.findIndex(
+        (n) => n.href === "/map" || n.label === "World Map"
+      );
+      const mockTestsItem = {
+        id: "mock-tests-nav",
+        label: "Mock Tests",
+        href: "/mock-tests",
+        icon: "BookOpen",
+        description: "Practice full-length mock exams",
+        isMega: false,
+        megaGroupTitle: null,
+        featuredTitle: null,
+        featuredItems: [],
+        target: "_self",
+        section: "main",
+        sortOrder: worldMapIdx >= 0 ? navItems[worldMapIdx].sortOrder + 1 : 98,
+        isActive: true,
+        parentId: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        children: [],
+      } as (typeof navItems)[number];
+
+      if (worldMapIdx >= 0) {
+        navItems.splice(worldMapIdx + 1, 0, mockTestsItem);
+      } else {
+        navItems.push(mockTestsItem);
+      }
+    }
+
     // Inject Resume Builder link if not already present in DB
     const hasResumeBuilder = navItems.some(
       (n) => n.href === "/resume-builder"
@@ -141,6 +174,52 @@ export const getFooterData = unstable_cache(
     }
     if (!company.foundedYear || company.foundedYear === 2020) {
       company.foundedYear = 2015;
+    }
+
+    // Ensure Mock Tests exists in a footer quick-links style section
+    const hasFooterMockTests = footerSections.some((section) =>
+      section.links.some((link) => link.href === "/mock-tests")
+    );
+
+    if (!hasFooterMockTests) {
+      const preferredSection =
+        footerSections.find((section) => /quick\s*links?/i.test(section.title)) ||
+        footerSections.find((section) => /resources?|links?/i.test(section.title)) ||
+        footerSections[0];
+
+      if (preferredSection) {
+        preferredSection.links.push({
+          id: "footer-link-mock-tests",
+          label: "Mock Tests",
+          href: "/mock-tests",
+          sectionId: preferredSection.id,
+          sortOrder: preferredSection.links.length + 1,
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } else {
+        footerSections.push({
+          id: "footer-section-quick-links",
+          title: "Quick Links",
+          sortOrder: 999,
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          links: [
+            {
+              id: "footer-link-mock-tests",
+              label: "Mock Tests",
+              href: "/mock-tests",
+              sectionId: "footer-section-quick-links",
+              sortOrder: 1,
+              isActive: true,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ],
+        });
+      }
     }
 
     return { company, footerSections, socialLinks, legalLinks, trustBadges, appDownloads };
