@@ -696,16 +696,16 @@ model CompanyInfo {
   name          String   @default("Mayra International")
   tagline       String   @default("India's most trusted education platform")
   description   String   @default("")
-  email         String   @default("support@mayra.in")
+  email         String   @default("support@mayrainternational.com")
   phone         String   @default("1800-123-4567")
   phoneLabel    String   @default("(Free)")
   address       String   @default("Bangalore, India")
   logo          String   @default("/images/mayra-logo.png")
   footerLogo    String   @default("/images/mayra-logo.png")
-  copyrightText String   @default("Mayra India")
+  copyrightText String   @default("Mayra International")
   foundedYear   Int      @default(2020)
-  siteUrl       String   @default("https://mayra.in")
-  twitterHandle String   @default("@mayra_in")
+  siteUrl       String   @default("https://www.mayrainternational.com")
+  twitterHandle String   @default("@mayraintl")
   updatedAt     DateTime @updatedAt
 }
 

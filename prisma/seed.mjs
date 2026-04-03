@@ -9,22 +9,22 @@ async function main() {
   console.log("  → Company Info");
   await prisma.companyInfo.upsert({
     where: { id: "company-main" },
-    update: {},
+    update: { siteUrl: "https://www.mayrainternational.com", email: "support@mayrainternational.com", twitterHandle: "@mayraintl", copyrightText: "Mayra International" },
     create: {
       id: "company-main",
       name: "Mayra International",
       tagline: "India's most trusted education platform. Helping students discover the right college, exam, and career since 2020.",
       description: "India's most trusted education portal",
-      email: "support@mayra.in",
+      email: "support@mayrainternational.com",
       phone: "1800-123-4567",
       phoneLabel: "(Free)",
       address: "Bangalore, India",
       logo: "/images/mayra-logo.png",
       footerLogo: "/images/mayra-logo.png",
-      copyrightText: "Mayra India",
+      copyrightText: "Mayra International",
       foundedYear: 2020,
-      siteUrl: "https://mayra.in",
-      twitterHandle: "@mayra_in",
+      siteUrl: "https://www.mayrainternational.com",
+      twitterHandle: "@mayraintl",
     },
   });
 
@@ -33,22 +33,22 @@ async function main() {
   const seoPages = [
     {
       pageSlug: "home",
-      title: "Mayra — Find Your Dream College in India | 25,000+ Colleges",
-      description: "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
-      keywords: ["education portal india", "college admissions india", "JEE Main 2026", "NEET 2026", "CAT MBA", "GATE", "top colleges india", "NIRF rankings 2026"],
+      title: "Mayra International — Find Your Dream College in India | 25,000+ Colleges",
+      description: "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
+      keywords: ["Mayra International", "mayrainternational", "mayra international education", "education portal india", "college admissions india", "JEE Main 2026", "NEET 2026", "CAT MBA", "GATE", "top colleges india", "NIRF rankings 2026"],
       ogImage: "/og-image.png",
-      ogTitle: "Mayra — Find Your Dream College in India",
-      ogDescription: "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
-      canonical: "https://mayra.in",
+      ogTitle: "Mayra International — Find Your Dream College in India",
+      ogDescription: "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
+      canonical: "https://www.mayrainternational.com",
     },
-    { pageSlug: "colleges", title: "Top Colleges in India 2026 — Rankings, Fees, Admissions", description: "Explore 25,000+ colleges across India.", keywords: ["top colleges india", "engineering colleges"], ogTitle: "Top Colleges in India", ogDescription: "Explore 25,000+ colleges", canonical: "https://mayra.in/colleges" },
-    { pageSlug: "exams", title: "Entrance Exams 2026 — Dates, Syllabus, Eligibility", description: "Complete guide to 500+ entrance exams.", keywords: ["JEE Main 2026", "NEET 2026", "entrance exams"], ogTitle: "Entrance Exams 2026", ogDescription: "Complete guide to 500+ entrance exams", canonical: "https://mayra.in/exams" },
-    { pageSlug: "courses", title: "Courses in India — UG, PG, Diploma Programs", description: "Explore 800+ courses across all streams.", keywords: ["courses india", "B.Tech", "MBBS", "MBA"], ogTitle: "Courses in India", ogDescription: "Explore 800+ courses", canonical: "https://mayra.in/courses" },
-    { pageSlug: "news", title: "Education News & Updates 2026", description: "Latest education news and updates.", keywords: ["education news", "exam results"], ogTitle: "Education News", ogDescription: "Latest education news", canonical: "https://mayra.in/news" },
-    { pageSlug: "study-abroad", title: "Study Abroad from India — Countries, Universities, Costs", description: "Complete guide to studying abroad.", keywords: ["study abroad", "study in USA"], ogTitle: "Study Abroad", ogDescription: "Complete guide to studying abroad", canonical: "https://mayra.in/study-abroad" },
+    { pageSlug: "colleges", title: "Top Colleges in India 2026 — Rankings, Fees, Admissions | Mayra International", description: "Explore 25,000+ colleges across India.", keywords: ["top colleges india", "engineering colleges", "Mayra International"], ogTitle: "Top Colleges in India | Mayra International", ogDescription: "Explore 25,000+ colleges", canonical: "https://www.mayrainternational.com/colleges" },
+    { pageSlug: "exams", title: "Entrance Exams 2026 — Dates, Syllabus, Eligibility | Mayra International", description: "Complete guide to 500+ entrance exams.", keywords: ["JEE Main 2026", "NEET 2026", "entrance exams", "Mayra International"], ogTitle: "Entrance Exams 2026 | Mayra International", ogDescription: "Complete guide to 500+ entrance exams", canonical: "https://www.mayrainternational.com/exams" },
+    { pageSlug: "courses", title: "Courses in India — UG, PG, Diploma Programs | Mayra International", description: "Explore 800+ courses across all streams.", keywords: ["courses india", "B.Tech", "MBBS", "MBA", "Mayra International"], ogTitle: "Courses in India | Mayra International", ogDescription: "Explore 800+ courses", canonical: "https://www.mayrainternational.com/courses" },
+    { pageSlug: "news", title: "Education News & Updates 2026 | Mayra International", description: "Latest education news and updates.", keywords: ["education news", "exam results", "Mayra International"], ogTitle: "Education News | Mayra International", ogDescription: "Latest education news", canonical: "https://www.mayrainternational.com/news" },
+    { pageSlug: "study-abroad", title: "Study Abroad from India — Countries, Universities, Costs | Mayra International", description: "Complete guide to studying abroad.", keywords: ["study abroad", "study in USA", "Mayra International"], ogTitle: "Study Abroad | Mayra International", ogDescription: "Complete guide to studying abroad", canonical: "https://www.mayrainternational.com/study-abroad" },
   ];
   for (const seo of seoPages) {
-    await prisma.pageSeo.upsert({ where: { pageSlug: seo.pageSlug }, update: {}, create: seo });
+    await prisma.pageSeo.upsert({ where: { pageSlug: seo.pageSlug }, update: { title: seo.title, canonical: seo.canonical, ogTitle: seo.ogTitle, keywords: seo.keywords }, create: seo });
   }
 
   // ── Streams ─────────────────────────────────────────────
@@ -87,6 +87,9 @@ async function main() {
 
   // ── Navigation Items ────────────────────────────────────
   console.log("  → Navigation Items");
+  // Clear existing nav items to prevent duplicates on re-seed
+  await prisma.navigationItem.deleteMany({ where: { parentId: { not: null } } });
+  await prisma.navigationItem.deleteMany({});
   await prisma.navigationItem.create({
     data: {
       label: "Colleges", href: "/colleges", icon: "GraduationCap", section: "main", sortOrder: 1, isMega: true,
@@ -156,6 +159,8 @@ async function main() {
 
   // ── Footer Sections ─────────────────────────────────────
   console.log("  → Footer Sections");
+  await prisma.footerLink.deleteMany({});
+  await prisma.footerSection.deleteMany({});
   await prisma.footerSection.create({
     data: {
       title: "Quick Links", sortOrder: 1,
@@ -225,6 +230,7 @@ async function main() {
 
   // ── Legal Links ─────────────────────────────────────────
   console.log("  → Legal Links");
+  await prisma.legalLink.deleteMany({});
   await prisma.legalLink.createMany({
     data: [
       { label: "Privacy Policy", href: "/privacy", sortOrder: 1 },
@@ -237,6 +243,7 @@ async function main() {
 
   // ── Trust Badges ────────────────────────────────────────
   console.log("  → Trust Badges");
+  await prisma.trustBadge.deleteMany({});
   await prisma.trustBadge.createMany({
     data: [
       { label: "SSL Secured", icon: "ShieldCheck", bgColor: "bg-green-900/50", borderColor: "border-green-700", textColor: "text-green-400", sortOrder: 1 },
@@ -256,6 +263,12 @@ async function main() {
 
   // ── Hero Banner ─────────────────────────────────────────
   console.log("  → Hero Banner");
+  await prisma.heroFloatingCard.deleteMany({});
+  await prisma.heroPopularSearch.deleteMany({});
+  await prisma.heroQuickFilter.deleteMany({});
+  await prisma.heroSearchTab.deleteMany({});
+  await prisma.heroStat.deleteMany({});
+  await prisma.heroBanner.deleteMany({});
   await prisma.heroBanner.create({
     data: {
       heading: "Find Your Dream College",
@@ -324,6 +337,7 @@ async function main() {
 
   // ── Home Stats ──────────────────────────────────────────
   console.log("  → Home Stats");
+  await prisma.homeStat.deleteMany({});
   await prisma.homeStat.createMany({
     data: [
       { icon: "GraduationCap", value: 25000, suffix: "+", label: "Colleges Listed", sublabel: "Across 28 states", color: "from-blue-600 to-blue-400", bgColor: "bg-blue-50", iconColor: "text-blue-600", sortOrder: 1 },

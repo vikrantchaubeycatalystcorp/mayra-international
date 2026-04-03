@@ -25,7 +25,11 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const { seo, company } = await getLayoutMetadata();
 
-  const siteUrl = company?.siteUrl || "https://www.mayrainternational.com";
+  // Force correct domain — override any stale DB values pointing to old domain
+  const rawSiteUrl = company?.siteUrl || "https://www.mayrainternational.com";
+  const siteUrl = rawSiteUrl.includes("mayra.in") && !rawSiteUrl.includes("mayrainternational")
+    ? "https://www.mayrainternational.com"
+    : rawSiteUrl;
   const twitterHandle = company?.twitterHandle || "@mayraintl";
 
   return {
@@ -82,6 +86,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
       images: [seo?.ogImage || "/og-image.png"],
     },
+    verification: {
+      google: "BvoI1CdDNvTp3m2ti5xMYQNDhNkz4HkQ46zDqBKiJoM",
+    },
     robots: {
       index: !seo?.noIndex,
       follow: true,
@@ -94,7 +101,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     alternates: {
-      canonical: seo?.canonical || siteUrl,
+      canonical: (seo?.canonical || siteUrl).replace(/https?:\/\/(www\.)?mayra\.in/g, "https://www.mayrainternational.com"),
     },
     category: "education",
   };
