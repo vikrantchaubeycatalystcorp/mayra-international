@@ -11,6 +11,7 @@ const quickLinks = [
   { label: "Study Abroad", href: "/study-abroad" },
   { label: "Compare Colleges", href: "/compare" },
   { label: "News & Articles", href: "/news" },
+  { label: "Mock Tests", href: "/mock-tests" },
   { label: "Resume Builder", href: "/resume-builder" },
   { label: "Career Guide", href: "/news?category=Careers" },
 ];

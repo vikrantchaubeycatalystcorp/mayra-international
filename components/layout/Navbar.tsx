@@ -165,6 +165,11 @@ const navItems: NavItem[] = [
     simple: true,
   },
   {
+    label: "Mock Tests",
+    href: "/mock-tests",
+    simple: true,
+  },
+  {
     label: "Resume Builder",
     href: "/resume-builder",
     simple: true,

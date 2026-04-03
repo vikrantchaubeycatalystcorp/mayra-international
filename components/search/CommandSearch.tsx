@@ -138,6 +138,7 @@ const defaultPages = [
   { id: "p-news", label: "Latest News", desc: "Education news & updates", href: "/news", icon: Newspaper, color: "from-red-500 to-rose-400" },
   { id: "p-compare", label: "Compare Colleges", desc: "Side-by-side comparison", href: "/compare", icon: Scale, color: "from-blue-600 to-blue-400" },
   { id: "p-abroad", label: "Study Abroad", desc: "International options", href: "/study-abroad", icon: Globe, color: "from-cyan-500 to-sky-400" },
+  { id: "p-mock", label: "Mock Tests", desc: "Free practice tests with leaderboards", href: "/mock-tests", icon: Trophy, color: "from-amber-500 to-orange-400" },
   { id: "p-resume", label: "Resume Builder", desc: "Build your resume", href: "/resume-builder", icon: FileText, color: "from-violet-500 to-purple-400" },
   { id: "p-dashboard", label: "My Dashboard", desc: "Your saved colleges & apps", href: "/dashboard", icon: LayoutDashboard, color: "from-gray-600 to-gray-400" },
   { id: "p-saved", label: "Saved Colleges", desc: "Your shortlisted colleges", href: "/dashboard/saved", icon: Heart, color: "from-pink-500 to-rose-400" },

@@ -76,7 +76,8 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  enquiries Enquiry[]
+  enquiries    Enquiry[]
+  mockAttempts MockAttempt[]
 
   @@index([email])
   @@index([provider])
@@ -826,4 +827,85 @@ model AppDownloadLink {
   isActive   Boolean @default(true)
 
   @@index([sortOrder])
+}
+
+// ============================================================
+// MOCK TEST & LEADERBOARD MODELS
+// ============================================================
+
+model MockExam {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  category         String
+  subject          String
+  description      String   @default("")
+  duration         Int
+  totalQuestions   Int
+  totalMarks       Int
+  negativeMarking  Float    @default(0)
+  difficulty       String   @default("Medium")
+  icon             String   @default("BookOpen")
+  color            String   @default("text-indigo-600")
+  gradient         String   @default("from-indigo-600 to-purple-700")
+  tags             String[]
+  attemptCount     Int      @default(0)
+  avgScore         Float    @default(50)
+  isFeatured       Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  questions MockQuestion[]
+  attempts  MockAttempt[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([isActive])
+  @@index([isFeatured])
+}
+
+model MockQuestion {
+  id              String   @id @default(cuid())
+  examId          String
+  exam            MockExam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  text            String
+  options         Json
+  correctOptionId String
+  explanation     String   @default("")
+  subject         String
+  topic           String
+  difficulty      String   @default("Medium")
+  marks           Int      @default(4)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  @@index([examId])
+  @@index([subject])
+  @@index([difficulty])
+}
+
+model MockAttempt {
+  id          String   @id @default(cuid())
+  examId      String
+  exam        MockExam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  userName    String   @default("Anonymous")
+  answers     Json
+  score       Int      @default(0)
+  totalMarks  Int
+  correct     Int      @default(0)
+  incorrect   Int      @default(0)
+  unanswered  Int      @default(0)
+  percentage  Float    @default(0)
+  timeTaken   Int      @default(0)
+  subjectWise Json     @default("[]")
+  completedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([examId])
+  @@index([userId])
+  @@index([percentage])
+  @@index([completedAt])
 }
