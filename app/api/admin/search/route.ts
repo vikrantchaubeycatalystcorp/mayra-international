@@ -1,13 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin/middleware";
 
 export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if (auth instanceof NextResponse) return auth;
+
   const { searchParams } = req.nextUrl;
   const q = searchParams.get("q") || "";
   const type = searchParams.get("type") || "all";
   const limit = Math.min(20, parseInt(searchParams.get("limit") || "8", 10));
 
-  const hasQuery = q.trim().length > 0;
+  if (q.trim().length < 2 && q.trim().length > 0) {
+    return NextResponse.json({
+      query: q.trim(),
+      total: 0,
+      colleges: [], courses: [], exams: [], news: [], studyAbroad: [],
+      leads: [], enquiries: [], users: [], newsletter: [],
+      streams: [], tags: [], newsCategories: [], collegeTypes: [],
+      courseLevels: [], examModes: [], accreditations: [], dataSources: [],
+      heroBanners: [], announcements: [], pageSeo: [], admins: [],
+    });
+  }
+
+  const hasQuery = q.trim().length >= 2;
   const query = q.trim();
 
   const mode = "insensitive" as const;

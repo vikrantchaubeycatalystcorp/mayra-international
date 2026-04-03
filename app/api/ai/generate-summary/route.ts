@@ -185,14 +185,14 @@ export async function POST(request: Request) {
     // Validate required fields
     if (!targetRole || typeof targetRole !== 'string' || !targetRole.trim()) {
       return NextResponse.json(
-        { error: 'targetRole is required and must be a non-empty string' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'targetRole is required and must be a non-empty string' } },
         { status: 400 },
       );
     }
 
     if (!skills || !Array.isArray(skills) || skills.length === 0) {
       return NextResponse.json(
-        { error: 'skills is required and must be a non-empty array of strings' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'skills is required and must be a non-empty array of strings' } },
         { status: 400 },
       );
     }
@@ -200,7 +200,7 @@ export async function POST(request: Request) {
     const validSegments: Segment[] = ['fresher', 'internship', 'experienced'];
     if (!segment || !validSegments.includes(segment)) {
       return NextResponse.json(
-        { error: 'segment is required and must be one of: fresher, internship, experienced' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'segment is required and must be one of: fresher, internship, experienced' } },
         { status: 400 },
       );
     }
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
 
     if (cleanSkills.length === 0) {
       return NextResponse.json(
-        { error: 'skills array must contain at least one non-empty string' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'skills array must contain at least one non-empty string' } },
         { status: 400 },
       );
     }
@@ -219,6 +219,7 @@ export async function POST(request: Request) {
     const expStr = typeof experience === 'string' ? experience.trim() : '';
 
     return NextResponse.json({
+      success: true,
       variants: [
         {
           style: 'ats_concise' as const,
@@ -239,7 +240,8 @@ export async function POST(request: Request) {
       error instanceof SyntaxError
         ? 'Invalid JSON in request body'
         : 'Internal server error';
+    const code = error instanceof SyntaxError ? 'VALIDATION_ERROR' : 'SERVER_ERROR';
     const status = error instanceof SyntaxError ? 400 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ success: false, error: { code, message } }, { status });
   }
 }

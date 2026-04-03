@@ -135,7 +135,7 @@ export default function RootLayout({
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
       </head>
-      <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
+      <body className="antialiased min-h-screen flex flex-col">
         <Suspense fallback={<nav className="h-16 lg:h-[68px] bg-white/80 backdrop-blur-md border-b border-gray-200/50 fixed top-0 inset-x-0 z-50" />}>
           <NavbarServer />
         </Suspense>

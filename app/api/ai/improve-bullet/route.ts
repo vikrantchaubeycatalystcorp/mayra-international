@@ -313,7 +313,7 @@ export async function POST(request: Request) {
     // Validate
     if (!bullet || typeof bullet !== 'string' || !bullet.trim()) {
       return NextResponse.json(
-        { error: 'Bullet text is required and must be a non-empty string' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Bullet text is required and must be a non-empty string' } },
         { status: 400 },
       );
     }
@@ -322,14 +322,14 @@ export async function POST(request: Request) {
 
     if (trimmedBullet.length < 5) {
       return NextResponse.json(
-        { error: 'Bullet text is too short. Provide at least 5 characters.' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Bullet text is too short. Provide at least 5 characters.' } },
         { status: 400 },
       );
     }
 
     if (trimmedBullet.length > 1000) {
       return NextResponse.json(
-        { error: 'Bullet text is too long. Maximum 1000 characters.' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Bullet text is too long. Maximum 1000 characters.' } },
         { status: 400 },
       );
     }
@@ -343,6 +343,7 @@ export async function POST(request: Request) {
     const confidence = calculateConfidence(trimmedBullet);
 
     return NextResponse.json({
+      success: true,
       variants: [
         { style: 'concise' as const, text: concise.text, changes: concise.changes },
         { style: 'balanced' as const, text: balanced.text, changes: balanced.changes },
@@ -356,7 +357,8 @@ export async function POST(request: Request) {
       error instanceof SyntaxError
         ? 'Invalid JSON in request body'
         : 'Internal server error';
+    const code = error instanceof SyntaxError ? 'VALIDATION_ERROR' : 'SERVER_ERROR';
     const status = error instanceof SyntaxError ? 400 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ success: false, error: { code, message } }, { status });
   }
 }

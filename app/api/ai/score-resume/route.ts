@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     // Validate the resume object exists
     if (!resume || typeof resume !== 'object') {
       return NextResponse.json(
-        { error: 'resume is required and must be an object' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume is required and must be an object' } },
         { status: 400 },
       );
     }
@@ -22,49 +22,49 @@ export async function POST(request: Request) {
     // Validate required top-level fields
     if (!resume.personal || typeof resume.personal !== 'object') {
       return NextResponse.json(
-        { error: 'resume.personal is required' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.personal is required' } },
         { status: 400 },
       );
     }
 
     if (!Array.isArray(resume.education)) {
       return NextResponse.json(
-        { error: 'resume.education must be an array' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.education must be an array' } },
         { status: 400 },
       );
     }
 
     if (!Array.isArray(resume.experience)) {
       return NextResponse.json(
-        { error: 'resume.experience must be an array' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.experience must be an array' } },
         { status: 400 },
       );
     }
 
     if (!Array.isArray(resume.projects)) {
       return NextResponse.json(
-        { error: 'resume.projects must be an array' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.projects must be an array' } },
         { status: 400 },
       );
     }
 
     if (!Array.isArray(resume.skills)) {
       return NextResponse.json(
-        { error: 'resume.skills must be an array' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.skills must be an array' } },
         { status: 400 },
       );
     }
 
     if (!Array.isArray(resume.sections)) {
       return NextResponse.json(
-        { error: 'resume.sections must be an array' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.sections must be an array' } },
         { status: 400 },
       );
     }
 
     if (typeof resume.summary !== 'string') {
       return NextResponse.json(
-        { error: 'resume.summary must be a string' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'resume.summary must be a string' } },
         { status: 400 },
       );
     }
@@ -90,13 +90,14 @@ export async function POST(request: Request) {
 
     const result = scoreResume(safeResume);
 
-    return NextResponse.json(result);
+    return NextResponse.json({ success: true, data: result });
   } catch (error) {
     const message =
       error instanceof SyntaxError
         ? 'Invalid JSON in request body'
         : 'Internal server error';
+    const code = error instanceof SyntaxError ? 'VALIDATION_ERROR' : 'SERVER_ERROR';
     const status = error instanceof SyntaxError ? 400 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ success: false, error: { code, message } }, { status });
   }
 }

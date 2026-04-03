@@ -21,11 +21,15 @@ const RATE_LIMITS: Record<string, { windowMs: number; max: number }> = {
 };
 
 function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
+  // Use the last IP in x-forwarded-for (closest proxy) to prevent spoofing.
+  // In production behind a known proxy, trust only the rightmost entry.
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const ips = forwarded.split(",").map((ip) => ip.trim()).filter(Boolean);
+    // Last entry is the one added by the trusted reverse proxy
+    return ips[ips.length - 1] || "unknown";
+  }
+  return req.headers.get("x-real-ip") || "unknown";
 }
 
 function isRateLimited(key: string, windowMs: number, max: number): boolean {
@@ -99,11 +103,51 @@ async function verifyAdminToken(req: NextRequest): Promise<boolean> {
 }
 
 // ---------------------------------------------------------------------------
+// CSRF origin validation for public POST endpoints
+// ---------------------------------------------------------------------------
+
+const CSRF_PROTECTED_PATHS = [
+  "/api/enquiry",
+  "/api/free-counselling",
+  "/api/newsletter",
+  "/api/contact",
+];
+
+function isOriginAllowed(req: NextRequest): boolean {
+  const origin = req.headers.get("origin");
+  const host = req.headers.get("host");
+  if (!origin) return true; // Non-browser requests (e.g. curl) won't send origin
+  try {
+    const originHost = new URL(origin).host;
+    return originHost === host;
+  } catch {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Middleware
 // ---------------------------------------------------------------------------
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // 0. CSRF origin check on public form POST endpoints
+  if (
+    req.method === "POST" &&
+    CSRF_PROTECTED_PATHS.includes(pathname) &&
+    !isOriginAllowed(req)
+  ) {
+    return applySecurityHeaders(
+      NextResponse.json(
+        {
+          success: false,
+          error: { code: "FORBIDDEN", message: "Invalid request origin" },
+        },
+        { status: 403 }
+      )
+    );
+  }
 
   // 1. Rate limiting on specific endpoints (POST only for form endpoints)
   for (const [path, config] of Object.entries(RATE_LIMITS)) {

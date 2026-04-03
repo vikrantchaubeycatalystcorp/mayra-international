@@ -352,14 +352,14 @@ export async function POST(request: Request) {
     // Validate
     if (!jdText || typeof jdText !== 'string' || !jdText.trim()) {
       return NextResponse.json(
-        { error: 'jdText is required and must be a non-empty string' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'jdText is required and must be a non-empty string' } },
         { status: 400 },
       );
     }
 
     if (jdText.length > 20000) {
       return NextResponse.json(
-        { error: 'jdText is too long. Maximum 20,000 characters.' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'jdText is too long. Maximum 20,000 characters.' } },
         { status: 400 },
       );
     }
@@ -391,6 +391,7 @@ export async function POST(request: Request) {
     const yearsRequired = extractYears(sections.full);
 
     return NextResponse.json({
+      success: true,
       requiredSkills: finalRequired,
       preferredSkills: finalPreferred,
       experienceKeywords,
@@ -403,7 +404,8 @@ export async function POST(request: Request) {
       error instanceof SyntaxError
         ? 'Invalid JSON in request body'
         : 'Internal server error';
+    const code = error instanceof SyntaxError ? 'VALIDATION_ERROR' : 'SERVER_ERROR';
     const status = error instanceof SyntaxError ? 400 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ success: false, error: { code, message } }, { status });
   }
 }

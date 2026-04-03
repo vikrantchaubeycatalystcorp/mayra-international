@@ -891,8 +891,8 @@ your-project/
 
 ```bash
 # Clone and install
-git clone https://github.com/your-org/edu-portal
-cd edu-portal
+git clone https://github.com/your-org/mayra-international
+cd mayra-international
 pnpm install
 
 # Setup environment

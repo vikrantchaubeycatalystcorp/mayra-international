@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     // Validate file exists
     if (!file || !(file instanceof File) || file.size === 0) {
       return NextResponse.json(
-        { error: 'A file is required. Please upload a PDF or DOCX resume.' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'A file is required. Please upload a PDF or DOCX resume.' } },
         { status: 400 },
       );
     }
@@ -82,10 +82,7 @@ export async function POST(req: NextRequest) {
     // Validate file type
     if (!isAllowedFile(file)) {
       return NextResponse.json(
-        {
-          error:
-            'Unsupported file type. Please upload a PDF (.pdf) or Word document (.docx).',
-        },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Unsupported file type. Please upload a PDF (.pdf) or Word document (.docx).' } },
         { status: 400 },
       );
     }
@@ -93,9 +90,7 @@ export async function POST(req: NextRequest) {
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        {
-          error: `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 5 MB.`,
-        },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 5 MB.` } },
         { status: 400 },
       );
     }
@@ -103,7 +98,7 @@ export async function POST(req: NextRequest) {
     const fileType = getFileType(file);
     if (!fileType) {
       return NextResponse.json(
-        { error: 'Could not determine file type. Please upload a PDF or DOCX file.' },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Could not determine file type. Please upload a PDF or DOCX file.' } },
         { status: 400 },
       );
     }
@@ -123,20 +118,14 @@ export async function POST(req: NextRequest) {
       console.error('Text extraction failed:', errMsg);
       console.error('Stack:', errStack);
       return NextResponse.json(
-        {
-          error:
-            'Failed to extract text from the uploaded file. The file may be corrupted, password-protected, or contain only scanned images.',
-        },
+        { success: false, error: { code: 'EXTRACTION_ERROR', message: 'Failed to extract text from the uploaded file. The file may be corrupted, password-protected, or contain only scanned images.' } },
         { status: 500 },
       );
     }
 
     if (!rawText || !rawText.trim()) {
       return NextResponse.json(
-        {
-          error:
-            'No readable text found in the file. If this is a scanned document, please use a text-based PDF or DOCX instead.',
-        },
+        { success: false, error: { code: 'VALIDATION_ERROR', message: 'No readable text found in the file. If this is a scanned document, please use a text-based PDF or DOCX instead.' } },
         { status: 400 },
       );
     }
@@ -144,14 +133,11 @@ export async function POST(req: NextRequest) {
     // Parse the extracted text into structured resume data
     const parsed = parseResumeText(rawText);
 
-    return NextResponse.json({ data: parsed });
+    return NextResponse.json({ success: true, data: parsed });
   } catch (error) {
     console.error('Resume parse error:', error);
     return NextResponse.json(
-      {
-        error:
-          'An unexpected error occurred while parsing the resume. Please try again.',
-      },
+      { success: false, error: { code: 'SERVER_ERROR', message: 'An unexpected error occurred while parsing the resume. Please try again.' } },
       { status: 500 },
     );
   }

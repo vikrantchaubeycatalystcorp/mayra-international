@@ -45,7 +45,7 @@ export const useAppStore = create<AppStore>()(
       isInCompare: (id: string) => get().compareList.includes(id),
     }),
     {
-      name: "edu-portal-store",
+      name: "mayra-international-store",
     }
   )
 );

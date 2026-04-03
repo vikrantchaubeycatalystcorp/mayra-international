@@ -14,6 +14,7 @@ out/
 dist/
 build/
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # logs
 npm-debug.log*
@@ -23,3 +24,13 @@ pnpm-debug.log*
 
 # local IDE/agent folders
 .claude/
+.claude-flow/
+.swarm/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

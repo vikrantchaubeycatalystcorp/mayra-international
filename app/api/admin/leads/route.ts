@@ -21,10 +21,13 @@ export async function GET(req: NextRequest) {
         { phone: { contains: search, mode: "insensitive" } },
       ];
     }
-    if (source) {
+    const validSources = ["INQUIRY", "FREE_COUNSELLING"] as const;
+    const validStatuses = ["NEW", "CONTACTED", "CLOSED"] as const;
+
+    if (source && validSources.includes(source as typeof validSources[number])) {
       where.source = source as "INQUIRY" | "FREE_COUNSELLING";
     }
-    if (status) {
+    if (status && validStatuses.includes(status as typeof validStatuses[number])) {
       where.status = status as "NEW" | "CONTACTED" | "CLOSED";
     }
 
