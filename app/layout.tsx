@@ -115,6 +115,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="BvoI1CdDNvTp3m2ti5xMYQNDhNkz4HkQ46zDqBKiJoM" />
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
       </head>
