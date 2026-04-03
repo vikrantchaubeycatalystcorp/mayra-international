@@ -3,6 +3,15 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin/middleware";
 import { Prisma } from "@prisma/client";
 
+function sanitizeCsvCell(value: string): string {
+  let cell = String(value ?? "").replace(/"/g, '""');
+  // Prevent CSV formula injection
+  if (/^[=+\-@\t\r]/.test(cell)) {
+    cell = "'" + cell;
+  }
+  return `"${cell}"`;
+}
+
 export async function GET(req: NextRequest) {
   const auth = await requireAdmin(req, "leads", "export");
   if (auth instanceof NextResponse) return auth;
@@ -11,12 +20,20 @@ export async function GET(req: NextRequest) {
   const source = url.searchParams.get("source") || "";
   const status = url.searchParams.get("status") || "";
 
+  const validSources = ["INQUIRY", "FREE_COUNSELLING"] as const;
+  const validStatuses = ["NEW", "CONTACTED", "CLOSED"] as const;
+
   const where: Prisma.LeadWhereInput = {};
-  if (source) where.source = source as "INQUIRY" | "FREE_COUNSELLING";
-  if (status) where.status = status as "NEW" | "CONTACTED" | "CLOSED";
+  if (source && validSources.includes(source as typeof validSources[number])) {
+    where.source = source as "INQUIRY" | "FREE_COUNSELLING";
+  }
+  if (status && validStatuses.includes(status as typeof validStatuses[number])) {
+    where.status = status as "NEW" | "CONTACTED" | "CLOSED";
+  }
 
   const leads = await prisma.lead.findMany({
     where,
+    take: 50000,
     orderBy: { createdAt: "desc" },
   });
 
@@ -36,7 +53,7 @@ export async function GET(req: NextRequest) {
     lead.state || "",
     lead.currentClass || "",
     lead.courseInterested || "",
-    String(lead.message || "").replace(/"/g, '""'),
+    lead.message || "",
     lead.status,
     lead.adminEmailStatus,
     lead.studentEmailStatus,
@@ -45,7 +62,7 @@ export async function GET(req: NextRequest) {
 
   const csv = [
     headers.join(","),
-    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ...rows.map((row) => row.map((cell) => sanitizeCsvCell(String(cell))).join(",")),
   ].join("\n");
 
   return new NextResponse(csv, {

@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
 
   const colleges = await prisma.college.findMany({
     where,
+    take: 5000,
     select: {
       id: true,
       name: true,

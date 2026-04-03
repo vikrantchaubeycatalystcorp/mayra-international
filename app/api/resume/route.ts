@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function POST() {
-  return NextResponse.json({ message: "resume endpoint" });
+  return NextResponse.json(
+    { success: false, error: { code: "NOT_IMPLEMENTED", message: "This feature is coming soon" } },
+    { status: 501 }
+  );
 }

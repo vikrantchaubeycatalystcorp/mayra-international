@@ -3,6 +3,12 @@ import { prisma } from "@/lib/db";
 import { requireAdmin, success, badRequest, getSearchParams } from "@/lib/admin/middleware";
 import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
+import { z } from "zod";
+
+const mediaUrlSchema = z.string().url().refine(
+  (url) => /^https?:\/\//i.test(url),
+  { message: "URL must use http or https protocol" }
+);
 
 export async function GET(req: NextRequest) {
   const auth = await requireAdmin(req, "settings", "view");
@@ -33,6 +39,11 @@ export async function POST(req: NextRequest) {
 
     if (!body.url) {
       return badRequest("url is required");
+    }
+
+    const urlResult = mediaUrlSchema.safeParse(body.url);
+    if (!urlResult.success) {
+      return badRequest("Invalid URL: must be a valid http or https URL");
     }
 
     const asset = await prisma.mediaAsset.create({

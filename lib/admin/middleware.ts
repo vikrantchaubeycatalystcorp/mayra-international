@@ -64,11 +64,23 @@ export async function getAdminFromRequest(
 export async function requireAdmin(
   req: NextRequest,
   resource?: Resource,
-  action?: Permission
+  action?: Permission,
+  checkDb = false
 ): Promise<{ admin: AdminJWTPayload } | NextResponse> {
   const admin = await getAdminFromRequest(req);
   if (!admin) return unauthorized();
   if (!admin.isActive) return forbidden("Account deactivated");
+
+  // For sensitive operations, verify admin is still active in DB
+  if (checkDb) {
+    const { prisma } = await import("@/lib/db");
+    const dbAdmin = await prisma.admin.findUnique({
+      where: { id: admin.id },
+      select: { isActive: true, role: true },
+    });
+    if (!dbAdmin || !dbAdmin.isActive) return forbidden("Account deactivated");
+  }
+
   if (resource && action && !hasPermission(admin.role, resource, action)) {
     return forbidden();
   }

@@ -50,57 +50,55 @@ export async function GET(req: NextRequest) {
       prisma.lead.count({ where: { email: null } }),
     ]);
 
-    // Daily leads for last 14 days (for trend chart)
-    const dailyTrend: { date: string; count: number }[] = [];
-    for (let i = 13; i >= 0; i--) {
-      const dayStart = new Date(today);
-      dayStart.setDate(today.getDate() - i);
-      const dayEnd = new Date(dayStart);
-      dayEnd.setDate(dayStart.getDate() + 1);
-      const count = await prisma.lead.count({
-        where: { createdAt: { gte: dayStart, lt: dayEnd } },
-      });
-      dailyTrend.push({
-        date: dayStart.toISOString().split("T")[0],
-        count,
-      });
-    }
-
-    // Top courses
-    const allLeads = await prisma.lead.findMany({
-      select: { courseInterested: true, city: true, state: true },
+    // Daily leads for last 14 days (for trend chart) — single query instead of 14
+    const fourteenDaysAgo = new Date(today);
+    fourteenDaysAgo.setDate(today.getDate() - 13);
+    const trendLeads = await prisma.lead.findMany({
+      where: { createdAt: { gte: fourteenDaysAgo } },
+      select: { createdAt: true },
     });
-
-    const courseMap = new Map<string, number>();
-    const cityMap = new Map<string, number>();
-    const stateMap = new Map<string, number>();
-
-    for (const l of allLeads) {
-      if (l.courseInterested) {
-        courseMap.set(l.courseInterested, (courseMap.get(l.courseInterested) || 0) + 1);
-      }
-      if (l.city) {
-        cityMap.set(l.city, (cityMap.get(l.city) || 0) + 1);
-      }
-      if (l.state) {
-        stateMap.set(l.state, (stateMap.get(l.state) || 0) + 1);
+    const trendMap = new Map<string, number>();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      trendMap.set(d.toISOString().split("T")[0], 0);
+    }
+    for (const l of trendLeads) {
+      const key = new Date(l.createdAt).toISOString().split("T")[0];
+      if (trendMap.has(key)) {
+        trendMap.set(key, trendMap.get(key)! + 1);
       }
     }
+    const dailyTrend = Array.from(trendMap.entries()).map(([date, count]) => ({ date, count }));
 
-    const topCourses = [...courseMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([name, count]) => ({ name, count }));
+    // Top courses, cities, states — use groupBy instead of fetching all leads
+    const [topCoursesRaw, topCitiesRaw, topStatesRaw] = await Promise.all([
+      prisma.lead.groupBy({
+        by: ['courseInterested'],
+        _count: { id: true },
+        where: { courseInterested: { not: null } },
+        orderBy: { _count: { id: 'desc' } },
+        take: 6,
+      }),
+      prisma.lead.groupBy({
+        by: ['city'],
+        _count: { id: true },
+        where: { city: { not: null } },
+        orderBy: { _count: { id: 'desc' } },
+        take: 6,
+      }),
+      prisma.lead.groupBy({
+        by: ['state'],
+        _count: { id: true },
+        where: { state: { not: null } },
+        orderBy: { _count: { id: 'desc' } },
+        take: 6,
+      }),
+    ]);
 
-    const topCities = [...cityMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([name, count]) => ({ name, count }));
-
-    const topStates = [...stateMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([name, count]) => ({ name, count }));
+    const topCourses = topCoursesRaw.map((r) => ({ name: r.courseInterested!, count: r._count.id }));
+    const topCities = topCitiesRaw.map((r) => ({ name: r.city!, count: r._count.id }));
+    const topStates = topStatesRaw.map((r) => ({ name: r.state!, count: r._count.id }));
 
     // Recent 5 leads
     const recentLeads = await prisma.lead.findMany({

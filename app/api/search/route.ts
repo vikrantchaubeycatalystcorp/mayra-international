@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
           { streams: { has: query } },
           { type: { contains: query, mode: "insensitive" as const } },
           { courses: { has: query } },
-          { description: { contains: query, mode: "insensitive" as const } },
           { accreditation: { has: query } },
         ],
       }
@@ -38,7 +37,6 @@ export async function GET(req: NextRequest) {
           { level: { contains: query, mode: "insensitive" as const } },
           { mode: { contains: query, mode: "insensitive" as const } },
           { eligibility: { contains: query, mode: "insensitive" as const } },
-          { description: { contains: query, mode: "insensitive" as const } },
         ],
       }
     : { isFeatured: true, isActive: true };
@@ -50,7 +48,6 @@ export async function GET(req: NextRequest) {
           { name: { contains: query, mode: "insensitive" as const } },
           { stream: { contains: query, mode: "insensitive" as const } },
           { level: { contains: query, mode: "insensitive" as const } },
-          { description: { contains: query, mode: "insensitive" as const } },
         ],
       }
     : { isFeatured: true, isActive: true };
@@ -62,7 +59,6 @@ export async function GET(req: NextRequest) {
           { title: { contains: query, mode: "insensitive" as const } },
           { category: { contains: query, mode: "insensitive" as const } },
           { summary: { contains: query, mode: "insensitive" as const } },
-          { content: { contains: query, mode: "insensitive" as const } },
           { tags: { has: query } },
           { author: { contains: query, mode: "insensitive" as const } },
         ],

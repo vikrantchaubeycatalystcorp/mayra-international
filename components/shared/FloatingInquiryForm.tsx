@@ -47,6 +47,7 @@ export function FloatingInquiryForm() {
   const [minimized, setMinimized] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -68,13 +69,20 @@ export function FloatingInquiryForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
     try {
-      await fetch("/api/free-counselling", {
+      const response = await fetch("/api/free-counselling", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (!response.ok) {
+        setErrorMsg("Failed to submit inquiry. Please try again.");
+        return;
+      }
       setSubmitted(true);
+    } catch {
+      setErrorMsg("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -264,6 +272,10 @@ export function FloatingInquiryForm() {
               >
                 {loading ? "Submitting..." : "Get Free Counselling"}
               </Button>
+
+              {errorMsg && (
+                <p className="text-[10px] text-red-600 text-center font-medium">{errorMsg}</p>
+              )}
 
               <p className="text-[10px] text-gray-500 text-center">
                 By submitting, you agree to our privacy policy. We won&apos;t spam you.

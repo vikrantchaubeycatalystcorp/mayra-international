@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireAdmin, success, notFound } from "@/lib/admin/middleware";
+import { requireAdmin, success, notFound, badRequest } from "@/lib/admin/middleware";
 import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
+
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,6 +29,10 @@ export async function PUT(req: NextRequest, { params }: Props) {
 
   try {
     const body = await req.json();
+
+    if (body.pageSlug !== undefined && !SLUG_PATTERN.test(body.pageSlug)) {
+      return badRequest("Invalid pageSlug: must be lowercase alphanumeric with hyphens (e.g. 'about-us')");
+    }
 
     const seo = await prisma.pageSeo.update({
       where: { id },

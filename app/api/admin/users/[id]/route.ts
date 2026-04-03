@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireAdmin, success, notFound } from "@/lib/admin/middleware";
+import { requireAdmin, success, notFound, badRequest } from "@/lib/admin/middleware";
 import { logActivity } from "@/lib/admin/activity-logger";
+import { z } from "zod";
+
+const userUpdateSchema = z.object({
+  isActive: z.boolean().optional(),
+  isVerified: z.boolean().optional(),
+}).strict();
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin(req, "users", "view");
@@ -23,11 +29,19 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!existing) return notFound("User not found");
 
   const body = await req.json();
+  const parsed = userUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return badRequest("Invalid input", parsed.error.errors.map((e) => ({
+      field: e.path.join("."),
+      message: e.message,
+    })));
+  }
+  const validated = parsed.data;
   const user = await prisma.user.update({
     where: { id },
     data: {
-      isActive: body.isActive ?? existing.isActive,
-      isVerified: body.isVerified ?? existing.isVerified,
+      isActive: validated.isActive ?? existing.isActive,
+      isVerified: validated.isVerified ?? existing.isVerified,
     },
     select: { id: true, name: true, email: true, isActive: true, isVerified: true },
   });

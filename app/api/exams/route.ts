@@ -26,5 +26,7 @@ export async function GET(req: NextRequest) {
     prisma.exam.count({ where }),
   ]);
 
-  return NextResponse.json({ data, total, page, limit, pages: Math.ceil(total / limit) });
+  const response = NextResponse.json({ data, total, page, limit, pages: Math.ceil(total / limit) });
+  response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+  return response;
 }

@@ -118,7 +118,12 @@ export async function POST(req: NextRequest) {
       action: "LOGIN",
       entity: "Admin",
       details: "Admin logged in",
-      ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+      ipAddress: (() => {
+        const forwarded = req.headers.get("x-forwarded-for");
+        return forwarded
+          ? forwarded.split(",").map(s => s.trim()).filter(Boolean).pop() || "unknown"
+          : req.headers.get("x-real-ip") || "unknown";
+      })(),
     });
 
     return NextResponse.json({

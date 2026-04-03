@@ -20,8 +20,20 @@ export async function POST(request: NextRequest) {
 
     let created = 0;
     let skipped = 0;
+    const errors: { index: number; error: string }[] = [];
 
-    for (const c of courses) {
+    for (let i = 0; i < courses.length; i++) {
+      const c = courses[i];
+      if (!c.name || typeof c.name !== "string" || !c.name.trim()) {
+        errors.push({ index: i, error: "name is required and must be a non-empty string" });
+        skipped++;
+        continue;
+      }
+      if (!c.slug || typeof c.slug !== "string" || !c.slug.trim()) {
+        errors.push({ index: i, error: "slug is required and must be a non-empty string" });
+        skipped++;
+        continue;
+      }
       try {
         await prisma.course.upsert({
           where: { slug: c.slug },
@@ -57,7 +69,7 @@ export async function POST(request: NextRequest) {
     });
 
     revalidateEntity("Course");
-    return NextResponse.json({ success: true, data: { created, skipped, total: courses.length } });
+    return NextResponse.json({ success: true, data: { created, skipped, total: courses.length, errors: errors.length > 0 ? errors : undefined } });
   } catch (error) {
     console.error("Bulk import error:", error);
     return NextResponse.json({ success: false, error: "Bulk import failed" }, { status: 500 });
