@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2, X } from "lucide-react";
+import { ArrowLeft, Save, Loader2, X, ImageIcon } from "lucide-react";
 import { createItem } from "@/hooks/admin/useAdminCRUD";
 import { NEWS_CATEGORIES as FALLBACK_NEWS_CATEGORIES } from "@/types/admin";
 import { useMasterData } from "@/hooks/useMasterData";
@@ -16,7 +16,7 @@ export default function NewArticlePage() {
   const [error, setError] = useState("");
   const [form, setForm] = useState({
     title: "", category: "News" as string, summary: "", content: "", author: "Editorial Team",
-    publishedAt: new Date().toISOString().split("T")[0], imageColor: "#3B82F6",
+    publishedAt: new Date().toISOString().split("T")[0], imageUrl: "", imageColor: "#3B82F6",
     tags: [] as string[], isLive: false, isActive: true,
   });
   const [tagInput, setTagInput] = useState("");
@@ -65,6 +65,25 @@ export default function NewArticlePage() {
           <div>
             <label className={labelClass}>Content *</label>
             <textarea value={form.content} onChange={(e) => update("content", e.target.value)} required rows={12} className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none font-mono" placeholder="Write your article content here (Markdown supported)..." />
+          </div>
+          <div>
+            <label className={labelClass}>Image URL</label>
+            <div className="flex gap-3">
+              <input type="url" value={form.imageUrl} onChange={(e) => update("imageUrl", e.target.value)} className={inputClass} placeholder="https://example.com/image.jpg" />
+            </div>
+            {form.imageUrl && (
+              <div className="mt-2 relative rounded-xl border border-gray-200 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={form.imageUrl} alt="Preview" className="w-full h-40 object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <button type="button" onClick={() => update("imageUrl", "")} className="absolute top-2 right-2 p-1 rounded-lg bg-white/90 shadow-sm hover:bg-white text-gray-500 hover:text-red-600"><X className="w-4 h-4" /></button>
+              </div>
+            )}
+            {!form.imageUrl && (
+              <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>Add image URL or leave empty to use gradient color</span>
+              </div>
+            )}
           </div>
           <div>
             <label className={labelClass}>Tags</label>

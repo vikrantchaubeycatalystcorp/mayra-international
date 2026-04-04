@@ -81,6 +81,7 @@ export interface NewsArticle {
   summary: string;
   content: string;
   publishedAt: string;
+  imageUrl?: string;
   imageColor: string;
   author: string;
   isLive?: boolean;

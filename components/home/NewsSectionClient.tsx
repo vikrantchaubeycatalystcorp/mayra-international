@@ -15,6 +15,7 @@ type ArticleData = {
   summary: string;
   content: string;
   publishedAt: string;
+  imageUrl?: string | null;
   imageColor: string;
   author: string;
   isLive: boolean;
@@ -26,7 +27,11 @@ function NewsCard({ article, variant = "default" }: { article: ArticleData; vari
   if (variant === "featured") {
     return (
       <article className="group card-premium overflow-hidden h-full flex flex-col">
-        <div className={`h-52 bg-gradient-to-br ${article.imageColor} relative overflow-hidden flex-shrink-0`}>
+        <div className={`h-52 ${article.imageUrl ? "" : `bg-gradient-to-br ${article.imageColor}`} relative overflow-hidden flex-shrink-0`}>
+          {article.imageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
           <div className="absolute top-4 left-4 flex gap-2">
             <Badge variant="secondary" className="bg-white/90 text-gray-800 backdrop-blur-sm">{article.category}</Badge>
@@ -55,7 +60,14 @@ function NewsCard({ article, variant = "default" }: { article: ArticleData; vari
 
   return (
     <article className="group flex gap-4 p-4 rounded-xl hover:bg-indigo-50/30 transition-all duration-300 border border-transparent hover:border-indigo-100/30">
-      <div className={`h-16 w-16 rounded-xl bg-gradient-to-br ${article.imageColor} flex-shrink-0 shadow-sm`} />
+      {article.imageUrl ? (
+        <div className="h-16 w-16 rounded-xl flex-shrink-0 shadow-sm overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <div className={`h-16 w-16 rounded-xl bg-gradient-to-br ${article.imageColor} flex-shrink-0 shadow-sm`} />
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1.5">
           <Badge variant="secondary" className="text-xs py-0">{article.category}</Badge>

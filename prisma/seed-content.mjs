@@ -126,6 +126,7 @@ async function main() {
         summary: n.summary || "",
         content: n.content || "",
         publishedAt: n.publishedAt,
+        imageUrl: n.imageUrl || null,
         imageColor: n.imageColor || "#3B82F6",
         author: n.author || "Editorial Team",
         isLive: n.isLive !== undefined ? n.isLive : true,

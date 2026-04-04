@@ -39,6 +39,7 @@ export interface NewsItem {
   summary: string;
   content: string;
   publishedAt: string;
+  imageUrl?: string | null;
   imageColor: string;
   author: string;
   isLive: boolean;
@@ -46,19 +47,26 @@ export interface NewsItem {
   views: number | null;
 }
 
-function CategoryImage({ category, imageColor, isLive, featured = false }: {
+function CategoryImage({ category, imageColor, imageUrl, isLive, featured = false, title }: {
   category: string;
   imageColor: string;
+  imageUrl?: string | null;
   isLive?: boolean;
   featured?: boolean;
+  title?: string;
 }) {
   const Icon = categoryIconMap[category] ?? Newspaper;
   return (
     <div className={cn(
-      `bg-gradient-to-br ${imageColor} flex items-center justify-center relative`,
+      `${imageUrl ? "" : `bg-gradient-to-br ${imageColor}`} flex items-center justify-center relative overflow-hidden`,
       featured ? "lg:w-72 h-48 lg:h-auto flex-shrink-0" : "h-40"
     )}>
-      <Icon className="h-14 w-14 text-white/70" strokeWidth={1.5} />
+      {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imageUrl} alt={title || category} className="w-full h-full object-cover" />
+      ) : (
+        <Icon className="h-14 w-14 text-white/70" strokeWidth={1.5} />
+      )}
       {isLive && (
         <div className="absolute top-3 left-3">
           <LiveBadge />
@@ -77,8 +85,10 @@ function NewsCard({ article, featured = false }: { article: NewsItem; featured?:
       <CategoryImage
         category={article.category}
         imageColor={article.imageColor}
+        imageUrl={article.imageUrl}
         isLive={article.isLive}
         featured={featured}
+        title={article.title}
       />
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-center gap-2 mb-2">

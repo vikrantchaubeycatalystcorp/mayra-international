@@ -178,6 +178,7 @@ export const newsFormSchema = z.object({
   content: z.string().min(10).max(50000),
   author: z.string().max(100).default("Editorial Team"),
   publishedAt: z.string(),
+  imageUrl: z.string().url().optional().or(z.literal("")),
   imageColor: z.string().default("#3B82F6"),
   tags: z.array(z.string()).max(10).optional().default([]),
   isLive: z.boolean().default(false),
