@@ -87,6 +87,7 @@ export function ContactForm() {
         body: JSON.stringify(form),
       });
       setSubmitted(true);
+      window.dispatchEvent(new Event("inquiry-submitted"));
     } finally {
       setLoading(false);
     }

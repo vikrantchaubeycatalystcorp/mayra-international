@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createLeadFromForm } from "@/lib/lead-service";
+import { prisma } from "@/lib/db";
+
+export async function GET() {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const count = await prisma.lead.count({
+      where: { createdAt: { gte: startOfMonth } },
+    });
+
+    return NextResponse.json({ count }, {
+      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120" },
+    });
+  } catch {
+    return NextResponse.json({ count: 0 });
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
