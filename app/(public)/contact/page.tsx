@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ContactForm } from "./ContactForm";
 import { LiveInquiryCount } from "./LiveInquiryCount";
 import {
@@ -80,6 +81,7 @@ const testimonials = [
   {
     name: "Priya Sharma",
     initials: "PS",
+    image: "/testimonials/priya.jpg",
     course: "B.Tech Computer Science",
     college: "VIT Vellore",
     city: "Lucknow",
@@ -93,6 +95,7 @@ const testimonials = [
   {
     name: "Rohit Deshmukh",
     initials: "RD",
+    image: "/testimonials/rohit.jpg",
     course: "MBA Finance",
     college: "Symbiosis Pune",
     city: "Nagpur",
@@ -106,6 +109,7 @@ const testimonials = [
   {
     name: "Ananya Krishnan",
     initials: "AK",
+    image: "/testimonials/ananya.jpg",
     course: "MBBS",
     college: "Kasturba Medical College, Manipal",
     city: "Kochi",
@@ -119,6 +123,7 @@ const testimonials = [
   {
     name: "Sahil Mehta",
     initials: "SM",
+    image: "/testimonials/sahil.jpg",
     course: "B.Des Communication Design",
     college: "MIT Institute of Design, Pune",
     city: "Ahmedabad",
@@ -132,6 +137,7 @@ const testimonials = [
   {
     name: "Fatima Sheikh",
     initials: "FS",
+    image: "/testimonials/fatima.jpg",
     course: "LLB (5-Year Integrated)",
     college: "Symbiosis Law School, Pune",
     city: "Mumbai",
@@ -145,6 +151,7 @@ const testimonials = [
   {
     name: "Arjun Reddy",
     initials: "AR",
+    image: "/testimonials/arjun.jpg",
     course: "M.Tech AI & ML",
     college: "IIIT Hyderabad",
     city: "Visakhapatnam",
@@ -372,10 +379,14 @@ export default function ContactPage() {
 
                 {/* Student Info */}
                 <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                  <div
-                    className={`h-11 w-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-lg`}
-                  >
-                    {t.initials}
+                  <div className="relative h-11 w-11 flex-shrink-0">
+                    <Image
+                      src={t.image}
+                      alt={t.name}
+                      width={44}
+                      height={44}
+                      className="rounded-full object-cover h-11 w-11 shadow-lg ring-2 ring-white"
+                    />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
