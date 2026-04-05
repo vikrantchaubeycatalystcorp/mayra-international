@@ -176,6 +176,39 @@ export const getFooterData = unstable_cache(
       company.foundedYear = 2015;
     }
 
+    // Guard against fake/placeholder phone numbers
+    if (!company.phone || /1800-?123-?4567/i.test(company.phone)) {
+      company.phone = "+91 7506799678";
+    }
+
+    // Filter out unverified trust badges (ISO 27001 not certified)
+    const filteredBadges = trustBadges.filter(
+      (b) => !/ISO\s*27001/i.test(b.label)
+    );
+
+    // Filter out dead app download links (no app published yet)
+    const filteredAppDownloads = appDownloads.filter(
+      (a) => a.url && a.url !== "#"
+    );
+
+    // Deduplicate footer section links by href within each section
+    for (const section of footerSections) {
+      const seen = new Set<string>();
+      section.links = section.links.filter((link) => {
+        if (seen.has(link.href)) return false;
+        seen.add(link.href);
+        return true;
+      });
+    }
+
+    // Deduplicate legal links by label
+    const seenLegal = new Set<string>();
+    const dedupedLegalLinks = legalLinks.filter((link) => {
+      if (seenLegal.has(link.label)) return false;
+      seenLegal.add(link.label);
+      return true;
+    });
+
     // Ensure Mock Tests exists in a footer quick-links style section
     const hasFooterMockTests = footerSections.some((section) =>
       section.links.some((link) => link.href === "/mock-tests")
@@ -222,7 +255,7 @@ export const getFooterData = unstable_cache(
       }
     }
 
-    return { company, footerSections, socialLinks, legalLinks, trustBadges, appDownloads };
+    return { company, footerSections, socialLinks, legalLinks: dedupedLegalLinks, trustBadges: filteredBadges, appDownloads: filteredAppDownloads };
   },
   ["footer-data"],
   { revalidate: 300 }

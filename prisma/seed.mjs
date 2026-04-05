@@ -247,19 +247,12 @@ async function main() {
   await prisma.trustBadge.createMany({
     data: [
       { label: "SSL Secured", icon: "ShieldCheck", bgColor: "bg-green-900/50", borderColor: "border-green-700", textColor: "text-green-400", sortOrder: 1 },
-      { label: "ISO 27001", bgColor: "bg-blue-900/50", borderColor: "border-blue-700", textColor: "text-blue-400", sortOrder: 2 },
     ],
     skipDuplicates: true,
   });
 
   // ── App Downloads ───────────────────────────────────────
-  console.log("  → App Download Links");
-  for (const app of [
-    { platform: "ios", icon: "Smartphone", storeLabel: "Get it on", storeName: "App Store", url: "#", sortOrder: 1 },
-    { platform: "android", icon: "PlayCircle", storeLabel: "Get it on", storeName: "Google Play", url: "#", sortOrder: 2 },
-  ]) {
-    await prisma.appDownloadLink.upsert({ where: { platform: app.platform }, update: {}, create: app });
-  }
+  // App Download Links removed — no mobile app available yet
 
   // ── Hero Banner ─────────────────────────────────────────
   console.log("  → Hero Banner");

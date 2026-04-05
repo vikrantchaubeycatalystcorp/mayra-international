@@ -56,6 +56,7 @@ export function ContactForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [renderTs] = useState(() => Date.now());
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -65,6 +66,7 @@ export function ContactForm() {
     currentClass: "",
     courseInterest: "",
     message: "",
+    _hp: "",
   });
 
   function handleChange(
@@ -81,10 +83,11 @@ export function ContactForm() {
     e.preventDefault();
     setLoading(true);
     try {
+      const { _hp, ...fields } = form;
       await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...fields, _hp, _ts: renderTs }),
       });
       setSubmitted(true);
       window.dispatchEvent(new Event("inquiry-submitted"));
@@ -121,6 +124,7 @@ export function ContactForm() {
               currentClass: "",
               courseInterest: "",
               message: "",
+              _hp: "",
             });
           }}
         >
@@ -304,6 +308,18 @@ export function ContactForm() {
           </>
         )}
       </Button>
+
+      {/* Honeypot — hidden from real users, attracts bots */}
+      <input
+        type="text"
+        name="_hp"
+        value={form._hp}
+        onChange={handleChange}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+      />
 
       <p className="text-xs text-gray-400 text-center">
         By submitting, you agree to our privacy policy. Your information is safe

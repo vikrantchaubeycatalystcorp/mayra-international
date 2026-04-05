@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone, MapPin, Twitter, Linkedin, Youtube, Instagram, Facebook, ShieldCheck, Smartphone, PlayCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Twitter, Linkedin, Youtube, Instagram, Facebook, ShieldCheck } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
@@ -173,26 +173,6 @@ export function Footer() {
               No spam. Unsubscribe anytime.
             </p>
 
-            {/* App Download */}
-            <div className="mt-6">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Download App</p>
-              <div className="flex gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 cursor-pointer hover:border-gray-500 transition-colors">
-                  <Smartphone className="h-4 w-4 text-gray-300" />
-                  <div>
-                    <p className="text-xs text-gray-500 leading-none">Get it on</p>
-                    <p className="text-xs font-semibold text-white leading-none">App Store</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 cursor-pointer hover:border-gray-500 transition-colors">
-                  <PlayCircle className="h-4 w-4 text-gray-300" />
-                  <div>
-                    <p className="text-xs text-gray-500 leading-none">Get it on</p>
-                    <p className="text-xs font-semibold text-white leading-none">Google Play</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -213,9 +193,6 @@ export function Footer() {
             <span className="flex items-center gap-1 px-2 py-1 bg-green-900/50 border border-green-700 rounded text-xs text-green-400 font-medium">
               <ShieldCheck className="h-3.5 w-3.5" />
               SSL Secured
-            </span>
-            <span className="px-2 py-1 bg-blue-900/50 border border-blue-700 rounded text-xs text-blue-400 font-medium">
-              ISO 27001
             </span>
           </div>
         </div>

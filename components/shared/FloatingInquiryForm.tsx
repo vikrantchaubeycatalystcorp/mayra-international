@@ -48,6 +48,7 @@ export function FloatingInquiryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [renderTs] = useState(() => Date.now());
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -56,6 +57,7 @@ export function FloatingInquiryForm() {
     currentClass: "",
     courseInterest: "",
     message: "",
+    _hp: "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -71,10 +73,11 @@ export function FloatingInquiryForm() {
     setLoading(true);
     setErrorMsg(null);
     try {
+      const { _hp, ...fields } = form;
       const response = await fetch("/api/free-counselling", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...fields, _hp, _ts: renderTs }),
       });
       if (!response.ok) {
         setErrorMsg("Failed to submit inquiry. Please try again.");
@@ -136,7 +139,7 @@ export function FloatingInquiryForm() {
                 className="text-xs text-primary-600 underline mt-1"
                 onClick={() => {
                   setSubmitted(false);
-                  setForm({ name: "", email: "", phone: "", city: "", currentClass: "", courseInterest: "", message: "" });
+                  setForm({ name: "", email: "", phone: "", city: "", currentClass: "", courseInterest: "", message: "", _hp: "" });
                 }}
               >
                 Submit another
@@ -276,6 +279,18 @@ export function FloatingInquiryForm() {
               {errorMsg && (
                 <p className="text-[10px] text-red-600 text-center font-medium">{errorMsg}</p>
               )}
+
+              {/* Honeypot — hidden from real users */}
+              <input
+                type="text"
+                name="_hp"
+                value={form._hp}
+                onChange={handleChange}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+              />
 
               <p className="text-[10px] text-gray-500 text-center">
                 By submitting, you agree to our privacy policy. We won&apos;t spam you.

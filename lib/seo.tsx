@@ -2,7 +2,7 @@ import type { College, Course, Exam, NewsArticle, StudyAbroadCountry } from "../
 
 const SITE_URL = "https://www.mayrainternational.com";
 const SITE_NAME = "Mayra International";
-const ORG_LOGO = `${SITE_URL}/logo.png`;
+const ORG_LOGO = `${SITE_URL}/icon`;
 
 // ── Organization Schema (root level) ───────────────────────────────────────
 export function organizationJsonLd() {

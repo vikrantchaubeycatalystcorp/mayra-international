@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createLeadFromForm } from "@/lib/lead-service";
+import { validateBotProtection } from "@/lib/bot-protection";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const botError = validateBotProtection(body);
+    if (botError) {
+      return NextResponse.json(
+        { success: false, error: { code: "BOT_DETECTED", message: botError } },
+        { status: 422 }
+      );
+    }
+
     const result = await createLeadFromForm(body, "FREE_COUNSELLING");
 
     if (!result.success) {

@@ -234,7 +234,7 @@ export function FooterClient({
               <Link
                 key={link.id}
                 href={link.href}
-                className="hover:text-gray-400 transition-colors"
+                className="hover:text-white transition-colors"
               >
                 {link.label}
               </Link>

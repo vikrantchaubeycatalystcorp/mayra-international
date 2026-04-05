@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createLeadFromForm } from "@/lib/lead-service";
 import { prisma } from "@/lib/db";
+import { validateBotProtection } from "@/lib/bot-protection";
 
 export async function GET() {
   try {
@@ -22,6 +23,15 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const botError = validateBotProtection(body);
+    if (botError) {
+      return NextResponse.json(
+        { success: false, error: { code: "BOT_DETECTED", message: botError } },
+        { status: 422 }
+      );
+    }
+
     const result = await createLeadFromForm(body, "INQUIRY");
 
     if (!result.success) {
