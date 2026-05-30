@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Search, Calendar, Monitor, Users, ArrowRight } from "lucide-react";
 import { Breadcrumb } from "../../../components/shared/Breadcrumb";
@@ -11,6 +11,8 @@ import { useMasterData } from "../../../hooks/useMasterData";
 
 const fallbackLevelFilters = ["All", "UG", "PG", "PhD", "Diploma"];
 const fallbackStreamFilters = ["All", "Engineering", "Medical", "Management", "Law", "Defence"];
+
+const PAGE_SIZE = 12;
 
 interface ExamItem {
   id: string;
@@ -148,6 +150,7 @@ export function ExamsClient({ exams }: ExamsClientProps) {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("All");
   const [stream, setStream] = useState("All");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     return exams.filter((exam) => {
@@ -161,6 +164,30 @@ export function ExamsClient({ exams }: ExamsClientProps) {
       return matchSearch && matchLevel && matchStream;
     });
   }, [search, level, stream, exams]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+  // Reset to first page whenever filters change the result set
+  useEffect(() => {
+    setPage(1);
+  }, [search, level, stream]);
+
+  // Keep page in range if the filtered count shrinks
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filtered, page]
+  );
+
+  const goToPage = (p: number) => {
+    setPage(p);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -229,12 +256,24 @@ export function ExamsClient({ exams }: ExamsClientProps) {
 
         {/* Results Count */}
         <p className="text-sm text-gray-500 mb-5">
-          Showing <span className="font-semibold text-gray-900">{filtered.length}</span> exams
+          {filtered.length > 0 ? (
+            <>
+              Showing{" "}
+              <span className="font-semibold text-gray-900">
+                {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)}
+              </span>{" "}
+              of <span className="font-semibold text-gray-900">{filtered.length}</span> exams
+            </>
+          ) : (
+            <>
+              Showing <span className="font-semibold text-gray-900">0</span> exams
+            </>
+          )}
         </p>
 
         {/* Exam Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {filtered.map((exam) => (
+          {paginated.map((exam) => (
             <ExamCard key={exam.id} exam={exam} />
           ))}
         </div>
@@ -242,6 +281,53 @@ export function ExamsClient({ exams }: ExamsClientProps) {
         {filtered.length === 0 && (
           <div className="text-center py-20">
             <p className="text-gray-400 text-lg">No exams found matching your search</p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-10 flex items-center justify-center gap-2">
+            <button
+              suppressHydrationWarning
+              onClick={() => goToPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              Previous
+            </button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+              const p =
+                totalPages <= 7
+                  ? i + 1
+                  : page <= 4
+                  ? i + 1
+                  : page >= totalPages - 3
+                  ? totalPages - 6 + i
+                  : page - 3 + i;
+              return (
+                <button
+                  suppressHydrationWarning
+                  key={p}
+                  onClick={() => goToPage(p)}
+                  className={cn(
+                    "h-9 w-9 rounded-lg text-sm font-medium transition-colors",
+                    page === p
+                      ? "bg-primary-600 text-white"
+                      : "border border-gray-200 hover:bg-gray-50 text-gray-700"
+                  )}
+                >
+                  {p}
+                </button>
+              );
+            })}
+            <button
+              suppressHydrationWarning
+              onClick={() => goToPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>
