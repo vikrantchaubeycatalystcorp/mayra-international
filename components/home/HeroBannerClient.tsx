@@ -210,7 +210,7 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
           {data.subheading && (
             <p
               className={cn(
-                "text-lg sm:text-xl text-indigo-200/70 mb-12 max-w-2xl mx-auto leading-relaxed font-light transition-all duration-700 delay-200",
+                "text-lg sm:text-xl text-white/95 [text-shadow:0_1px_8px_rgba(0,0,0,0.55)] mb-12 max-w-2xl mx-auto leading-relaxed font-light transition-all duration-700 delay-200",
                 loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               )}
             >
@@ -338,13 +338,13 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                 loaded ? "opacity-100" : "opacity-0"
               )}
             >
-              <span className="text-indigo-400/50 text-xs font-medium uppercase tracking-wider">Trending</span>
+              <span className="text-white/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] text-xs font-semibold uppercase tracking-wider">Trending</span>
               {data.popularSearches.map((item) => (
                 <button
                   suppressHydrationWarning
                   key={item.id}
                   onClick={() => router.push(item.href)}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-indigo-200/60 hover:text-white text-xs font-medium border border-white/[0.06] hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/25 text-white/95 [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] hover:text-white text-xs font-medium border border-white/20 hover:border-white/35 hover:bg-black/35 backdrop-blur-sm transition-all duration-300"
                 >
                   <TrendingUp className="h-3 w-3" />
                   {item.label}
