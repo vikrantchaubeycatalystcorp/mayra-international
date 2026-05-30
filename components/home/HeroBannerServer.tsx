@@ -32,8 +32,8 @@ export async function HeroBannerServer() {
         className="object-cover object-center"
         quality={75}
       />
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0520]/90 via-[#12103a]/85 to-[#1a1145]/90" />
+      {/* Light scrim — keeps text legible on the left while the photo stays clearly visible */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
       <HeroBannerClient banner={banner || null} />
     </section>
   );

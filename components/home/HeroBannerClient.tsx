@@ -254,10 +254,18 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                 inputFocused ? "shadow-[0_0_80px_rgba(99,102,241,0.25)]" : ""
               )}
             >
-              {/* Animated gradient border */}
-              <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-indigo-500/30 via-purple-500/20 to-indigo-500/30 animate-gradient-x opacity-60" />
+              {/* Animated gradient border — faint edge glow only, so it doesn't tint the whole panel */}
+              <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-indigo-500/20 animate-gradient-x opacity-25" />
 
-              <div className="relative glass rounded-[22px] p-5 sm:p-6">
+              {/* Lighter, low-blur glass so the students behind stay clearly visible */}
+              <div
+                className="relative rounded-[22px] p-5 sm:p-6 border border-white/15 shadow-2xl shadow-black/20"
+                style={{
+                  background: "rgba(15, 14, 35, 0.24)",
+                  backdropFilter: "blur(8px) saturate(150%)",
+                  WebkitBackdropFilter: "blur(8px) saturate(150%)",
+                }}
+              >
                 {/* Tab Switcher */}
                 <div className="flex gap-1 mb-5 bg-white/[0.06] rounded-2xl p-1">
                   {tabs.map((tab, idx) => (
