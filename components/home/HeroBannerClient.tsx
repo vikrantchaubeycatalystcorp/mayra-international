@@ -231,14 +231,14 @@ export function HeroBannerClient({ banner }: { banner: BannerData }) {
                 return (
                   <div key={stat.id} className="text-center group">
                     <div className="flex items-center justify-center gap-2 mb-1">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/[0.08]">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/15">
                         <Icon className={cn("h-3.5 w-3.5", stat.color)} />
                       </div>
-                      <span className="text-lg sm:text-2xl md:text-3xl font-black text-white tracking-tight">
+                      <span className="text-lg sm:text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
                         <AnimatedCounter value={stat.value} />
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-indigo-300/60 font-medium">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-white/85 font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">{stat.label}</p>
                   </div>
                 );
               })}
