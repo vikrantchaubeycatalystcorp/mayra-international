@@ -99,6 +99,7 @@ export function NavbarClient({ navItems }: Props) {
                   {item.label}
                 </Link>
               ))}
+              <Link href="/contact">Contact</Link>
             </div>
 
             <span className="nav-spacer" />
@@ -193,6 +194,10 @@ export function NavbarClient({ navItems }: Props) {
             </div>
           );
         })}
+
+        <Link href="/contact" onClick={() => setDrawerOpen(false)}>
+          Contact
+        </Link>
 
         <button
           onClick={() => {
