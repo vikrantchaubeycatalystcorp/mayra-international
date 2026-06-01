@@ -27,7 +27,7 @@ export function LiveInquiryCount() {
   const display = count + 2800;
 
   return (
-    <p className="text-xs text-indigo-200">
+    <p className="text-xs text-primary-200">
       <span className="text-white font-semibold">
         {display.toLocaleString("en-IN")} students
       </span>{" "}

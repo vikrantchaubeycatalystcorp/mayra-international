@@ -54,6 +54,7 @@ interface AdminDataTableProps<T extends { id: string }> {
   sortOrder?: "asc" | "desc";
   createHref?: string;
   createLabel?: string;
+  onCreate?: () => void;
   onEdit?: (item: T) => void;
   editHref?: (item: T) => string;
   onDelete?: (item: T) => void;
@@ -84,7 +85,9 @@ export function AdminDataTable<T extends { id: string }>({
   sortOrder,
   createHref,
   createLabel = "Add New",
+  onCreate,
   editHref,
+  onEdit,
   onDelete,
   viewHref,
   filters,
@@ -167,6 +170,15 @@ export function AdminDataTable<T extends { id: string }>({
               <Plus className="w-3.5 h-3.5" />
               {createLabel}
             </Link>
+          )}
+          {onCreate && (
+            <button
+              onClick={onCreate}
+              className="inline-flex items-center gap-2 h-9 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-xs font-semibold transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {createLabel}
+            </button>
           )}
         </div>
       </div>
@@ -404,6 +416,15 @@ export function AdminDataTable<T extends { id: string }>({
                             >
                               <Edit3 className="w-4 h-4" />
                             </Link>
+                          )}
+                          {onEdit && (
+                            <button
+                              onClick={() => onEdit(item)}
+                              className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-all"
+                              title="Edit"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
                           )}
                           {onDelete && (
                             <button

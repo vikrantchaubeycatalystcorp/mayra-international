@@ -49,21 +49,21 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
       }`}
     >
       {/* Panel header */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-900 px-5 py-4 flex items-start justify-between flex-shrink-0">
+      <div className="bg-gradient-to-r from-primary-700 to-primary-900 px-5 py-4 flex items-start justify-between flex-shrink-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Globe className="h-4 w-4 text-blue-200" />
-            <span className="text-blue-200 text-xs font-medium uppercase tracking-wide">Country</span>
+            <Globe className="h-4 w-4 text-primary-200" />
+            <span className="text-primary-200 text-xs font-medium uppercase tracking-wide">Country</span>
           </div>
           <h2 className="text-white font-bold text-lg leading-tight">{country?.countryName || "Select a country"}</h2>
           {country && (
             <div className="flex items-center gap-2 mt-1">
-              <Building2 className="h-3.5 w-3.5 text-blue-300" />
-              <span className="text-blue-200 text-sm">{country.collegeCount.toLocaleString()} colleges</span>
+              <Building2 className="h-3.5 w-3.5 text-primary-300" />
+              <span className="text-primary-200 text-sm">{country.collegeCount.toLocaleString()} colleges</span>
             </div>
           )}
         </div>
-        <button suppressHydrationWarning onClick={onClose} className="text-blue-200 hover:text-white transition-colors mt-1">
+        <button suppressHydrationWarning onClick={onClose} className="text-primary-200 hover:text-white transition-colors mt-1">
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -84,11 +84,11 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
                 key={c.id}
                 ref={c.id === selectedCollegeId ? selectedRef : undefined}
                 onClick={() => onSelectCollege(c)}
-                className={`w-full text-left px-5 py-3.5 transition-colors hover:bg-blue-50 flex items-start gap-3 ${
-                  c.id === selectedCollegeId ? "bg-blue-50 border-l-4 border-blue-500" : ""
+                className={`w-full text-left px-5 py-3.5 transition-colors hover:bg-primary-50 flex items-start gap-3 ${
+                  c.id === selectedCollegeId ? "bg-primary-50 border-l-4 border-primary-500" : ""
                 }`}
               >
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-white font-bold text-sm">{c.name.charAt(0)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -99,11 +99,11 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     {c.nirfRank && (
-                      <span className="text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5 font-medium">NIRF #{c.nirfRank}</span>
+                      <span className="text-xs bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 font-medium">NIRF #{c.nirfRank}</span>
                     )}
                     {c.rating && (
-                      <span className="flex items-center gap-0.5 text-xs text-amber-600">
-                        <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" />
+                      <span className="flex items-center gap-0.5 text-xs text-accent-600">
+                        <Star className="h-2.5 w-2.5 fill-accent-500 text-accent-500" />
                         {c.rating}
                       </span>
                     )}
@@ -121,7 +121,7 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
         <div className="border-t border-gray-100 px-5 py-3 flex-shrink-0">
           <Link
             href={`/colleges?country=${country.countryCode}`}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg transition-colors"
           >
             View All {country.countryName} Colleges
             <ChevronRight className="h-4 w-4" />

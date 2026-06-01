@@ -254,12 +254,12 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
                   "interpolate",
                   ["linear"],
                   ["coalesce", ["get", "collegeCount"], 0],
-                  0, "#e8f4fd",
-                  100, "#b3d9f5",
-                  500, "#5aabe8",
-                  2000, "#2563eb",
-                  5000, "#1e3a8a",
-                  10000, "#0f172a",
+                  0, "#E7F0EB",
+                  100, "#C9DFD5",
+                  500, "#58927A",
+                  2000, "#1C5A42",
+                  5000, "#164A37",
+                  10000, "#11392B",
                 ],
                 "fill-opacity": countryFillOpacity,
               }}
@@ -272,9 +272,9 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
                 "line-color": [
                   "case",
                   ["==", ["get", "ISO_A2"], hoveredCountry || ""],
-                  "#f59e0b",
+                  "#C8841B",
                   ["==", ["get", "ISO_A2"], selectedCountry?.countryCode || ""],
-                  "#3b82f6",
+                  "#256B50",
                   "#cbd5e1",
                 ],
                 "line-width": [
@@ -318,8 +318,8 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
                 "circle-color": [
                   "case",
                   ["==", ["get", "code"], selectedCountry?.countryCode || ""],
-                  "#2563eb",
-                  "#1e40af",
+                  "#1C5A42",
+                  "#164A37",
                 ],
                 "circle-stroke-color": "#fff",
                 "circle-stroke-width": 2,
@@ -366,7 +366,7 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
               filter={["has", "point_count"]}
               paint={{
                 "circle-radius": ["step", ["get", "point_count"], 20, 5, 28, 10, 36],
-                "circle-color": ["step", ["get", "point_count"], "#f97316", 5, "#ef4444", 10, "#dc2626"],
+                "circle-color": ["step", ["get", "point_count"], "#C8841B", 5, "#ef4444", 10, "#dc2626"],
                 "circle-stroke-width": 3,
                 "circle-stroke-color": "#fff",
                 "circle-opacity": markerOpacity,
@@ -390,7 +390,7 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
               filter={["!", ["has", "point_count"]]}
               paint={{
                 "circle-radius": 9,
-                "circle-color": "#f97316",
+                "circle-color": "#C8841B",
                 "circle-stroke-width": 2.5,
                 "circle-stroke-color": "#fff",
                 "circle-opacity": markerOpacity,
@@ -409,7 +409,7 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
                 "text-font": ["Noto Sans Regular"],
               }}
               paint={{
-                "text-color": "#1e293b",
+                "text-color": "#1B1814",
                 "text-halo-color": "#fff",
                 "text-halo-width": 1.5,
                 "text-opacity": zoom > ZOOM_REGIONAL ? markerOpacity : 0,
@@ -446,11 +446,11 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
           </div>
           <div className="space-y-1">
             {[
-              { color: "#e8f4fd", label: "0" },
-              { color: "#5aabe8", label: "100–500" },
-              { color: "#2563eb", label: "500–2K" },
-              { color: "#1e3a8a", label: "2K–10K" },
-              { color: "#0f172a", label: "10K+" },
+              { color: "#E7F0EB", label: "0" },
+              { color: "#58927A", label: "100–500" },
+              { color: "#1C5A42", label: "500–2K" },
+              { color: "#164A37", label: "2K–10K" },
+              { color: "#11392B", label: "10K+" },
             ].map(({ color, label }) => (
               <div key={label} className="flex items-center gap-2">
                 <div className="w-4 h-3 rounded-sm border border-gray-200" style={{ backgroundColor: color }} />
@@ -475,7 +475,7 @@ export function WorldCollegeMap({ countriesData, initialColleges }: Props) {
       {loadingCountryGeo && (
         <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center z-20 pointer-events-none">
           <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 flex items-center gap-4">
-            <Globe className="h-6 w-6 text-blue-600 animate-spin" style={{ animationDuration: "2s" }} />
+            <Globe className="h-6 w-6 text-primary-600 animate-spin" style={{ animationDuration: "2s" }} />
             <span className="text-gray-700 font-semibold">Loading World Map…</span>
           </div>
         </div>

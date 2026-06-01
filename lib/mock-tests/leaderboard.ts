@@ -16,14 +16,14 @@ const SIMULATED_NAMES = [
 ];
 
 const AVATARS = [
-  "bg-gradient-to-br from-blue-500 to-purple-600",
+  "bg-gradient-to-br from-primary-500 to-primary-600",
   "bg-gradient-to-br from-green-500 to-teal-600",
-  "bg-gradient-to-br from-orange-500 to-red-600",
-  "bg-gradient-to-br from-pink-500 to-rose-600",
-  "bg-gradient-to-br from-indigo-500 to-blue-600",
-  "bg-gradient-to-br from-yellow-500 to-amber-600",
-  "bg-gradient-to-br from-cyan-500 to-blue-600",
-  "bg-gradient-to-br from-violet-500 to-purple-600",
+  "bg-gradient-to-br from-accent-500 to-red-600",
+  "bg-gradient-to-br from-primary-500 to-rose-600",
+  "bg-gradient-to-br from-primary-500 to-primary-600",
+  "bg-gradient-to-br from-accent-500 to-accent-600",
+  "bg-gradient-to-br from-primary-500 to-primary-600",
+  "bg-gradient-to-br from-primary-500 to-primary-600",
 ];
 
 function generateSimulatedEntries(

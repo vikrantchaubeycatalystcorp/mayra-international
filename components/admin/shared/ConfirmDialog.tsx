@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { AlertTriangle, X, Trash2, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -45,12 +47,14 @@ export function ConfirmDialog({
   loading,
   variant = "danger",
 }: ConfirmDialogProps) {
-  if (!open) return null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!open || !mounted) return null;
 
   const v = VARIANTS[variant];
 
-  return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 overflow-y-auto">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className="relative bg-white rounded-2xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
@@ -95,6 +99,7 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

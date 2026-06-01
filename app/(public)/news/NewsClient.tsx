@@ -327,7 +327,7 @@ export function NewsClient({ news, categoryCounts }: NewsClientProps) {
             {/* Trending */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
               <h3 className="font-bold text-gray-900 mb-4 text-sm flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-orange-500" />
+                <TrendingUp className="h-4 w-4 text-accent-500" />
                 Trending Articles
               </h3>
               <div className="space-y-4">

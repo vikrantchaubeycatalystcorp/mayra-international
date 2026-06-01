@@ -29,21 +29,21 @@ const contactInfo = [
     label: "Call Us",
     value: "+91 7506799678",
     subtext: "Mon-Sat, 9 AM - 7 PM IST",
-    color: "from-blue-500 to-indigo-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     icon: Mail,
     label: "Email Us",
     value: "info@mayrainternational.com",
     subtext: "We reply within 24 hours",
-    color: "from-purple-500 to-pink-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     icon: MapPin,
     label: "Visit Us",
     value: "Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703",
     subtext: "Palm Beach Road, Sector 19D, Maharashtra",
-    color: "from-orange-500 to-red-500",
+    color: "from-accent-500 to-red-500",
   },
   {
     icon: Clock,
@@ -87,7 +87,7 @@ const testimonials = [
     city: "Lucknow",
     year: "2025 Batch",
     rating: 5,
-    gradient: "from-pink-500 to-rose-500",
+    gradient: "from-primary-500 to-rose-500",
     text: "I was so confused after 12th — my parents wanted me in engineering but I didn't know which college to pick. Mayra International's counsellor literally sat with me for 2 hours, understood my JEE score, budget, and hostel preference, and shortlisted 5 colleges. I got into VIT Vellore and I couldn't be happier. Honestly, without their guidance I would've ended up in a random college.",
     highlight: "Got into VIT Vellore with full guidance",
     date: "March 2025",
@@ -101,7 +101,7 @@ const testimonials = [
     city: "Nagpur",
     year: "2024 Batch",
     rating: 5,
-    gradient: "from-blue-500 to-indigo-600",
+    gradient: "from-primary-500 to-primary-600",
     text: "After my B.Com, everyone told me MBA is the way to go but nobody explained HOW to get into a good college. I found Mayra International through a friend and they helped me with everything — SNAP exam prep tips, form filling, interview preparation, even negotiating the fee structure. The counsellor Amit sir was available even at 10 PM when I had doubts. This is genuine service.",
     highlight: "Complete MBA admission support",
     date: "January 2025",
@@ -129,7 +129,7 @@ const testimonials = [
     city: "Ahmedabad",
     year: "2025 Batch",
     rating: 5,
-    gradient: "from-orange-500 to-amber-600",
+    gradient: "from-accent-500 to-accent-600",
     text: "I wanted to pursue design but my family had zero idea about design colleges in India. Most consultants I spoke to only pushed engineering. Mayra International was different — they actually listened, explained the scope of design careers, showed placement records, and helped me prepare my portfolio for MIT ID. Today I'm studying what I love. If you're confused about your career, just talk to them once.",
     highlight: "Found the right creative career path",
     date: "February 2025",
@@ -143,7 +143,7 @@ const testimonials = [
     city: "Mumbai",
     year: "2024 Batch",
     rating: 5,
-    gradient: "from-purple-500 to-violet-600",
+    gradient: "from-primary-500 to-primary-600",
     text: "I filled the inquiry form on this website at 11 PM and got a call the very next morning. The counsellor understood that I wanted law and not just any law college — I wanted a top NLU or Symbiosis. They guided me through CLAT preparation resources, backup options, and the entire admission timeline. I'm now at Symbiosis Law School. The best part? They didn't charge me a single rupee for the counselling.",
     highlight: "Free counselling, premium results",
     date: "September 2024",
@@ -157,7 +157,7 @@ const testimonials = [
     city: "Visakhapatnam",
     year: "2025 Batch",
     rating: 5,
-    gradient: "from-cyan-500 to-blue-600",
+    gradient: "from-primary-500 to-primary-600",
     text: "After B.Tech I was confused between working and doing M.Tech. Mayra International helped me see the bigger picture — they showed me salary comparisons, career growth data, and which M.Tech specializations have the best ROI. They even connected me with alumni from IIIT Hyderabad. That one conversation changed my career trajectory. I'd recommend them to anyone who feels lost after graduation.",
     highlight: "Data-driven career decision making",
     date: "March 2025",
@@ -173,25 +173,25 @@ const statsHighlights = [
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+    <main className="min-h-screen bg-[#FBF9F4]">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
         {/* Background decorations */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-100/40 rounded-full blur-3xl" />
-          <div className="absolute top-40 right-10 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-100/40 rounded-full blur-3xl" />
+          <div className="absolute top-40 right-10 w-96 h-96 bg-primary-100/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-t from-white to-transparent" />
         </div>
 
         <div className="container mx-auto relative">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-100 text-primary-700 text-sm font-medium mb-6">
               <Headphones className="h-4 w-4" />
               We&apos;re here to help
             </div>
             <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
               Get in{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
                 Touch
               </span>
             </h1>
@@ -206,10 +206,10 @@ export default function ContactPage() {
             {contactInfo.map((item) => (
               <div
                 key={item.label}
-                className="group bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300"
+                className="group bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:shadow-primary-500/5 hover:-translate-y-1 transition-all duration-300"
               >
                 <div
-                  className={`inline-flex h-11 w-11 rounded-xl bg-gradient-to-br ${item.color} items-center justify-center mb-4 shadow-lg shadow-indigo-500/10 group-hover:scale-110 transition-transform duration-300`}
+                  className={`inline-flex h-11 w-11 rounded-xl bg-gradient-to-br ${item.color} items-center justify-center mb-4 shadow-lg shadow-primary-500/10 group-hover:scale-110 transition-transform duration-300`}
                 >
                   <item.icon className="h-5 w-5 text-white" />
                 </div>
@@ -234,11 +234,11 @@ export default function ContactPage() {
             <div className="lg:col-span-3">
               <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
                 {/* Form header */}
-                <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 px-8 py-6">
+                <div className="bg-gradient-to-r from-primary-600 via-primary-600 to-primary-600 px-8 py-6">
                   <h2 className="text-xl font-bold text-white">
                     Student Inquiry Form
                   </h2>
-                  <p className="text-indigo-200 text-sm mt-1">
+                  <p className="text-primary-200 text-sm mt-1">
                     Fill in your details and we&apos;ll connect you with an expert counsellor
                   </p>
                 </div>
@@ -264,10 +264,10 @@ export default function ContactPage() {
                 {reasons.map((r) => (
                   <div
                     key={r.title}
-                    className="group flex gap-4 p-4 rounded-2xl bg-white border border-gray-100 hover:border-indigo-100 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300"
+                    className="group flex gap-4 p-4 rounded-2xl bg-white border border-gray-100 hover:border-primary-100 hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-300"
                   >
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/50 flex items-center justify-center flex-shrink-0 group-hover:from-indigo-100 group-hover:to-purple-100 transition-colors">
-                      <r.icon className="h-5 w-5 text-indigo-600" />
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-50 border border-primary-100/50 flex items-center justify-center flex-shrink-0 group-hover:from-primary-100 group-hover:to-primary-100 transition-colors">
+                      <r.icon className="h-5 w-5 text-primary-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800 text-sm mb-0.5">
@@ -282,13 +282,13 @@ export default function ContactPage() {
               </div>
 
               {/* Trust badge */}
-              <div className="mt-auto p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/50">
+              <div className="mt-auto p-5 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-50 border border-primary-100/50">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex -space-x-2">
                     {[...Array(4)].map((_, i) => (
                       <div
                         key={i}
-                        className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold"
+                        className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold"
                       >
                         {String.fromCharCode(65 + i)}
                       </div>
@@ -319,7 +319,7 @@ export default function ContactPage() {
             </div>
             <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight mb-3">
               Hear From{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
                 Real Students
               </span>
             </h2>
@@ -336,7 +336,7 @@ export default function ContactPage() {
                 key={stat.label}
                 className="text-center py-5 px-4 rounded-2xl bg-white border border-gray-100 shadow-sm"
               >
-                <p className="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <p className="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
                   {stat.value}
                 </p>
                 <p className="text-xs text-gray-500 mt-1 font-medium">{stat.label}</p>
@@ -349,16 +349,16 @@ export default function ContactPage() {
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="group bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-xl hover:shadow-indigo-500/5 hover:border-indigo-100 transition-all duration-300 flex flex-col"
+                className="group bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-xl hover:shadow-primary-500/5 hover:border-primary-100 transition-all duration-300 flex flex-col"
               >
                 {/* Quote Icon + Rating */}
                 <div className="flex items-center justify-between mb-4">
-                  <Quote className="h-8 w-8 text-indigo-100" />
+                  <Quote className="h-8 w-8 text-primary-100" />
                   <div className="flex gap-0.5">
                     {[...Array(t.rating)].map((_, i) => (
                       <Star
                         key={i}
-                        className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
+                        className="h-3.5 w-3.5 fill-accent-400 text-accent-400"
                       />
                     ))}
                   </div>
@@ -391,7 +391,7 @@ export default function ContactPage() {
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
                       {t.name}
-                      <BadgeCheck className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                      <BadgeCheck className="h-3.5 w-3.5 text-primary-500 flex-shrink-0" />
                     </p>
                     <p className="text-xs text-gray-500 truncate">
                       {t.course} &bull; {t.college}
@@ -406,11 +406,11 @@ export default function ContactPage() {
           </div>
 
           {/* CTA Banner */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 p-8 sm:p-10 lg:p-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-primary-700 p-8 sm:p-10 lg:p-12">
             {/* Background decoration */}
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
-              <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-purple-400/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-primary-400/10 rounded-full blur-2xl" />
             </div>
 
             <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -418,7 +418,7 @@ export default function ContactPage() {
                 <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-2">
                   Your Success Story Starts With One Step
                 </h3>
-                <p className="text-indigo-200 text-sm max-w-lg">
+                <p className="text-primary-200 text-sm max-w-lg">
                   Just like Priya, Rohit, Ananya, and thousands of others — fill the inquiry form
                   above and let our expert counsellors guide you to your dream college. It&apos;s
                   100% free.
@@ -426,7 +426,7 @@ export default function ContactPage() {
               </div>
               <a
                 href="#inquiry-form"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-indigo-700 font-bold text-sm hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-primary-700 font-bold text-sm hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all duration-300 whitespace-nowrap flex-shrink-0"
               >
                 Fill Inquiry Form Now
                 <ArrowRight className="h-4 w-4" />
@@ -449,7 +449,7 @@ export default function ContactPage() {
                 </div>
                 <LiveInquiryCount />
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-indigo-200">
+              <div className="flex items-center gap-1.5 text-xs text-primary-200">
                 <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
                 Counsellors are online now
               </div>
@@ -464,7 +464,7 @@ export default function ContactPage() {
           <div className="text-center mb-8">
             <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
               Find Us on the{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
                 Map
               </span>
             </h2>
@@ -475,13 +475,13 @@ export default function ContactPage() {
 
           <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
             {/* Map Header Bar */}
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-4 flex items-center gap-3">
+            <div className="bg-gradient-to-r from-accent-500 to-red-500 px-6 py-4 flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-white/20 flex items-center justify-center">
                 <MapPin className="h-5 w-5 text-white" />
               </div>
               <div>
                 <p className="text-sm font-bold text-white">Our Office Location</p>
-                <p className="text-xs text-orange-100">Satra Plaza, Vashi, Navi Mumbai</p>
+                <p className="text-xs text-accent-100">Satra Plaza, Vashi, Navi Mumbai</p>
               </div>
             </div>
 
@@ -500,7 +500,7 @@ export default function ContactPage() {
             {/* Map Footer with directions link */}
             <div className="px-6 py-4 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <MapPin className="h-4 w-4 text-primary-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-800">
                     Office No 613, 6th Floor, Satra Plaza
@@ -514,7 +514,7 @@ export default function ContactPage() {
                 href="https://www.google.com/maps/dir//Satra+Plaza,+Palm+Beach+Rd,+Sector+19D,+Vashi,+Navi+Mumbai,+Maharashtra+400703"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold hover:shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-600 text-white text-sm font-semibold hover:shadow-lg hover:shadow-primary-500/25 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
               >
                 <MapPin className="h-4 w-4" />
                 Get Directions

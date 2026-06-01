@@ -16,8 +16,8 @@ export default function OgImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 100%)",
-          fontFamily: "sans-serif",
+          background: "linear-gradient(135deg, #11392B 0%, #164A37 45%, #1C5A42 100%)",
+          fontFamily: "serif",
           padding: "60px",
         }}
       >
@@ -29,7 +29,7 @@ export default function OgImage() {
             justifyContent: "center",
             width: "100px",
             height: "100px",
-            background: "linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)",
+            background: "#FBF9F4",
             borderRadius: "24px",
             marginBottom: "32px",
           }}
@@ -37,8 +37,8 @@ export default function OgImage() {
           <span
             style={{
               fontSize: 64,
-              fontWeight: 800,
-              color: "#ffffff",
+              fontWeight: 700,
+              color: "#1C5A42",
               lineHeight: 1,
             }}
           >
@@ -62,7 +62,7 @@ export default function OgImage() {
         <div
           style={{
             fontSize: 24,
-            color: "#94a3b8",
+            color: "#CFC6B6",
             textAlign: "center",
             lineHeight: 1.5,
             maxWidth: "800px",
@@ -83,10 +83,10 @@ export default function OgImage() {
               key={item}
               style={{
                 padding: "10px 24px",
-                background: "rgba(59, 130, 246, 0.2)",
-                border: "1px solid rgba(59, 130, 246, 0.4)",
+                background: "rgba(200, 132, 27, 0.18)",
+                border: "1px solid rgba(200, 132, 27, 0.4)",
                 borderRadius: "999px",
-                color: "#93c5fd",
+                color: "#EAD3A3",
                 fontSize: 18,
                 fontWeight: 600,
               }}

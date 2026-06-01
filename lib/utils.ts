@@ -53,33 +53,16 @@ export function getInitials(name: string): string {
 }
 
 export function getGradientForLetter(letter: string): string {
-  const gradients: Record<string, string> = {
-    A: "from-red-500 to-orange-500",
-    B: "from-blue-500 to-cyan-500",
-    C: "from-green-500 to-teal-500",
-    D: "from-purple-500 to-pink-500",
-    E: "from-yellow-500 to-orange-500",
-    F: "from-pink-500 to-rose-500",
-    G: "from-indigo-500 to-purple-500",
-    H: "from-cyan-500 to-blue-500",
-    I: "from-teal-500 to-green-500",
-    J: "from-orange-500 to-red-500",
-    K: "from-violet-500 to-indigo-500",
-    L: "from-sky-500 to-blue-500",
-    M: "from-emerald-500 to-teal-500",
-    N: "from-blue-600 to-indigo-600",
-    O: "from-amber-500 to-yellow-500",
-    P: "from-rose-500 to-pink-500",
-    Q: "from-lime-500 to-green-500",
-    R: "from-red-600 to-rose-500",
-    S: "from-slate-600 to-blue-600",
-    T: "from-teal-600 to-cyan-500",
-    U: "from-purple-600 to-violet-500",
-    V: "from-fuchsia-500 to-purple-500",
-    W: "from-blue-700 to-blue-500",
-    X: "from-gray-600 to-slate-500",
-    Y: "from-yellow-600 to-amber-500",
-    Z: "from-zinc-600 to-gray-500",
-  };
-  return gradients[letter.toUpperCase()] || "from-blue-600 to-blue-400";
+  // Editorial palette — pine / gold / result-teal / ink. Assigned
+  // deterministically per letter so avatars vary but stay on-brand.
+  const palette = [
+    "from-[#256B50] to-[#164A37]", // pine
+    "from-[#C8841B] to-[#A96A0F]", // marigold
+    "from-[#0E6E78] to-[#0a525a]", // result teal
+    "from-[#1C5A42] to-[#11392B]", // deep pine
+    "from-[#574F45] to-[#1B1814]", // ink
+    "from-[#9A6410] to-[#6E4309]", // amber-brown
+  ];
+  const code = (letter.toUpperCase().charCodeAt(0) || 65) - 65;
+  return palette[((code % palette.length) + palette.length) % palette.length];
 }

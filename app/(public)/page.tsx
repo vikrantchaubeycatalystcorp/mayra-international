@@ -13,7 +13,7 @@ import { NewsletterCtaServer } from "./NewsletterCtaServer";
 export const revalidate = 300;
 
 function SectionSkeleton({ height = "h-64" }: { height?: string }) {
-  return <div className={`${height} bg-gray-100 animate-pulse`} />;
+  return <div className={`${height} bg-[#F4F0E7] animate-pulse`} />;
 }
 
 export default async function HomePage() {
@@ -32,9 +32,6 @@ export default async function HomePage() {
         <TopExamsServer />
       </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
-        <ShortsCarouselServer />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
         <NewsSectionServer />
       </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
@@ -42,6 +39,9 @@ export default async function HomePage() {
       </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
         <StudyAbroadTeaserServer />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <ShortsCarouselServer />
       </Suspense>
       <NewsletterCtaServer />
       <CompareBar />
