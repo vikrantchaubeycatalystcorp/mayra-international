@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, MessageSquarePlus } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -60,6 +60,16 @@ export function FloatingInquiryForm() {
     _hp: "",
   });
 
+  // Open (expand) the form when "Free counselling" CTAs dispatch the event.
+  useEffect(() => {
+    const open = () => {
+      setMinimized(false);
+      window.scrollTo({ top: window.scrollY }); // no-op scroll keeps focus context
+    };
+    window.addEventListener("mayra:open-enquiry", open);
+    return () => window.removeEventListener("mayra:open-enquiry", open);
+  }, []);
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -93,12 +103,12 @@ export function FloatingInquiryForm() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] shadow-premium-lg rounded-3xl overflow-hidden transition-all duration-500 ease-out-expo"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] shadow-premium-lg rounded-xl overflow-hidden transition-all duration-500 ease-out-expo border border-[#E8E1D4]"
       style={{ maxHeight: minimized ? "52px" : "80vh" }}
     >
       {/* Header — always visible */}
       <div
-        className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-indigo-700 to-purple-700 text-white cursor-pointer select-none"
+        className="flex items-center justify-between px-4 py-3.5 bg-[#1C5A42] text-white cursor-pointer select-none"
         onClick={() => setMinimized((m) => !m)}
       >
         <div className="flex items-center gap-2">

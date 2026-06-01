@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Newsreader, Hanken_Grotesk, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import "./editorial.css";
 import { NavbarServer } from "../components/layout/NavbarServer";
 import { FooterServer } from "../components/layout/FooterServer";
 import dynamic from "next/dynamic";
@@ -15,16 +16,35 @@ import { getLayoutMetadata } from "../lib/cached-queries";
 
 export const revalidate = 300;
 
-const inter = Inter({
+// Editorial type system: Newsreader (serif headings), Hanken Grotesk (sans
+// body), Spline Sans Mono (kickers / numeric labels). Wired to CSS variables
+// consumed by app/editorial.css and tailwind.config.ts.
+const serif = Newsreader({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const sans = Hanken_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const mono = Spline_Sans_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
   display: "swap",
 });
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#1e40af",
+  themeColor: "#1C5A42",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -124,7 +144,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="rjceF4dV_VTYq5WSXdlb1UxWTK8SfDSS_SRgsOjQW5E" />
         <link rel="preconnect" href="https://images.unsplash.com" />
@@ -133,11 +153,11 @@ export default function RootLayout({
         <JsonLd data={websiteJsonLd()} />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
-        <Suspense fallback={<nav className="h-16 lg:h-[68px] bg-white/80 backdrop-blur-md border-b border-gray-200/50 fixed top-0 inset-x-0 z-50" />}>
+        <Suspense fallback={<nav className="h-[68px] bg-[#FBF9F4]/90 backdrop-blur-md border-b border-[#E8E1D4] sticky top-0 z-50" />}>
           <NavbarServer />
         </Suspense>
-        <main className="flex-1 pt-16 lg:pt-[68px]">{children}</main>
-        <Suspense fallback={<footer className="bg-gray-900 h-64" />}>
+        <main className="flex-1">{children}</main>
+        <Suspense fallback={<footer className="bg-[#1B1814] h-64" />}>
           <FooterServer />
         </Suspense>
         <FloatingInquiryForm />

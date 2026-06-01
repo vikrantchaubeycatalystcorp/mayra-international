@@ -4,26 +4,29 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 234 47% 8%;
+    /* Editorial palette (warm paper / pine / gold). Channel values feed
+       hsl(var(--x)) in tailwind.config.ts. Raw editorial tokens
+       (--paper, --pine, --gold, ...) live in app/editorial.css. */
+    --background: 43 47% 97%;
+    --foreground: 34 15% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 234 47% 8%;
+    --card-foreground: 34 15% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 234 47% 8%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 234 47% 14%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 234 10% 46%;
-    --accent: 240 5% 96%;
-    --accent-foreground: 234 47% 14%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 240 6% 92%;
-    --input: 240 6% 92%;
-    --ring: 239 84% 67%;
-    --radius: 0.75rem;
+    --popover-foreground: 34 15% 9%;
+    --primary: 157 53% 23%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 42 37% 93%;
+    --secondary-foreground: 33 12% 31%;
+    --muted: 42 37% 93%;
+    --muted-foreground: 35 9% 50%;
+    --accent: 39 81% 92%;
+    --accent-foreground: 35 84% 36%;
+    --destructive: 11 71% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 39 30% 87%;
+    --input: 39 25% 80%;
+    --ring: 157 53% 23%;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -67,13 +70,13 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold tracking-tight;
+    @apply font-display tracking-tight;
     text-wrap: balance;
   }
 
   ::selection {
-    background: rgba(99, 102, 241, 0.15);
-    color: #312e81;
+    background: rgba(200, 132, 27, 0.22);
+    color: #1B1814;
   }
 }
 
@@ -90,13 +93,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
+  background: rgba(28, 90, 66, 0.25);
   border-radius: 10px;
   transition: background 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.4);
+  background: rgba(28, 90, 66, 0.45);
 }
 
 /* ============================

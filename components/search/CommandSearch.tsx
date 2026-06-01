@@ -132,14 +132,14 @@ function clearRecentSearches() {
 
 // ─── Quick navigation pages (shown when no query) ─────────
 const defaultPages = [
-  { id: "p-colleges", label: "Browse Colleges", desc: "25,000+ colleges across India", href: "/colleges", icon: GraduationCap, color: "from-indigo-600 to-purple-500" },
-  { id: "p-exams", label: "Entrance Exams", desc: "Exam dates, eligibility & registration", href: "/exams", icon: FileText, color: "from-orange-500 to-amber-400" },
-  { id: "p-courses", label: "Explore Courses", desc: "800+ courses across all streams", href: "/courses", icon: BookOpen, color: "from-emerald-500 to-teal-400" },
+  { id: "p-colleges", label: "Browse Colleges", desc: "25,000+ colleges across India", href: "/colleges", icon: GraduationCap, color: "from-[#256B50] to-[#164A37]" },
+  { id: "p-exams", label: "Entrance Exams", desc: "Exam dates, eligibility & registration", href: "/exams", icon: FileText, color: "from-[#C8841B] to-[#A96A0F]" },
+  { id: "p-courses", label: "Explore Courses", desc: "800+ courses across all streams", href: "/courses", icon: BookOpen, color: "from-[#256B50] to-[#0E6E78]" },
   { id: "p-news", label: "Latest News", desc: "Education news & updates", href: "/news", icon: Newspaper, color: "from-red-500 to-rose-400" },
   { id: "p-compare", label: "Compare Colleges", desc: "Side-by-side comparison", href: "/compare", icon: Scale, color: "from-blue-600 to-blue-400" },
   { id: "p-abroad", label: "Study Abroad", desc: "International options", href: "/study-abroad", icon: Globe, color: "from-cyan-500 to-sky-400" },
   { id: "p-mock", label: "Mock Tests", desc: "Free practice tests with leaderboards", href: "/mock-tests", icon: Trophy, color: "from-amber-500 to-orange-400" },
-  { id: "p-resume", label: "Resume Builder", desc: "Build your resume", href: "/resume-builder", icon: FileText, color: "from-violet-500 to-purple-400" },
+  { id: "p-resume", label: "Resume Builder", desc: "Build your resume", href: "/resume-builder", icon: FileText, color: "from-[#256B50] to-[#164A37]" },
   { id: "p-dashboard", label: "My Dashboard", desc: "Your saved colleges & apps", href: "/dashboard", icon: LayoutDashboard, color: "from-gray-600 to-gray-400" },
   { id: "p-saved", label: "Saved Colleges", desc: "Your shortlisted colleges", href: "/dashboard/saved", icon: Heart, color: "from-pink-500 to-rose-400" },
   { id: "p-enquiries", label: "My Enquiries", desc: "Track your applications", href: "/dashboard/enquiries", icon: MessageSquare, color: "from-green-600 to-emerald-400" },
@@ -277,14 +277,14 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
       />
 
       {/* Dialog */}
-      <div className="relative w-full max-w-2xl bg-white/[0.97] backdrop-blur-xl rounded-3xl shadow-[0_25px_60px_-12px_rgba(0,0,0,0.25)] overflow-hidden animate-scale-in border border-gray-200/50">
+      <div className="relative w-full max-w-2xl bg-white/[0.98] backdrop-blur-xl rounded-xl shadow-[0_25px_60px_-12px_rgba(0,0,0,0.25)] overflow-hidden animate-scale-in border border-[#D8CFBE]">
         <Command
-          className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:text-indigo-400 [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.15em]"
+          className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:text-[#8B8275] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.15em] [&_[cmdk-group-heading]]:font-mono"
           shouldFilter={false}
         >
           {/* Search Input */}
           <div className="flex items-center border-b border-gray-100 px-5 py-4">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0 mr-3 shadow-sm">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center flex-shrink-0 mr-3 shadow-sm">
               <Search className="h-4 w-4 text-white" />
             </div>
             <CommandInput
@@ -295,7 +295,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
               className="flex-1 text-base outline-none placeholder:text-gray-400 bg-transparent font-medium"
             />
             {loading && (
-              <div className="mr-3 h-4 w-4 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+              <div className="mr-3 h-4 w-4 border-2 border-[#C9DFD5] border-t-[#1C5A42] rounded-full animate-spin" />
             )}
             <button suppressHydrationWarning
               onClick={() => onOpenChange(false)}
@@ -315,14 +315,14 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                   onClick={() => setActiveFilter(tab.key)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                     activeFilter === tab.key
-                      ? "bg-indigo-100 text-indigo-700 shadow-sm"
+                      ? "bg-[#E7F0EB] text-[#164A37] shadow-sm"
                       : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {tab.label}
                   {tab.count > 0 && (
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                      activeFilter === tab.key ? "bg-indigo-200/60 text-indigo-700" : "bg-gray-100 text-gray-400"
+                      activeFilter === tab.key ? "bg-[#C9DFD5] text-[#164A37]" : "bg-gray-100 text-gray-400"
                     }`}>
                       {tab.count}
                     </span>
@@ -349,7 +349,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                       key={tag}
                       suppressHydrationWarning
                       onClick={() => setQuery(tag)}
-                      className="px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-xs font-medium hover:bg-indigo-100 transition-colors"
+                      className="px-3 py-1.5 rounded-full bg-[#E7F0EB] text-[#164A37] text-xs font-medium hover:bg-[#C9DFD5] transition-colors"
                     >
                       {tag}
                     </button>
@@ -414,7 +414,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         key={item.label}
                         suppressHydrationWarning
                         onClick={() => handleSelect(item.href, item.label)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 text-xs font-medium border border-indigo-100/50 hover:from-indigo-100 hover:to-purple-100 hover:shadow-sm transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E7F0EB] text-[#164A37] text-xs font-medium border border-[#C9DFD5] hover:bg-[#C9DFD5] hover:shadow-sm transition-all"
                       >
                         <Zap className="h-3 w-3" />
                         {item.label}
@@ -462,9 +462,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                           key={college.id}
                           value={`featured-college-${college.id}`}
                           onSelect={() => handleSelect(`/colleges/${college.slug}`, college.name)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-indigo-50/50 data-[selected]:bg-indigo-50/50 transition-all duration-200"
+                          className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-[#F0F5F2] data-[selected]:bg-[#F0F5F2] transition-all duration-200"
                         >
-                          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+                          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
                             {college.name[0]}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -474,7 +474,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                               {college.nirfRank ? ` · NIRF #${college.nirfRank}` : ""}
                             </p>
                           </div>
-                          <Sparkles className="h-3.5 w-3.5 text-amber-400 flex-shrink-0" />
+                          <Sparkles className="h-3.5 w-3.5 text-[#C8841B] flex-shrink-0" />
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -501,9 +501,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                           key={link.id}
                           value={`quicklink-${link.id}`}
                           onSelect={() => handleSelect(link.href, link.title)}
-                          className="flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer hover:bg-violet-50/50 data-[selected]:bg-violet-50/50 transition-all duration-200"
+                          className="flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer hover:bg-[#F0F5F2] data-[selected]:bg-[#F0F5F2] transition-all duration-200"
                         >
-                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center flex-shrink-0 shadow-sm">
                             <LinkIcon className="h-3.5 w-3.5 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -529,9 +529,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         key={college.id}
                         value={`college-${college.id}`}
                         onSelect={() => handleSelect(`/colleges/${college.slug}`, college.name)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-indigo-50/50 data-[selected]:bg-indigo-50/50 transition-all duration-200"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-[#F0F5F2] data-[selected]:bg-[#F0F5F2] transition-all duration-200"
                       >
-                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
                           {college.name[0]}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -541,7 +541,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                           <div className="flex items-center gap-2 text-xs text-gray-500">
                             <span>{college.city}, {college.state}</span>
                             {college.nirfRank && (
-                              <span className="px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 font-semibold text-[10px]">
+                              <span className="px-1.5 py-0.5 rounded bg-[#FBEFD8] text-[#A96A0F] font-semibold text-[10px]">
                                 NIRF #{college.nirfRank}
                               </span>
                             )}
@@ -552,8 +552,8 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         </div>
                         <div className="text-right flex-shrink-0">
                           {college.rating && college.rating > 0 && (
-                            <div className="flex items-center gap-0.5 text-xs text-amber-500">
-                              <Star className="h-3 w-3 fill-amber-400" />
+                            <div className="flex items-center gap-0.5 text-xs text-[#C8841B]">
+                              <Star className="h-3 w-3 fill-[#C8841B]" />
                               {college.rating.toFixed(1)}
                             </div>
                           )}
@@ -570,7 +570,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                       <button
                         suppressHydrationWarning
                         onClick={() => setActiveFilter("colleges")}
-                        className="w-full text-center py-2 text-xs text-indigo-500 font-semibold hover:text-indigo-700 transition-colors"
+                        className="w-full text-center py-2 text-xs text-[#1C5A42] font-semibold hover:text-[#164A37] transition-colors"
                       >
                         View all {results.colleges.length} colleges →
                       </button>
@@ -590,9 +590,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         key={exam.id}
                         value={`exam-${exam.id}`}
                         onSelect={() => handleSelect(`/exams/${exam.slug}`, exam.name)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-orange-50/50 data-[selected]:bg-orange-50/50 transition-all duration-200"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-[#FBF0D9]/60 data-[selected]:bg-[#FBF0D9]/60 transition-all duration-200"
                       >
-                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#C8841B] to-[#A96A0F] flex items-center justify-center flex-shrink-0 shadow-sm">
                           <FileText className="h-4 w-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -613,7 +613,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                           </div>
                         </div>
                         {exam.level && (
-                          <span className="px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-semibold flex-shrink-0">
+                          <span className="px-2 py-0.5 rounded-full bg-[#FBEFD8] text-[#A96A0F] text-[10px] font-semibold flex-shrink-0">
                             {exam.level}
                           </span>
                         )}
@@ -623,7 +623,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                       <button
                         suppressHydrationWarning
                         onClick={() => setActiveFilter("exams")}
-                        className="w-full text-center py-2 text-xs text-orange-500 font-semibold hover:text-orange-700 transition-colors"
+                        className="w-full text-center py-2 text-xs text-[#A96A0F] font-semibold hover:text-[#87530C] transition-colors"
                       >
                         View all {results.exams.length} exams →
                       </button>
@@ -643,9 +643,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         key={course.id}
                         value={`course-${course.id}`}
                         onSelect={() => handleSelect(`/courses/${course.slug}`, course.name)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-emerald-50/50 data-[selected]:bg-emerald-50/50 transition-all duration-200"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-[#E5F2EA] data-[selected]:bg-[#E5F2EA] transition-all duration-200"
                       >
-                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#256B50] to-[#0E6E78] flex items-center justify-center flex-shrink-0 shadow-sm">
                           <BookOpen className="h-4 w-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -671,7 +671,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                       <button
                         suppressHydrationWarning
                         onClick={() => setActiveFilter("courses")}
-                        className="w-full text-center py-2 text-xs text-emerald-500 font-semibold hover:text-emerald-700 transition-colors"
+                        className="w-full text-center py-2 text-xs text-[#1C5A42] font-semibold hover:text-[#164A37] transition-colors"
                       >
                         View all {results.courses.length} courses →
                       </button>
@@ -745,7 +745,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
-              <Sparkles className="h-3 w-3 text-indigo-400" />
+              <Sparkles className="h-3 w-3 text-[#C8841B]" />
               Mayra Search
               {hasQuery && !loading && (
                 <span className="text-gray-300 ml-1">· {totalResults} results</span>
