@@ -85,6 +85,7 @@ export function AdminDataTable<T extends { id: string }>({
   createHref,
   createLabel = "Add New",
   editHref,
+  onEdit,
   onDelete,
   viewHref,
   filters,
@@ -404,6 +405,15 @@ export function AdminDataTable<T extends { id: string }>({
                             >
                               <Edit3 className="w-4 h-4" />
                             </Link>
+                          )}
+                          {onEdit && (
+                            <button
+                              onClick={() => onEdit(item)}
+                              className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-all"
+                              title="Edit"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
                           )}
                           {onDelete && (
                             <button
