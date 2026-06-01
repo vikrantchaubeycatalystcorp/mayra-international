@@ -32,21 +32,21 @@ export function LeaderboardView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-[#FBF9F4]">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 px-4 py-12 text-white">
+      <div className="bg-gradient-to-br from-primary-600 via-primary-600 to-primary-800 px-4 py-12 text-white">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-4 inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-sm">
-            <Trophy className="h-8 w-8 text-amber-300" />
+            <Trophy className="h-8 w-8 text-accent-300" />
           </div>
           <h1 className="text-3xl font-black sm:text-4xl">Leaderboard</h1>
-          <p className="mt-2 text-indigo-200">Compete with thousands of students across India</p>
+          <p className="mt-2 text-primary-200">Compete with thousands of students across India</p>
         </div>
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Back */}
-        <Link href="/mock-tests" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 mb-6">
+        <Link href="/mock-tests" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-6">
           <ArrowLeft className="h-4 w-4" /> Back to Mock Tests
         </Link>
 
@@ -59,7 +59,7 @@ export function LeaderboardView() {
               placeholder="Search by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 py-2.5 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-xl border border-gray-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200"
             />
           </div>
           <div className="relative">
@@ -67,7 +67,7 @@ export function LeaderboardView() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as ExamCategory | "all")}
-              className="appearance-none rounded-xl border border-gray-200 py-2.5 pl-10 pr-10 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
+              className="appearance-none rounded-xl border border-gray-200 py-2.5 pl-10 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 bg-white"
             >
               <option value="all">All Exams</option>
               {examCategories.map((c) => (
@@ -111,7 +111,7 @@ export function LeaderboardView() {
                     <tr
                       key={`${entry.rank}-${entry.userName}`}
                       className={`border-b last:border-0 transition-colors ${
-                        isUser ? "bg-indigo-50/50 font-medium" : "hover:bg-gray-50/50"
+                        isUser ? "bg-primary-50/50 font-medium" : "hover:bg-gray-50/50"
                       }`}
                     >
                       <td className="px-4 py-3">
@@ -125,7 +125,7 @@ export function LeaderboardView() {
                           <div>
                             <p className="text-sm font-semibold text-gray-900">
                               {entry.userName}
-                              {isUser && <span className="ml-1.5 text-[10px] bg-indigo-100 text-indigo-600 rounded-full px-1.5 py-0.5">You</span>}
+                              {isUser && <span className="ml-1.5 text-[10px] bg-primary-100 text-primary-600 rounded-full px-1.5 py-0.5">You</span>}
                             </p>
                           </div>
                         </div>
@@ -138,7 +138,7 @@ export function LeaderboardView() {
                       <td className="px-4 py-3 text-right">
                         <span className={`text-sm font-bold ${
                           entry.percentage >= 70 ? "text-emerald-600"
-                          : entry.percentage >= 40 ? "text-amber-600"
+                          : entry.percentage >= 40 ? "text-accent-600"
                           : "text-red-500"
                         }`}>
                           {entry.percentage}%
@@ -152,7 +152,7 @@ export function LeaderboardView() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right hidden md:table-cell">
-                        <span className="flex items-center justify-end gap-1 text-xs text-orange-500">
+                        <span className="flex items-center justify-end gap-1 text-xs text-accent-500">
                           <Flame className="h-3 w-3" />
                           {entry.streak}
                         </span>
@@ -177,9 +177,9 @@ export function LeaderboardView() {
 
 function PodiumCard({ entry, position }: { entry: LeaderboardEntry; position: 1 | 2 | 3 }) {
   const config = {
-    1: { height: "h-32", icon: Crown, color: "from-amber-400 to-yellow-500", ring: "ring-amber-300", label: "1st" },
+    1: { height: "h-32", icon: Crown, color: "from-accent-400 to-accent-500", ring: "ring-accent-300", label: "1st" },
     2: { height: "h-24", icon: Medal, color: "from-gray-300 to-gray-400", ring: "ring-gray-300", label: "2nd" },
-    3: { height: "h-20", icon: Medal, color: "from-amber-600 to-orange-700", ring: "ring-amber-600", label: "3rd" },
+    3: { height: "h-20", icon: Medal, color: "from-accent-600 to-accent-700", ring: "ring-accent-600", label: "3rd" },
   }[position];
 
   const Icon = config.icon;
@@ -195,7 +195,7 @@ function PodiumCard({ entry, position }: { entry: LeaderboardEntry; position: 1 
         </div>
       </div>
       <p className="text-sm font-bold text-gray-900 text-center max-w-[80px] truncate">{entry.userName}</p>
-      <p className="text-xs font-bold text-indigo-600">{entry.percentage}%</p>
+      <p className="text-xs font-bold text-primary-600">{entry.percentage}%</p>
       <div className={`mt-2 w-20 sm:w-24 ${config.height} rounded-t-xl bg-gradient-to-b ${config.color} flex items-start justify-center pt-2`}>
         <span className="text-lg font-black text-white/80">{config.label}</span>
       </div>
@@ -204,8 +204,8 @@ function PodiumCard({ entry, position }: { entry: LeaderboardEntry; position: 1 
 }
 
 function RankBadge({ rank }: { rank: number }) {
-  if (rank === 1) return <Crown className="h-5 w-5 text-amber-500" />;
+  if (rank === 1) return <Crown className="h-5 w-5 text-accent-500" />;
   if (rank === 2) return <Medal className="h-5 w-5 text-gray-400" />;
-  if (rank === 3) return <Medal className="h-5 w-5 text-amber-700" />;
+  if (rank === 3) return <Medal className="h-5 w-5 text-accent-700" />;
   return <span className="text-sm font-bold text-gray-400">#{rank}</span>;
 }

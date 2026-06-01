@@ -175,20 +175,20 @@ export function CommandPalette({ open, onClose }: Props) {
                 key={item.id}
                 onClick={() => handleSelect(item)}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                  i === selectedIndex ? "bg-indigo-50 text-indigo-700" : "hover:bg-gray-50 text-gray-700"
+                  i === selectedIndex ? "bg-primary-50 text-primary-700" : "hover:bg-gray-50 text-gray-700"
                 }`}
               >
                 <StatusIcon status={item.status} active={i === selectedIndex} />
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${item.index === currentQuestionIndex ? "text-indigo-600" : ""}`}>
+                  <p className={`text-sm font-medium truncate ${item.index === currentQuestionIndex ? "text-primary-600" : ""}`}>
                     {item.label}
                     {item.index === currentQuestionIndex && (
-                      <span className="ml-2 text-[10px] text-indigo-400 font-normal">(current)</span>
+                      <span className="ml-2 text-[10px] text-primary-400 font-normal">(current)</span>
                     )}
                   </p>
                   <p className="text-xs text-gray-400 truncate">{item.description}</p>
                 </div>
-                <ArrowRight className={`h-3.5 w-3.5 shrink-0 ${i === selectedIndex ? "text-indigo-400" : "text-gray-300"}`} />
+                <ArrowRight className={`h-3.5 w-3.5 shrink-0 ${i === selectedIndex ? "text-primary-400" : "text-gray-300"}`} />
               </button>
             ))
           )}
@@ -227,10 +227,10 @@ function StatusIcon({ status, active }: { status: string; active: boolean }) {
     case "answered":
       return <div className={`${base} bg-emerald-100`}><Hash className="h-3.5 w-3.5 text-emerald-600" /></div>;
     case "marked":
-      return <div className={`${base} bg-amber-100`}><Flag className="h-3.5 w-3.5 text-amber-600" /></div>;
+      return <div className={`${base} bg-accent-100`}><Flag className="h-3.5 w-3.5 text-accent-600" /></div>;
     case "unanswered":
       return <div className={`${base} bg-gray-100`}><MinusCircle className="h-3.5 w-3.5 text-gray-400" /></div>;
     default:
-      return <div className={`${base} ${active ? "bg-indigo-100" : "bg-gray-100"}`}><ArrowRight className="h-3.5 w-3.5 text-gray-500" /></div>;
+      return <div className={`${base} ${active ? "bg-primary-100" : "bg-gray-100"}`}><ArrowRight className="h-3.5 w-3.5 text-gray-500" /></div>;
   }
 }

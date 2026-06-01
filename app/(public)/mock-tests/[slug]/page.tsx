@@ -111,9 +111,9 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
   const markedCount = lastAttempt ? lastAttempt.answers.filter((a) => a.isMarked).length : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-[#FBF9F4]">
       {/* Hero */}
-      <div className={`bg-gradient-to-br ${exam.gradient} to-indigo-900 px-4 py-12 text-white`}>
+      <div className={`bg-gradient-to-br ${exam.gradient} to-primary-900 px-4 py-12 text-white`}>
         <div className="mx-auto max-w-4xl">
           <Link href="/mock-tests" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white mb-6">
             <ArrowLeft className="h-4 w-4" /> Back to Mock Tests
@@ -127,7 +127,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
               <div className="flex items-center gap-2 mb-1">
                 <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium">{exam.category}</span>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  exam.difficulty === "Hard" ? "bg-red-500/30" : exam.difficulty === "Medium" ? "bg-amber-500/30" : "bg-green-500/30"
+                  exam.difficulty === "Hard" ? "bg-red-500/30" : exam.difficulty === "Medium" ? "bg-accent-500/30" : "bg-green-500/30"
                 }`}>
                   {exam.difficulty}
                 </span>
@@ -166,9 +166,9 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Previous Attempt Summary */}
         {lastAttempt && (
-          <div className="mb-6 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-6">
+          <div className="mb-6 rounded-2xl bg-gradient-to-r from-primary-50 to-primary-50 border border-primary-100 p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Star className="h-5 w-5 text-indigo-500" />
+              <Star className="h-5 w-5 text-primary-500" />
               <h3 className="font-bold text-gray-900">Your Last Attempt</h3>
               <span className="text-xs text-gray-400 ml-auto">
                 {new Date(lastAttempt.completedAt).toLocaleDateString()}
@@ -177,7 +177,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="rounded-xl bg-white p-3 border border-gray-100">
                 <p className={`text-2xl font-black ${
-                  lastAttempt.percentage >= 70 ? "text-emerald-600" : lastAttempt.percentage >= 40 ? "text-amber-600" : "text-red-600"
+                  lastAttempt.percentage >= 70 ? "text-emerald-600" : lastAttempt.percentage >= 40 ? "text-accent-600" : "text-red-600"
                 }`}>{lastAttempt.percentage}%</p>
                 <p className="text-[10px] text-gray-500">Score</p>
               </div>
@@ -222,7 +222,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
                     variant="outline"
                     size="sm"
                     onClick={() => { setReattemptMode("weak-topic"); setTestStarted(true); }}
-                    className="text-xs border-amber-200 text-amber-600 hover:bg-amber-50"
+                    className="text-xs border-accent-200 text-accent-600 hover:bg-accent-50"
                   >
                     <Brain className="h-3.5 w-3.5 mr-1" /> Weak Topics ({weakTopicCount} Qs)
                   </Button>
@@ -232,7 +232,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
                     variant="outline"
                     size="sm"
                     onClick={() => { setReattemptMode("marked-only"); setTestStarted(true); }}
-                    className="text-xs border-purple-200 text-purple-600 hover:bg-purple-50"
+                    className="text-xs border-primary-200 text-primary-600 hover:bg-primary-50"
                   >
                     <Flag className="h-3.5 w-3.5 mr-1" /> Marked ({markedCount})
                   </Button>
@@ -264,7 +264,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
               {previousAttempts.length > 0 && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Your Attempts</span>
-                  <span className="font-medium text-indigo-600">{previousAttempts.length}</span>
+                  <span className="font-medium text-primary-600">{previousAttempts.length}</span>
                 </div>
               )}
             </div>
@@ -277,14 +277,14 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
               {(["Easy", "Medium", "Hard"] as const).map((d) => (
                 <div key={d} className="flex items-center gap-3">
                   <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    d === "Hard" ? "bg-red-100 text-red-700" : d === "Medium" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"
+                    d === "Hard" ? "bg-red-100 text-red-700" : d === "Medium" ? "bg-accent-100 text-accent-700" : "bg-green-100 text-green-700"
                   }`}>
                     {d}
                   </span>
                   <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
-                        d === "Hard" ? "bg-red-500" : d === "Medium" ? "bg-amber-500" : "bg-green-500"
+                        d === "Hard" ? "bg-red-500" : d === "Medium" ? "bg-accent-500" : "bg-green-500"
                       }`}
                       style={{ width: `${(difficultyBreakdown[d] / exam.totalQuestions) * 100}%` }}
                     />
@@ -299,10 +299,10 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
         {/* Test Features */}
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { icon: Brain, label: "AI Diagnostics", desc: "Post-test intelligence", color: "text-indigo-600", bg: "bg-indigo-100" },
+            { icon: Brain, label: "AI Diagnostics", desc: "Post-test intelligence", color: "text-primary-600", bg: "bg-primary-100" },
             { icon: BarChart3, label: "Smart Review", desc: "Filter by mistake type", color: "text-emerald-600", bg: "bg-emerald-100" },
-            { icon: Zap, label: "Speed Tracking", desc: "Per-question timing", color: "text-amber-600", bg: "bg-amber-100" },
-            { icon: Target, label: "Confidence Tags", desc: "Rate your certainty", color: "text-purple-600", bg: "bg-purple-100" },
+            { icon: Zap, label: "Speed Tracking", desc: "Per-question timing", color: "text-accent-600", bg: "bg-accent-100" },
+            { icon: Target, label: "Confidence Tags", desc: "Rate your certainty", color: "text-primary-600", bg: "bg-primary-100" },
           ].map((f) => (
             <div key={f.label} className="rounded-xl bg-white border border-gray-100 p-3 shadow-sm text-center">
               <div className={`mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-lg ${f.bg}`}>
@@ -315,12 +315,12 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
         </div>
 
         {/* Instructions */}
-        <div className="mt-6 rounded-2xl bg-amber-50 border border-amber-200 p-6">
+        <div className="mt-6 rounded-2xl bg-accent-50 border border-accent-200 p-6">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600" />
-            <h3 className="font-bold text-amber-800">Instructions</h3>
+            <AlertTriangle className="h-5 w-5 text-accent-600" />
+            <h3 className="font-bold text-accent-800">Instructions</h3>
           </div>
-          <ul className="space-y-2 text-sm text-amber-700">
+          <ul className="space-y-2 text-sm text-accent-700">
             <li className="flex items-start gap-2"><Minus className="h-4 w-4 mt-0.5 shrink-0" /> You have <strong>{exam.duration} minutes</strong> to complete this test.</li>
             <li className="flex items-start gap-2"><Minus className="h-4 w-4 mt-0.5 shrink-0" /> Each correct answer carries <strong>{exam.questions[0]?.marks || 4} marks</strong>.</li>
             {exam.negativeMarking > 0 && (
@@ -337,7 +337,7 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
           <Button
             variant="gradient"
             size="xl"
-            className="text-lg px-12 shadow-xl shadow-indigo-200"
+            className="text-lg px-12 shadow-xl shadow-primary-200"
             onClick={() => { setReattemptMode(null); setTestStarted(true); }}
           >
             <Shield className="h-5 w-5 mr-2" /> Start Test Now
@@ -350,9 +350,9 @@ export default function ExamPage({ params }: { params: Promise<{ slug: string }>
         <div className="mt-8 rounded-2xl bg-white border border-gray-100 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-gray-900 flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-amber-500" /> Top Performers
+              <Trophy className="h-5 w-5 text-accent-500" /> Top Performers
             </h3>
-            <Link href="/mock-tests/leaderboard" className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+            <Link href="/mock-tests/leaderboard" className="text-xs text-primary-600 hover:underline flex items-center gap-1">
               View Full Leaderboard <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
