@@ -818,6 +818,30 @@ model MediaAsset {
   @@index([type])
 }
 
+/// Admin-managed YouTube videos & shorts shown in the homepage student carousel
+model YouTubeShort {
+  id          String   @id @default(cuid())
+  title       String
+  url         String              // original link the admin pasted
+  videoId     String              // extracted 11-char YouTube ID (for embeds/thumbs)
+  type        String   @default("short")   // "short" (9:16) | "video" (16:9)
+  thumbnail   String   @default("")        // optional override; else derived from videoId
+  description String   @default("")
+  category    String?              // optional badge/grouping label
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  viewCount   Int      @default(0)
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
 /// Newsletter CTA section content
 model CtaSection {
   id               String   @id @default(cuid())

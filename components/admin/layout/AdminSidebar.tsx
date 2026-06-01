@@ -49,6 +49,7 @@ import {
   Sparkles,
   LogOut,
   HelpCircle,
+  Youtube,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -110,6 +111,7 @@ const NAV_SECTIONS: {
       { href: "/admin/social-links", label: "Social Links", icon: Share2, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/cta-sections", label: "CTA Sections", icon: MousePointerClick, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/announcements", label: "Announcements", icon: Megaphone, roles: ["SUPER_ADMIN", "ADMIN"] },
+      { href: "/admin/youtube-shorts", label: "YouTube Shorts", icon: Youtube, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/media", label: "Media Library", icon: ImageIcon, roles: ["SUPER_ADMIN", "ADMIN"] },
     ],
   },

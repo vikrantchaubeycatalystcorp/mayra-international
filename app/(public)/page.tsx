@@ -3,6 +3,7 @@ import { HeroBannerServer } from "../../components/home/HeroBannerServer";
 import { StatsSectionServer } from "../../components/home/StatsSectionServer";
 import { TopCollegesServer } from "../../components/home/TopCollegesServer";
 import { TopExamsServer } from "../../components/home/TopExamsServer";
+import { ShortsCarouselServer } from "../../components/home/ShortsCarouselServer";
 import { NewsSectionServer } from "../../components/home/NewsSectionServer";
 import { FeaturedCoursesServer } from "../../components/home/FeaturedCoursesServer";
 import { StudyAbroadTeaserServer } from "../../components/home/StudyAbroadTeaserServer";
@@ -29,6 +30,9 @@ export default async function HomePage() {
       </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
         <TopExamsServer />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <ShortsCarouselServer />
       </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
         <NewsSectionServer />

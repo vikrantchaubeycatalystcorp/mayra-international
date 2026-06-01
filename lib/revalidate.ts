@@ -18,6 +18,7 @@ const ENTITY_PATH_MAP: Record<string, string[]> = {
   HomeStat: ["/"],
   CtaSection: ["/"],
   Announcement: ["/"],
+  YouTubeShort: ["/"],
   WorldCollegeStat: ["/", "/map"],
 
   // Layout-wide (navbar, footer, etc.) — revalidate all via layout

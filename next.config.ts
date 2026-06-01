@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.mayrainternational.com" },
       { protocol: "https", hostname: "flagcdn.com" },
       { protocol: "https", hostname: "cdn.jsdelivr.net" },
+      { protocol: "https", hostname: "i.ytimg.com" },
+      { protocol: "https", hostname: "img.youtube.com" },
     ],
     dangerouslyAllowSVG: false,
     contentDispositionType: "attachment",
