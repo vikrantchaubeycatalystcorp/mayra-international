@@ -118,11 +118,13 @@
 
 .ed-scope .h-xl{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6vw,68px);line-height:1.02;letter-spacing:-.02em;}
 
-.ed-scope .h-1{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4vw,44px);line-height:1.06;letter-spacing:-.015em;}
+/* height:auto guards against the Tailwind h-1/h-2/h-3 height utilities,
+   which share these class names and would otherwise collapse the heading box. */
+.ed-scope .h-1{height:auto;font-family:var(--serif);font-weight:500;font-size:clamp(30px,4vw,44px);line-height:1.06;letter-spacing:-.015em;}
 
-.ed-scope .h-2{font-family:var(--serif);font-weight:500;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.01em;}
+.ed-scope .h-2{height:auto;font-family:var(--serif);font-weight:500;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.01em;}
 
-.ed-scope .h-3{font-family:var(--sans);font-weight:700;font-size:19px;line-height:1.25;letter-spacing:-.01em;}
+.ed-scope .h-3{height:auto;font-family:var(--sans);font-weight:700;font-size:19px;line-height:1.25;letter-spacing:-.01em;}
 
 .ed-scope .lead{font-size:clamp(17px,1.5vw,20px);line-height:1.5;color:var(--ink-2);font-weight:400;}
 
