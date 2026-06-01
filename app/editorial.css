@@ -339,9 +339,9 @@
 
 .ed-scope .site-header.scrolled{box-shadow:var(--sh-1);background:color-mix(in srgb,var(--paper) 94%,transparent);}
 
-.ed-scope .nav{display:flex;align-items:center;gap:14px;height:68px;}
+.ed-scope .nav{display:flex;align-items:center;gap:14px;height:80px;}
 
-.ed-scope .nav.scrolled{height:60px;}
+.ed-scope .nav.scrolled{height:70px;}
 
 .ed-scope .brand{display:flex;align-items:center;gap:10px;flex:none;}
 
@@ -782,7 +782,7 @@
 
 
 /* ---------- TOP FILTER BAR ---------- */
-.ed-scope .filterbar{position:sticky;top:68px;z-index:45;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.ed-scope .filterbar{position:sticky;top:80px;z-index:45;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
 
 .ed-scope .filterbar .container{padding-block:12px;}
 

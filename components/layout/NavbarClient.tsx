@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, Menu, X, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { CommandSearch } from "../search/CommandSearch";
 import { cn } from "../../lib/utils";
 
@@ -46,7 +47,9 @@ function openEnquiry() {
   }
 }
 
-export function NavbarClient({ navItems }: Props) {
+export function NavbarClient({ navItems, logo, siteName }: Props) {
+  // Prefer the transparent/clean logo when the default is configured.
+  const logoSrc = !logo || logo === "/images/mayra-logo.png" ? "/images/mayra-logo-clean.png" : logo;
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -86,11 +89,15 @@ export function NavbarClient({ navItems }: Props) {
       <header ref={headerRef} className={cn("site-header", scrolled && "scrolled")}>
         <div className="container">
           <nav className={cn("nav", scrolled && "scrolled")}>
-            <Link className="brand" href="/" aria-label="Mayra home">
-              <span className="mark">M</span>
-              <span className="word">
-                Mayra<b>.</b>
-              </span>
+            <Link className="brand" href="/" aria-label={`${siteName || "Mayra International"} home`}>
+              <Image
+                src={logoSrc}
+                alt={siteName || "Mayra International"}
+                width={1024}
+                height={558}
+                priority
+                className="h-[58px] w-auto"
+              />
             </Link>
 
             <div className="nav-links">
@@ -136,10 +143,13 @@ export function NavbarClient({ navItems }: Props) {
       <aside className={cn("drawer", drawerOpen && "open")} aria-label="Mobile navigation">
         <div className="drawer-top">
           <span className="brand">
-            <span className="mark">M</span>
-            <span className="word">
-              Mayra<b>.</b>
-            </span>
+            <Image
+              src={logoSrc}
+              alt={siteName || "Mayra International"}
+              width={1024}
+              height={558}
+              className="h-12 w-auto"
+            />
           </span>
           <button className="modal-close" onClick={() => setDrawerOpen(false)} aria-label="Close">
             <X className="h-4 w-4" />

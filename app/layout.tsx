@@ -153,7 +153,7 @@ export default function RootLayout({
         <JsonLd data={websiteJsonLd()} />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
-        <Suspense fallback={<nav className="h-[68px] bg-[#FBF9F4]/90 backdrop-blur-md border-b border-[#E8E1D4] sticky top-0 z-50" />}>
+        <Suspense fallback={<nav className="h-[80px] bg-[#FBF9F4]/90 backdrop-blur-md border-b border-[#E8E1D4] sticky top-0 z-50" />}>
           <NavbarServer />
         </Suspense>
         <main className="flex-1">{children}</main>
