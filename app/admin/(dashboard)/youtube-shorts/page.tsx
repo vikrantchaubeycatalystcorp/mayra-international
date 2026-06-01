@@ -8,7 +8,7 @@ import { AdminDataTable, type Column } from "@/components/admin/shared/AdminData
 import { ConfirmDialog } from "@/components/admin/shared/ConfirmDialog";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
 import { parseYouTubeId, youTubeThumb } from "@/lib/youtube";
-import { X, Loader2, Plus, Youtube, PlaySquare } from "lucide-react";
+import { X, Loader2, Youtube, PlaySquare } from "lucide-react";
 
 interface YouTubeShort {
   id: string;
@@ -229,19 +229,12 @@ export default function AdminYouTubeShortsPage() {
         onSort={crud.setSort}
         sortBy={crud.sortBy}
         sortOrder={crud.sortOrder}
+        onCreate={openCreate}
+        createLabel="Add Video"
         onEdit={openEdit}
         onDelete={setDeleteTarget}
         emptyMessage="No videos yet — add your first YouTube Short"
       />
-
-      <div className="flex justify-end -mt-[52px] mr-4 relative z-10 pointer-events-none">
-        <button
-          onClick={openCreate}
-          className="pointer-events-auto inline-flex items-center gap-2 h-10 px-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
-        >
-          <Plus className="w-4 h-4" /> Add Video
-        </button>
-      </div>
 
       {showForm && mounted && createPortal(
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 overflow-y-auto">
