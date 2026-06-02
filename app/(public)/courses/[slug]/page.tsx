@@ -127,7 +127,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
               <div className="flex items-center gap-4 mb-3">
                 <div
-                  className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${course.color || "from-blue-600 to-blue-400"} flex items-center justify-center flex-shrink-0`}
+                  className={`h-14 w-14 rounded-2xl bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center flex-shrink-0`}
                 >
                   <Icon className="h-7 w-7 text-white" />
                 </div>
@@ -136,7 +136,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
               <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-5">
                 <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-lg">
-                  <Clock className="h-4 w-4 text-blue-500" />
+                  <Clock className="h-4 w-4 text-primary-500" />
                   {course.duration}
                 </span>
                 <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-lg">
@@ -144,12 +144,12 @@ export default async function CourseDetailPage({ params }: Props) {
                   {course.topColleges.toLocaleString()}+ Colleges
                 </span>
                 <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-lg">
-                  <IndianRupee className="h-4 w-4 text-orange-500" />
+                  <IndianRupee className="h-4 w-4 text-accent-500" />
                   Avg Fees: {formatCurrency(course.avgFees)}/yr
                 </span>
                 {course.avgSalary && (
                   <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-lg">
-                    <TrendingUp className="h-4 w-4 text-purple-500" />
+                    <TrendingUp className="h-4 w-4 text-primary-500" />
                     Avg Salary: {(course.avgSalary / 100000).toFixed(1)} LPA
                   </span>
                 )}
@@ -169,7 +169,7 @@ export default async function CourseDetailPage({ params }: Props) {
             </div>
 
             {/* Quick Info Card */}
-            <div className="w-full lg:w-72 bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl border border-primary-100 p-5 flex-shrink-0">
+            <div className="w-full lg:w-72 bg-gradient-to-br from-primary-50 to-primary-50 rounded-2xl border border-primary-100 p-5 flex-shrink-0">
               <h3 className="font-bold text-gray-900 mb-4 text-sm">Key Information</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -226,14 +226,14 @@ export default async function CourseDetailPage({ params }: Props) {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { icon: Clock, label: "Duration", value: course.duration, color: "text-blue-500" },
-                  { icon: GraduationCap, label: "Level", value: course.level, color: "text-purple-500" },
+                  { icon: Clock, label: "Duration", value: course.duration, color: "text-primary-500" },
+                  { icon: GraduationCap, label: "Level", value: course.level, color: "text-primary-500" },
                   { icon: Building2, label: "Colleges Offering", value: `${course.topColleges.toLocaleString()}+`, color: "text-green-500" },
-                  { icon: IndianRupee, label: "Average Annual Fees", value: formatCurrency(course.avgFees), color: "text-orange-500" },
+                  { icon: IndianRupee, label: "Average Annual Fees", value: formatCurrency(course.avgFees), color: "text-accent-500" },
                   ...(course.avgSalary
                     ? [{ icon: TrendingUp, label: "Average Starting Salary", value: `${(course.avgSalary / 100000).toFixed(1)} LPA`, color: "text-emerald-500" }]
                     : []),
-                  { icon: Users, label: "Stream", value: course.stream, color: "text-indigo-500" },
+                  { icon: Users, label: "Stream", value: course.stream, color: "text-primary-500" },
                 ].map(({ icon: ItemIcon, label, value, color }) => (
                   <div key={label} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                     <div className="h-9 w-9 rounded-lg bg-white border border-gray-100 flex items-center justify-center flex-shrink-0">

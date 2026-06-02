@@ -1,7 +1,7 @@
 export default function CourseDetailLoading() {
   return (
     <div className="min-h-screen bg-gray-50 animate-pulse">
-      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 h-56" />
+      <div className="bg-gradient-to-br from-slate-900 via-primary-900 to-primary-800 h-56" />
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <div className="h-7 bg-gray-200 rounded w-72 mb-3" />

@@ -44,7 +44,10 @@ export function FloatingInquiryForm() {
   const COURSE_OPTIONS = masterData?.leadInterests
     ? masterData.leadInterests.map((i) => i.label)
     : FALLBACK_COURSE_OPTIONS;
-  const [minimized, setMinimized] = useState(false);
+  // Start collapsed so the widget sits as a compact bottom-right tab and
+  // doesn't blanket page content / CTAs. It expands on click and via the
+  // "Free counselling" CTAs (mayra:open-enquiry).
+  const [minimized, setMinimized] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

@@ -79,7 +79,9 @@
 
 .ed-scope button{font-family:inherit;cursor:pointer;}
 
-.ed-scope h1, .ed-scope h2, .ed-scope h3, .ed-scope h4, .ed-scope p{margin:0;}
+/* Headings/paragraphs are already margin-reset by Tailwind preflight; we omit
+   a scoped reset here so Tailwind margin utilities (mx-auto, mb-6, …) on
+   <p>/<h*> inside .ed-scope are not overridden by higher specificity. */
 
 .ed-scope :focus-visible{outline:2.5px solid var(--pine);outline-offset:2px;border-radius:3px;}
 
