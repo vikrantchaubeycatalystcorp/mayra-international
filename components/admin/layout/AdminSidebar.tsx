@@ -93,6 +93,7 @@ const NAV_SECTIONS: {
       { href: "/admin/news-categories", label: "News Categories", icon: FolderOpen, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/college-types", label: "College Types", icon: Building, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/course-levels", label: "Course Levels", icon: GraduationCap, roles: ["SUPER_ADMIN", "ADMIN"] },
+      { href: "/admin/recruiters", label: "Top Recruiters", icon: Building2, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/exam-modes", label: "Exam Modes", icon: Monitor, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/lead-options", label: "Lead Options", icon: ClipboardList, roles: ["SUPER_ADMIN", "ADMIN"] },
       { href: "/admin/data-sources", label: "Data Sources", icon: Database, roles: ["SUPER_ADMIN", "ADMIN"] },

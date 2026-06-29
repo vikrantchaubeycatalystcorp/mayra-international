@@ -104,6 +104,7 @@ export async function POST(req: NextRequest) {
         isActive: data.isActive,
         createdBy: auth.admin.id,
         source: "admin",
+        topRecruiters: { connect: data.topRecruiterIds.map((id) => ({ id })) },
       },
     });
 

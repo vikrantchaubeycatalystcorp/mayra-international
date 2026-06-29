@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Loader2, GraduationCap, MapPin, IndianRupee, Globe, Bu
 import { createItem } from "@/hooks/admin/useAdminCRUD";
 import { STREAMS as FALLBACK_STREAMS, COLLEGE_TYPES as FALLBACK_COLLEGE_TYPES, INDIAN_STATES as FALLBACK_INDIAN_STATES } from "@/types/admin";
 import { useMasterData } from "@/hooks/useMasterData";
+import { RecruiterMultiSelect } from "@/components/admin/shared/RecruiterMultiSelect";
 
 export default function NewCollegePage() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function NewCollegePage() {
     accreditation: [] as string[], courses: [] as string[], description: "",
     highlights: [] as string[], website: "", phone: "", totalStudents: null as number | null,
     faculty: null as number | null, latitude: null as number | null, longitude: null as number | null,
-    isFeatured: false, isActive: true, logo: "",
+    isFeatured: false, isActive: true, logo: "", topRecruiterIds: [] as string[],
   });
 
   const update = (key: string, value: unknown) => setForm((p) => ({ ...p, [key]: value }));
@@ -232,6 +233,17 @@ export default function NewCollegePage() {
               <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} className={inputClass} />
             </div>
           </div>
+        </div>
+
+        {/* Top Recruiters */}
+        <div className="admin-card p-6 space-y-5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center">
+              <Building className="w-3.5 h-3.5 text-teal-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-900">Top Recruiters</h3>
+          </div>
+          <RecruiterMultiSelect value={form.topRecruiterIds} onChange={(ids) => update("topRecruiterIds", ids)} />
         </div>
 
         {/* Actions */}

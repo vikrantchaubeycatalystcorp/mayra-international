@@ -58,6 +58,7 @@ export default async function CollegeDetailPage({ params }: Props) {
       recruiters: { orderBy: { sortOrder: "asc" } },
       feeStructures: { orderBy: { sortOrder: "asc" } },
       admissionInfo: true,
+      topRecruiters: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
     },
   });
   if (!college) notFound();
@@ -73,11 +74,6 @@ export default async function CollegeDetailPage({ params }: Props) {
   });
 
   const gradient = getGradientForLetter(college.name[0]);
-
-  const defaultRecruiters = ["Google", "Microsoft", "Amazon", "Goldman Sachs", "McKinsey", "BCG", "Flipkart", "Apple", "Deloitte", "KPMG"];
-  const recruiterNames = college.recruiters.length > 0
-    ? college.recruiters.map((r) => r.name)
-    : defaultRecruiters;
 
   // Build a compatible object for JSON-LD helpers that expect the old interface
   const collegeSeo = {
@@ -355,6 +351,23 @@ export default async function CollegeDetailPage({ params }: Props) {
               </Accordion>
             </section>
 
+            {/* Top Recruiters */}
+            {college.topRecruiters.length > 0 && (
+              <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Top Recruiters</h2>
+                <div className="flex flex-wrap gap-2">
+                  {college.topRecruiters.map((r) => (
+                    <span
+                      key={r.id}
+                      className="px-4 py-2 bg-primary-50 border border-primary-100 rounded-xl text-primary-700 text-sm font-medium"
+                    >
+                      {r.name}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Placements */}
             {college.avgPackage && (
               <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
@@ -376,20 +389,6 @@ export default async function CollegeDetailPage({ params }: Props) {
                       <p className="text-xs text-gray-500">{stat.label}</p>
                     </div>
                   ))}
-                </div>
-
-                <h3 className="font-semibold text-gray-800 mb-3 text-sm">Top Recruiters</h3>
-                <div className="flex flex-wrap gap-2">
-                  {recruiterNames.map(
-                    (company) => (
-                      <span
-                        key={company}
-                        className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700 font-medium"
-                      >
-                        {company}
-                      </span>
-                    )
-                  )}
                 </div>
               </section>
             )}

@@ -119,11 +119,18 @@ export const collegeFormSchema = z
     isFeatured: z.boolean().default(false),
     isActive: z.boolean().default(true),
     logo: z.string().optional().default(""),
+    topRecruiterIds: z.array(z.string()).optional().default([]),
   })
   .refine((d) => d.feesMax >= d.feesMin, {
     message: "Max fees must be >= min fees",
     path: ["feesMax"],
   });
+
+export const recruiterFormSchema = z.object({
+  name: z.string().min(1).max(200),
+  sortOrder: z.coerce.number().default(0),
+  isActive: z.boolean().default(true),
+});
 
 export const courseFormSchema = z.object({
   name: z.string().min(2).max(200),
@@ -256,6 +263,7 @@ export const emailSetupSchema = z.object({
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type AdminRegisterInput = z.infer<typeof adminRegisterSchema>;
 export type CollegeFormInput = z.infer<typeof collegeFormSchema>;
+export type RecruiterFormInput = z.infer<typeof recruiterFormSchema>;
 export type CourseFormInput = z.infer<typeof courseFormSchema>;
 export type ExamFormInput = z.infer<typeof examFormSchema>;
 export type NewsFormInput = z.infer<typeof newsFormSchema>;
