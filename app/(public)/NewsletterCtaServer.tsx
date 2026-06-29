@@ -11,7 +11,8 @@ export async function NewsletterCtaServer() {
   const heading = cta?.heading || "Start Your Education Journey Today";
   const subheading = cta?.subheading || "Join 10 lakh+ students who use Mayra to make smarter education decisions. Get personalized recommendations, exam alerts, and expert guidance.";
   const primaryText = cta?.ctaPrimaryText || "Get Started Free";
-  const primaryLink = cta?.ctaPrimaryLink || "/sign-up";
+  // "Get Started Free" should always take the user to the contact page.
+  const primaryLink = "/contact";
   const secondaryText = cta?.ctaSecondaryText || "Explore Colleges";
   const secondaryLink = cta?.ctaSecondaryLink || "/colleges";
   const footnote = cta?.footnote || "No credit card required. No spam. Just good guidance.";

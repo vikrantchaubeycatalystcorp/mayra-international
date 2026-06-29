@@ -91,10 +91,10 @@ export function StudyAbroadTeaserClient({ countries, title, subtitle, ctaLabel, 
             <div className="relative p-8 text-white">
               <h3 className="text-xl font-black mb-2 tracking-tight">Free IELTS/TOEFL Preparation</h3>
               <p className="text-indigo-200/70 text-sm mb-6 leading-relaxed">Get access to 1000+ practice questions, mock tests, and expert tips to ace your English proficiency exam.</p>
-              <button suppressHydrationWarning className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-700 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+              <Link href="/mock-tests" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-700 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
                 Start Preparing Free
                 <ExternalLink className="h-3.5 w-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
           <div className="relative overflow-hidden rounded-3xl">
@@ -104,10 +104,10 @@ export function StudyAbroadTeaserClient({ countries, title, subtitle, ctaLabel, 
             <div className="relative p-8 text-white">
               <h3 className="text-xl font-black mb-2 tracking-tight">Free Study Abroad Counseling</h3>
               <p className="text-orange-100/80 text-sm mb-6 leading-relaxed">Our expert counselors will guide you through university selection, SOP writing, visa process, and scholarships.</p>
-              <button suppressHydrationWarning className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-orange-700 rounded-xl font-semibold text-sm hover:bg-orange-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
-                Book Free Session
+              <Link href="/contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-orange-700 rounded-xl font-semibold text-sm hover:bg-orange-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+                Book Session
                 <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
