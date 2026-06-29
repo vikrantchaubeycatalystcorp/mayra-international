@@ -6,7 +6,7 @@ import { useAdminCRUD } from "@/hooks/admin/useAdminCRUD";
 import { AdminDataTable, type Column } from "@/components/admin/shared/AdminDataTable";
 import { ConfirmDialog } from "@/components/admin/shared/ConfirmDialog";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
-import { truncate, formatDate } from "@/lib/utils";
+import { truncate, formatDate, normalizeImageUrl } from "@/lib/utils";
 import { NEWS_CATEGORIES } from "@/types/admin";
 
 interface NewsRow { id: string; title: string; category: string; author: string; publishedAt: string; imageUrl?: string | null; isLive: boolean; isActive: boolean; views: number | null; tags: string[]; }
@@ -27,7 +27,7 @@ export default function AdminNewsPage() {
         <div className="flex items-center gap-3">
           {item.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={item.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
+            <img src={normalizeImageUrl(item.imageUrl)} alt="" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
           ) : (
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center flex-shrink-0"><Newspaper className="w-4 h-4 text-amber-600" /></div>
           )}

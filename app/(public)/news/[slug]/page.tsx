@@ -6,7 +6,7 @@ import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { ShareButtons } from "../../../../components/shared/ShareButtons";
 import { LiveBadge } from "../../../../components/shared/LiveBadge";
-import { formatDate, getReadTime } from "../../../../lib/utils";
+import { formatDate, getReadTime, normalizeImageUrl } from "../../../../lib/utils";
 import { JsonLd, newsArticleJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
 
 export const revalidate = 60;
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: Props) {
       authors: [article.author],
       section: article.category,
       tags: article.tags,
-      ...(article.imageUrl ? { images: [{ url: article.imageUrl, alt: article.title }] } : {}),
+      ...(article.imageUrl ? { images: [{ url: normalizeImageUrl(article.imageUrl), alt: article.title }] } : {}),
     },
     alternates: {
       canonical: `https://www.mayrainternational.com/news/${article.slug}`,
@@ -111,7 +111,7 @@ export default async function NewsDetailPage({ params }: Props) {
               {article.imageUrl ? (
                 <div className="h-64 sm:h-80 relative overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+                  <img src={normalizeImageUrl(article.imageUrl)} alt={article.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="flex items-center gap-2 mb-3">
@@ -283,7 +283,7 @@ export default async function NewsDetailPage({ params }: Props) {
                     {a.imageUrl ? (
                       <div className="h-14 w-14 rounded-xl flex-shrink-0 overflow-hidden">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={a.imageUrl} alt={a.title} className="w-full h-full object-cover" />
+                        <img src={normalizeImageUrl(a.imageUrl)} alt={a.title} className="w-full h-full object-cover" />
                       </div>
                     ) : (
                       <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${a.imageColor} flex-shrink-0 flex items-center justify-center`}>

@@ -37,6 +37,31 @@ export function formatDate(dateStr: string): string {
   });
 }
 
+/**
+ * Convert a Google Drive *share* link into a direct, embeddable image URL.
+ *
+ * Drive share links (e.g. `https://drive.google.com/file/d/FILE_ID/view?usp=sharing`)
+ * point at the web viewer, not the image bytes, so they don't work in an `<img>` tag.
+ * We rewrite them to the thumbnail endpoint, which serves the image directly and is
+ * reliable for hot-linking. Non-Drive URLs (and anything we can't parse) are returned
+ * unchanged.
+ */
+export function normalizeImageUrl(url?: string | null): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (!/drive\.google\.com|docs\.google\.com/i.test(trimmed)) return trimmed;
+
+  // Extract the file ID from the common Drive URL shapes:
+  //   /file/d/FILE_ID/...   •   ?id=FILE_ID / &id=FILE_ID   •   /d/FILE_ID
+  const id =
+    trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1] ??
+    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/)?.[1] ??
+    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+
+  if (!id) return trimmed;
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w1600`;
+}
+
 export function getReadTime(content: string): number {
   const wordsPerMinute = 200;
   const words = content.split(/\s+/).length;

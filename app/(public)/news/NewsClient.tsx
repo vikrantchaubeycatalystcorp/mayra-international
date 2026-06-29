@@ -10,7 +10,7 @@ import { Breadcrumb } from "../../../components/shared/Breadcrumb";
 import { Badge } from "../../../components/ui/badge";
 import { Input } from "../../../components/ui/input";
 import { LiveBadge } from "../../../components/shared/LiveBadge";
-import { formatDate, getReadTime, truncate } from "../../../lib/utils";
+import { formatDate, getReadTime, truncate, normalizeImageUrl } from "../../../lib/utils";
 import { cn } from "../../../lib/utils";
 import { useMasterData } from "../../../hooks/useMasterData";
 
@@ -63,7 +63,7 @@ function CategoryImage({ category, imageColor, imageUrl, isLive, featured = fals
     )}>
       {imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageUrl} alt={title || category} className="w-full h-full object-cover" />
+        <img src={normalizeImageUrl(imageUrl)} alt={title || category} className="w-full h-full object-cover" />
       ) : (
         <Icon className="h-14 w-14 text-white/70" strokeWidth={1.5} />
       )}
