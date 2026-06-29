@@ -432,7 +432,7 @@ export function getSmartFilters(attempt: TestAttempt, exam: MockExam): SmartFilt
       description: "Rushed answers that were incorrect",
       count: analytics.taxonomy.tooFastWrong.length,
       icon: "zap",
-      color: "text-accent-600",
+      color: "text-orange-600",
     },
     {
       id: "overtime-wrong",
@@ -440,7 +440,7 @@ export function getSmartFilters(attempt: TestAttempt, exam: MockExam): SmartFilt
       description: "Spent too long but still got wrong",
       count: analytics.taxonomy.overtimeWrong.length,
       icon: "clock",
-      color: "text-primary-600",
+      color: "text-purple-600",
     },
     {
       id: "unanswered-medium-hard",
@@ -448,7 +448,7 @@ export function getSmartFilters(attempt: TestAttempt, exam: MockExam): SmartFilt
       description: "Medium and hard questions left unanswered",
       count: unansweredMedHard.length,
       icon: "minus-circle",
-      color: "text-accent-600",
+      color: "text-amber-600",
     },
     {
       id: "guessed-correct",

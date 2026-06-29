@@ -1,8 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Mail, Phone, MapPin, Twitter, Linkedin, Youtube, Instagram, Facebook,
   ShieldCheck, Smartphone, PlayCircle, type LucideIcon,
 } from "lucide-react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { cn } from "../../lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
   Twitter, Linkedin, Youtube, Instagram, Facebook,
@@ -40,7 +44,11 @@ type SocialLinkData = {
   hoverColor: string;
 };
 
-type LegalLinkData = { id: string; label: string; href: string };
+type LegalLinkData = {
+  id: string;
+  label: string;
+  href: string;
+};
 
 type TrustBadgeData = {
   id: string;
@@ -81,159 +89,173 @@ export function FooterClient({
     .replace(/\b(?:myra|mayra)\s+india\b/gi, "Mayra International")
     .trim();
 
-  // brand (1.6fr) + one column per section (1fr) + newsletter (1.3fr)
-  const gridTemplateColumns = `1.6fr ${sections.map(() => "1fr").join(" ")} 1.3fr`;
-
   return (
-    <div className="ed-scope">
-      <footer className="site-footer">
-        <div className="container">
-          <div className="foot-grid" style={{ gridTemplateColumns }}>
-            {/* Brand */}
-            <div className="foot-brand">
-              <span className="word">
-                Mayra<span style={{ color: "var(--gold)" }}>.</span>
-              </span>
-              <p>{company.tagline}</p>
-              <div className="foot-contact">
-                <span><b>{company.email}</b></span>
-                <span>{company.phone}{company.phoneLabel ? ` ${company.phoneLabel}` : ""}</span>
+    <footer className="relative bg-[#0a0a12] text-gray-300 overflow-hidden">
+      {/* Subtle top gradient accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+      {/* Decorative blur */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-indigo-500/5 blur-[100px] pointer-events-none" />
+
+      <div className="container mx-auto py-16 relative">
+        <div className={cn(
+            "grid grid-cols-1 sm:grid-cols-2 gap-10",
+            sections.length + 2 <= 4 ? "lg:grid-cols-4" : sections.length + 2 <= 5 ? "lg:grid-cols-5" : "lg:grid-cols-6"
+          )}>
+          {/* Brand Column */}
+          <div className="lg:col-span-1">
+            <Link href="/" className="flex items-center gap-2 mb-5">
+              <Image
+                src={company.footerLogo}
+                alt={company.name}
+                width={1024}
+                height={558}
+                className="h-12 w-auto"
+              />
+            </Link>
+            <p className="text-sm text-gray-400 leading-relaxed mb-6">
+              {company.tagline}
+            </p>
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
+                <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
+                  <Mail className="h-3.5 w-3.5 text-indigo-400" />
+                </div>
+                <span>{company.email}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
+                <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
+                  <Phone className="h-3.5 w-3.5 text-indigo-400" />
+                </div>
+                <span>{company.phone} {company.phoneLabel}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-gray-300 transition-colors">
+                <div className="h-8 w-8 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-3.5 w-3.5 text-indigo-400" />
+                </div>
                 <span>{company.address}</span>
               </div>
-              {socialLinks.length > 0 && (
-                <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
-                  {socialLinks.map((social) => {
-                    const Icon = getIcon(social.icon);
+            </div>
+            <div className="flex items-center gap-2 mt-6">
+              {socialLinks.map((social) => {
+                const Icon = getIcon(social.icon);
+                return (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    aria-label={social.platform}
+                    className="h-9 w-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300"
+                  >
+                    {Icon ? <Icon className="h-4 w-4" /> : <span className="text-xs">{social.platform}</span>}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Dynamic Footer Sections */}
+          {sections.map((section) => (
+            <div key={section.id}>
+              <h2 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+                {section.title}
+              </h2>
+              <ul className="space-y-3">
+                {section.links.map((link) => (
+                  <li key={link.id}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {/* Newsletter */}
+          <div>
+            <h2 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+              Stay Updated
+            </h2>
+            <p className="text-sm text-gray-400 mb-5 leading-relaxed">
+              Get latest exam dates, results, and admission news straight to your inbox.
+            </p>
+            <div className="space-y-2.5">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-500 focus-visible:ring-indigo-500/30 focus-visible:border-indigo-500/50 rounded-xl h-11"
+              />
+              <Button variant="gradient" className="w-full rounded-xl h-11">
+                Subscribe Free
+              </Button>
+            </div>
+            <p className="text-xs text-gray-400 mt-2.5">
+              No spam. Unsubscribe anytime.
+            </p>
+
+            {/* App Download */}
+            {appDownloads.length > 0 && (
+              <div className="mt-7">
+                <p className="text-[10px] text-gray-400 uppercase tracking-[0.15em] mb-3 font-medium">Download App</p>
+                <div className="flex gap-2">
+                  {appDownloads.map((app) => {
+                    const Icon = getIcon(app.icon);
                     return (
                       <a
-                        key={social.id}
-                        href={social.url}
-                        aria-label={social.platform}
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 8,
-                          background: "rgba(255,255,255,0.05)",
-                          display: "grid",
-                          placeItems: "center",
-                          color: "#CFC6B6",
-                        }}
+                        key={app.id}
+                        href={app.url}
+                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] cursor-pointer hover:border-white/[0.12] hover:bg-white/[0.06] transition-all duration-300"
                       >
-                        {Icon ? <Icon className="h-4 w-4" /> : <span className="text-xs">{social.platform}</span>}
+                        {Icon ? <Icon className="h-4 w-4 text-gray-400" /> : null}
+                        <div>
+                          <p className="text-[10px] text-gray-400 leading-none">{app.storeLabel}</p>
+                          <p className="text-xs font-semibold text-white leading-none mt-0.5">{app.storeName}</p>
+                        </div>
                       </a>
                     );
                   })}
                 </div>
-              )}
-            </div>
-
-            {/* Dynamic link columns */}
-            {sections.map((section) => (
-              <div key={section.id} className="foot-col">
-                <h4>{section.title}</h4>
-                {section.links.map((link) => (
-                  <Link key={link.id} href={link.href}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
-
-            {/* Newsletter */}
-            <div className="foot-col foot-news">
-              <h4>Stay updated</h4>
-              <p style={{ color: "#B8AE9E", fontSize: "13.5px", marginBottom: 12, lineHeight: 1.55 }}>
-                Exam dates, results and admission alerts — weekly, edited by our desk.
-              </p>
-              <form>
-                <input
-                  className="input"
-                  type="email"
-                  placeholder="you@email.com"
-                  required
-                  style={{ marginBottom: 8 }}
-                />
-                <button className="btn btn-gold btn-block btn-sm" type="submit">
-                  Subscribe
-                </button>
-              </form>
-
-              {appDownloads.length > 0 && (
-                <div style={{ marginTop: 24 }}>
-                  <p style={{ fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8E8472", marginBottom: 10 }}>
-                    Download app
-                  </p>
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    {appDownloads.map((app) => {
-                      const Icon = getIcon(app.icon);
-                      return (
-                        <a
-                          key={app.id}
-                          href={app.url}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            padding: "8px 12px",
-                            borderRadius: "var(--r-sm)",
-                            border: "1px solid #3A352D",
-                            background: "#2A2620",
-                            color: "#CFC6B6",
-                          }}
-                        >
-                          {Icon ? <Icon className="h-4 w-4" /> : null}
-                          <div>
-                            <p style={{ fontSize: 10, lineHeight: 1, color: "#8E8472" }}>{app.storeLabel}</p>
-                            <p style={{ fontSize: 12, fontWeight: 600, lineHeight: 1, color: "#fff", marginTop: 2 }}>{app.storeName}</p>
-                          </div>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="foot-bottom">
-            <span>&copy; {new Date().getFullYear()} {safeCopyrightText}. All rights reserved.</span>
-            <div className="foot-legal">
-              {legalLinks.map((link) => (
-                <Link key={link.id} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            {trustBadges.length > 0 && (
-              <div style={{ display: "flex", gap: 8 }}>
-                {trustBadges.map((badge) => {
-                  const Icon = getIcon(badge.icon || "");
-                  return (
-                    <span
-                      key={badge.id}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 5,
-                        padding: "4px 9px",
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid #332E27",
-                        borderRadius: "var(--r-xs)",
-                        fontSize: 12,
-                        color: "#B8AE9E",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {Icon && <Icon className="h-3.5 w-3.5" />}
-                      {badge.label}
-                    </span>
-                  );
-                })}
               </div>
             )}
           </div>
         </div>
-      </footer>
-    </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/[0.05]">
+        <div className="container mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-400">
+            &copy; {new Date().getFullYear()} {safeCopyrightText}. All rights reserved.
+          </p>
+          <div className="flex items-center gap-5 text-xs text-gray-400">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.id}
+                href={link.href}
+                className="hover:text-white transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            {trustBadges.map((badge) => {
+              const Icon = getIcon(badge.icon || "");
+              return (
+                <span
+                  key={badge.id}
+                  className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.03] border border-white/[0.06] rounded-lg text-xs text-gray-400 font-medium"
+                >
+                  {Icon && <Icon className="h-3.5 w-3.5" />}
+                  {badge.label}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }

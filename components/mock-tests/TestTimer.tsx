@@ -35,7 +35,7 @@ export function TestTimer() {
             ? "bg-emerald-50 text-emerald-600"
             : paceStatus === "behind"
               ? "bg-red-50 text-red-600"
-              : "bg-primary-50 text-primary-600"
+              : "bg-blue-50 text-blue-600"
         }`}
         title={
           paceStatus === "ahead" ? "You're ahead of pace!"
@@ -58,14 +58,14 @@ export function TestTimer() {
           isCritical
             ? "bg-red-100 text-red-700 animate-pulse shadow-lg shadow-red-200"
             : isUrgent
-              ? "bg-accent-100 text-accent-700 shadow-md shadow-accent-100"
+              ? "bg-amber-100 text-amber-700 shadow-md shadow-amber-100"
               : "bg-gray-100 text-gray-700"
         }`}
       >
         {/* Progress bar background */}
         <div
           className={`absolute inset-y-0 left-0 transition-all duration-1000 ease-linear opacity-10 ${
-            isCritical ? "bg-red-500" : isUrgent ? "bg-accent-500" : "bg-primary-500"
+            isCritical ? "bg-red-500" : isUrgent ? "bg-amber-500" : "bg-indigo-500"
           }`}
           style={{ width: `${progressPct}%` }}
         />
