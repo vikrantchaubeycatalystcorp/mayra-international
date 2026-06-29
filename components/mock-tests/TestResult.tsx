@@ -51,9 +51,9 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
 
   const grade =
     attempt.percentage >= 90 ? { label: "Outstanding", color: "text-emerald-600", bg: "bg-emerald-100", icon: Crown }
-    : attempt.percentage >= 70 ? { label: "Excellent", color: "text-primary-600", bg: "bg-primary-100", icon: Star }
-    : attempt.percentage >= 50 ? { label: "Good", color: "text-accent-600", bg: "bg-accent-100", icon: Target }
-    : attempt.percentage >= 30 ? { label: "Average", color: "text-accent-600", bg: "bg-accent-100", icon: TrendingUp }
+    : attempt.percentage >= 70 ? { label: "Excellent", color: "text-blue-600", bg: "bg-blue-100", icon: Star }
+    : attempt.percentage >= 50 ? { label: "Good", color: "text-amber-600", bg: "bg-amber-100", icon: Target }
+    : attempt.percentage >= 30 ? { label: "Average", color: "text-orange-600", bg: "bg-orange-100", icon: TrendingUp }
     : { label: "Needs Work", color: "text-red-600", bg: "bg-red-100", icon: Zap };
 
   const GradeIcon = grade.icon;
@@ -89,7 +89,7 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
 
       <div className="mx-auto max-w-5xl">
         {/* Score Hero */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 via-primary-600 to-primary-800 p-8 text-white shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 p-8 text-white shadow-2xl">
           <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
           <div className="relative">
             <div className="flex flex-col items-center text-center">
@@ -97,7 +97,7 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
                 <GradeIcon className={`h-8 w-8 ${grade.color}`} />
               </div>
               <h1 className="text-3xl font-black sm:text-4xl">{grade.label}!</h1>
-              <p className="mt-1 text-primary-200">{exam.name}</p>
+              <p className="mt-1 text-indigo-200">{exam.name}</p>
 
               {/* Score Circle + Key Metrics */}
               <div className="mt-6 flex flex-wrap items-center justify-center gap-8">
@@ -114,26 +114,26 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-4xl font-black">{attempt.percentage}%</span>
-                    <span className="text-xs text-primary-200">{attempt.score}/{attempt.totalMarks}</span>
+                    <span className="text-xs text-indigo-200">{attempt.score}/{attempt.totalMarks}</span>
                   </div>
                 </div>
 
                 {/* Key insight metrics */}
                 <div className="grid grid-cols-2 gap-3 text-left">
                   <div className="rounded-xl bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-                    <p className="text-[10px] uppercase tracking-wide text-primary-300">Percentile</p>
+                    <p className="text-[10px] uppercase tracking-wide text-indigo-300">Percentile</p>
                     <p className="text-xl font-black">{analytics.predictedPercentileBand.low}-{analytics.predictedPercentileBand.high}%</p>
                   </div>
                   <div className="rounded-xl bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-                    <p className="text-[10px] uppercase tracking-wide text-primary-300">Avg Time/Q</p>
+                    <p className="text-[10px] uppercase tracking-wide text-indigo-300">Avg Time/Q</p>
                     <p className="text-xl font-black">{analytics.avgTimePerQuestion}s</p>
                   </div>
                   <div className="rounded-xl bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-                    <p className="text-[10px] uppercase tracking-wide text-primary-300">Neg. Mark Loss</p>
+                    <p className="text-[10px] uppercase tracking-wide text-indigo-300">Neg. Mark Loss</p>
                     <p className="text-xl font-black text-red-300">-{analytics.negativeMarkLoss}</p>
                   </div>
                   <div className="rounded-xl bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-                    <p className="text-[10px] uppercase tracking-wide text-primary-300">Effort Quality</p>
+                    <p className="text-[10px] uppercase tracking-wide text-indigo-300">Effort Quality</p>
                     <p className="text-xl font-black">{analytics.effortQualityScore}%</p>
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
 
               {/* Percentile Badge */}
               <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-                <Trophy className="h-4 w-4 text-accent-300" />
+                <Trophy className="h-4 w-4 text-amber-300" />
                 <span className="text-sm font-medium">
                   Better than {percentile}% of test takers
                 </span>
@@ -155,7 +155,7 @@ export function TestResult({ attempt, exam, onReattempt }: Props) {
           <StatCard icon={CheckCircle2} label="Correct" value={attempt.correct} color="text-emerald-600" bg="bg-emerald-100" />
           <StatCard icon={XCircle} label="Incorrect" value={attempt.incorrect} color="text-red-500" bg="bg-red-100" />
           <StatCard icon={MinusCircle} label="Unanswered" value={attempt.unanswered} color="text-gray-500" bg="bg-gray-100" />
-          <StatCard icon={Clock} label="Time" value={formatTime(attempt.timeTaken)} color="text-primary-600" bg="bg-primary-100" />
+          <StatCard icon={Clock} label="Time" value={formatTime(attempt.timeTaken)} color="text-blue-600" bg="bg-blue-100" />
         </div>
 
         {/* Tab Navigation */}
@@ -293,8 +293,8 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100">
-              <Flame className="h-5 w-5 text-accent-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100">
+              <Flame className="h-5 w-5 text-orange-600" />
             </div>
             <div>
               <h3 className="font-bold text-gray-900">{stats.currentStreak} Day Streak</h3>
@@ -305,7 +305,7 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
             {Array.from({ length: 7 }).map((_, i) => (
               <div
                 key={i}
-                className={`h-2 flex-1 rounded-full ${i < stats.currentStreak ? "bg-accent-500" : "bg-gray-200"}`}
+                className={`h-2 flex-1 rounded-full ${i < stats.currentStreak ? "bg-orange-500" : "bg-gray-200"}`}
               />
             ))}
           </div>
@@ -313,8 +313,8 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
 
         <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100">
-              <BarChart3 className="h-5 w-5 text-primary-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">
+              <BarChart3 className="h-5 w-5 text-indigo-600" />
             </div>
             <div>
               <h3 className="font-bold text-gray-900">Your Stats</h3>
@@ -355,8 +355,8 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
                   <div
                     className={`h-full rounded-full transition-all duration-1000 ease-out ${
                       s.percentage >= 70 ? "bg-gradient-to-r from-emerald-500 to-green-400"
-                      : s.percentage >= 40 ? "bg-gradient-to-r from-accent-500 to-accent-400"
-                      : "bg-gradient-to-r from-red-500 to-accent-400"
+                      : s.percentage >= 40 ? "bg-gradient-to-r from-amber-500 to-yellow-400"
+                      : "bg-gradient-to-r from-red-500 to-orange-400"
                     }`}
                     style={{ width: `${s.percentage}%` }}
                   />
@@ -371,11 +371,11 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
       {stats.badges.length > 0 && (
         <div className="rounded-2xl bg-white border border-gray-100 p-6 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Award className="h-5 w-5 text-accent-500" /> Badges Earned
+            <Award className="h-5 w-5 text-amber-500" /> Badges Earned
           </h3>
           <div className="flex flex-wrap gap-3">
             {stats.badges.map((b) => (
-              <div key={b.id} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-50 to-accent-50 border border-accent-200 px-3 py-2">
+              <div key={b.id} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 px-3 py-2">
                 <span className="text-lg">{b.icon === "flame" ? "\ud83d\udd25" : b.icon === "zap" ? "\u26a1" : b.icon === "brain" ? "\ud83e\udde0" : b.icon === "crown" ? "\ud83d\udc51" : b.icon === "target" ? "\ud83c\udfaf" : b.icon === "rocket" ? "\ud83d\ude80" : b.icon === "compass" ? "\ud83e\udded" : "\ud83c\udfc6"}</span>
                 <div>
                   <p className="text-xs font-bold text-gray-900">{b.name}</p>
@@ -389,21 +389,21 @@ function OverviewTab({ attempt, exam, analytics, stats, recommendations, onReatt
 
       {/* Personalized Recommendations */}
       {recommendations.length > 0 && (
-        <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-primary-50 border border-primary-100 p-6">
+        <div className="rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary-500" /> Recommended Next
+            <Sparkles className="h-5 w-5 text-indigo-500" /> Recommended Next
           </h3>
           <p className="text-xs text-gray-500 mb-4">Personalized based on your performance</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {recommendations.map((rec) => (
               <Link key={rec.examId} href={`/mock-tests/${rec.examSlug}`}>
-                <div className="group rounded-xl bg-white border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-primary-200 transition-all">
+                <div className="group rounded-xl bg-white border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all">
                   <div className={`mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br ${rec.gradient} text-white text-sm`}>
                     <Target className="h-4 w-4" />
                   </div>
                   <p className="text-sm font-bold text-gray-900 line-clamp-1">{rec.examName}</p>
                   <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{rec.reason}</p>
-                  <div className="mt-2 flex items-center gap-1 text-xs text-primary-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="mt-2 flex items-center gap-1 text-xs text-indigo-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                     Take Test <ChevronRight className="h-3 w-3" />
                   </div>
                 </div>
@@ -426,12 +426,12 @@ function DiagnosisTab({ attempt, exam, analytics }: {
 
   const taxonomyItems = [
     { label: "Careless Mistakes", ids: taxonomy.carelessMistakes, icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50", desc: "Easy questions you got wrong quickly" },
-    { label: "Too Fast, Wrong", ids: taxonomy.tooFastWrong, icon: Zap, color: "text-accent-600", bg: "bg-accent-50", desc: "Rushed and answered incorrectly" },
-    { label: "Overtime, Still Wrong", ids: taxonomy.overtimeWrong, icon: Clock, color: "text-primary-600", bg: "bg-primary-50", desc: "Spent too long but still missed" },
-    { label: "Overthought", ids: taxonomy.overthought, icon: Brain, color: "text-primary-600", bg: "bg-primary-50", desc: "Easy questions you spent too long on and got wrong" },
+    { label: "Too Fast, Wrong", ids: taxonomy.tooFastWrong, icon: Zap, color: "text-orange-600", bg: "bg-orange-50", desc: "Rushed and answered incorrectly" },
+    { label: "Overtime, Still Wrong", ids: taxonomy.overtimeWrong, icon: Clock, color: "text-purple-600", bg: "bg-purple-50", desc: "Spent too long but still missed" },
+    { label: "Overthought", ids: taxonomy.overthought, icon: Brain, color: "text-pink-600", bg: "bg-pink-50", desc: "Easy questions you spent too long on and got wrong" },
     { label: "Perfect Execution", ids: taxonomy.perfectExecution, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50", desc: "Right time, right answer" },
     { label: "Confident & Correct", ids: taxonomy.confidentCorrect, icon: ShieldCheck, color: "text-green-600", bg: "bg-green-50", desc: "Marked sure and got it right" },
-    { label: "Lucky Guesses", ids: taxonomy.guessedCorrect, icon: Sparkles, color: "text-accent-600", bg: "bg-accent-50", desc: "Guessed but got lucky" },
+    { label: "Lucky Guesses", ids: taxonomy.guessedCorrect, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-50", desc: "Guessed but got lucky" },
   ];
 
   return (
@@ -455,22 +455,22 @@ function DiagnosisTab({ attempt, exam, analytics }: {
           )}
           {taxonomy.overtimeWrong.length > 0 && (
             <p className="flex items-start gap-2">
-              <Clock className="h-4 w-4 text-primary-500 mt-0.5 shrink-0" />
+              <Clock className="h-4 w-4 text-purple-500 mt-0.5 shrink-0" />
               <span>You spent excessive time on <strong>{taxonomy.overtimeWrong.length} question{taxonomy.overtimeWrong.length > 1 ? "s" : ""}</strong> and still got them wrong. Consider moving on faster.</span>
             </p>
           )}
           {analytics.temperament.panicScore < 40 && (
             <p className="flex items-start gap-2">
-              <Activity className="h-4 w-4 text-accent-500 mt-0.5 shrink-0" />
+              <Activity className="h-4 w-4 text-orange-500 mt-0.5 shrink-0" />
               <span>Your accuracy dropped significantly in the last portion. Practice maintaining composure under time pressure.</span>
             </p>
           )}
         </div>
 
         {/* What to do today */}
-        <div className="mt-4 rounded-xl bg-primary-50 border border-primary-100 p-4">
-          <h4 className="text-sm font-bold text-primary-900 mb-2">What to do today</h4>
-          <ul className="space-y-1.5 text-sm text-primary-700">
+        <div className="mt-4 rounded-xl bg-indigo-50 border border-indigo-100 p-4">
+          <h4 className="text-sm font-bold text-indigo-900 mb-2">What to do today</h4>
+          <ul className="space-y-1.5 text-sm text-indigo-700">
             {taxonomy.carelessMistakes.length > 2 && (
               <li className="flex items-center gap-2"><ChevronRight className="h-3 w-3 shrink-0" /> Review your {taxonomy.carelessMistakes.length} careless mistakes - these are free marks</li>
             )}
@@ -519,7 +519,7 @@ function DiagnosisTab({ attempt, exam, analytics }: {
                 <span className="text-[10px] font-bold text-gray-600">{point.accuracy}%</span>
                 <div
                   className={`w-full rounded-t-lg transition-all ${
-                    point.accuracy >= 70 ? "bg-emerald-400" : point.accuracy >= 40 ? "bg-accent-400" : "bg-red-400"
+                    point.accuracy >= 70 ? "bg-emerald-400" : point.accuracy >= 40 ? "bg-amber-400" : "bg-red-400"
                   }`}
                   style={{ height: `${Math.max(4, point.accuracy * 1.2)}px` }}
                 />
@@ -587,7 +587,7 @@ function TimelineTab({ attempt, exam, analytics }: {
                   />
                   {/* Average line */}
                   <div
-                    className="absolute top-0 bottom-0 w-px bg-primary-400 opacity-50"
+                    className="absolute top-0 bottom-0 w-px bg-indigo-400 opacity-50"
                     style={{ left: `${(analytics.avgTimePerQuestion / maxTime) * 100}%` }}
                   />
                 </div>
@@ -606,7 +606,7 @@ function TimelineTab({ attempt, exam, analytics }: {
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Correct</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-400" /> Wrong</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-gray-300" /> Skipped</span>
-          <span className="flex items-center gap-1"><span className="h-2 w-px bg-primary-400" /> Avg time</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-px bg-indigo-400" /> Avg time</span>
         </div>
       </div>
 
@@ -667,7 +667,7 @@ function TimelineTab({ attempt, exam, analytics }: {
             });
             const accuracy = tagged.length > 0 ? Math.round((correct.length / tagged.length) * 100) : 0;
             const Icon = level === "sure" ? ShieldCheck : level === "maybe" ? CircleDot : HelpCircle;
-            const color = level === "sure" ? "text-emerald-600" : level === "maybe" ? "text-accent-600" : "text-red-500";
+            const color = level === "sure" ? "text-emerald-600" : level === "maybe" ? "text-amber-600" : "text-red-500";
 
             return (
               <div key={level} className="text-center">
@@ -712,7 +712,7 @@ function SolutionsTab({ attempt, exam, smartFilters, smartFilter, setSmartFilter
               disabled={f.count === 0 && f.id !== "all"}
               className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                 smartFilter === f.id
-                  ? "bg-primary-50 border-primary-200 text-primary-700"
+                  ? "bg-indigo-50 border-indigo-200 text-indigo-700"
                   : f.count === 0 && f.id !== "all"
                     ? "border-gray-100 text-gray-300 cursor-not-allowed"
                     : "border-gray-200 text-gray-500 hover:bg-gray-50"
@@ -761,7 +761,7 @@ function SolutionsTab({ attempt, exam, smartFilters, smartFilter, setSmartFilter
                   {answer?.confidence && (
                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
                       answer.confidence === "sure" ? "bg-emerald-100 text-emerald-600"
-                      : answer.confidence === "maybe" ? "bg-accent-100 text-accent-600"
+                      : answer.confidence === "maybe" ? "bg-amber-100 text-amber-600"
                       : "bg-red-100 text-red-500"
                     }`}>
                       {answer.confidence}
@@ -804,13 +804,13 @@ function SolutionsTab({ attempt, exam, smartFilters, smartFilter, setSmartFilter
                         <span className="rounded-full bg-gray-100 px-2 py-0.5 text-gray-500">{Math.round(answer.timeTaken)}s spent</span>
                       )}
                       {answer?.answerChanges && answer.answerChanges > 0 && (
-                        <span className="rounded-full bg-accent-100 px-2 py-0.5 text-accent-600">Changed {answer.answerChanges}x</span>
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-600">Changed {answer.answerChanges}x</span>
                       )}
                       {answer?.revisitCount && answer.revisitCount > 0 && (
-                        <span className="rounded-full bg-primary-100 px-2 py-0.5 text-primary-600">Revisited {answer.revisitCount}x</span>
+                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-blue-600">Revisited {answer.revisitCount}x</span>
                       )}
                     </div>
-                    <div className="rounded-xl bg-primary-50 p-3 text-sm text-primary-800">
+                    <div className="rounded-xl bg-blue-50 p-3 text-sm text-blue-800">
                       <strong>Explanation:</strong> {q.explanation}
                     </div>
                   </div>
@@ -848,8 +848,8 @@ function StatCard({ icon: Icon, label, value, color, bg }: {
 function TemperamentGauge({ label, value, icon: Icon }: {
   label: string; value: number; icon: React.ElementType;
 }) {
-  const color = value >= 70 ? "text-emerald-600" : value >= 40 ? "text-accent-600" : "text-red-500";
-  const ringColor = value >= 70 ? "stroke-emerald-500" : value >= 40 ? "stroke-accent-500" : "stroke-red-500";
+  const color = value >= 70 ? "text-emerald-600" : value >= 40 ? "text-amber-600" : "text-red-500";
+  const ringColor = value >= 70 ? "stroke-emerald-500" : value >= 40 ? "stroke-amber-500" : "stroke-red-500";
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -877,10 +877,10 @@ function BehaviorBar({ label, value, inverted, description }: {
   label: string; value: number; inverted?: boolean; description: string;
 }) {
   const effectiveValue = inverted ? 100 - value : value;
-  const color = effectiveValue >= 70 ? "bg-emerald-400" : effectiveValue >= 40 ? "bg-accent-400" : "bg-red-400";
+  const color = effectiveValue >= 70 ? "bg-emerald-400" : effectiveValue >= 40 ? "bg-amber-400" : "bg-red-400";
   const textColor = inverted
-    ? (value <= 30 ? "text-emerald-600" : value <= 60 ? "text-accent-600" : "text-red-600")
-    : (value >= 70 ? "text-emerald-600" : value >= 40 ? "text-accent-600" : "text-red-600");
+    ? (value <= 30 ? "text-emerald-600" : value <= 60 ? "text-amber-600" : "text-red-600")
+    : (value >= 70 ? "text-emerald-600" : value >= 40 ? "text-amber-600" : "text-red-600");
 
   return (
     <div>

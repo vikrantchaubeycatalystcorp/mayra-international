@@ -8,20 +8,20 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-[#E7F0EB] text-[#164A37]",
+          "border-transparent bg-indigo-50 text-indigo-700",
         secondary:
-          "border-transparent bg-[#EEEAE1] text-[#6E6457]",
+          "border-transparent bg-gray-100 text-gray-600",
         destructive:
-          "border-transparent bg-[#F8E7E0] text-[#B23A1E]",
-        outline: "border-[#D8CFBE] text-[#574F45] bg-white",
+          "border-transparent bg-red-50 text-red-700",
+        outline: "border-gray-200 text-gray-600 bg-white",
         success:
-          "border-transparent bg-[#E5F2EA] text-[#1F7A48]",
+          "border-transparent bg-emerald-50 text-emerald-700",
         warning:
-          "border-transparent bg-[#FBF0D9] text-[#9A6410]",
-        live: "border-transparent bg-[#B23A1E] text-white",
-        blue: "border-transparent bg-[#E7F0EB] text-[#164A37]",
-        orange: "border-[#EAD3A3] bg-[#FBEFD8] text-[#A96A0F]",
-        purple: "border-transparent bg-[#DEF0F1] text-[#0E6E78]",
+          "border-transparent bg-amber-50 text-amber-700",
+        live: "border-transparent bg-red-500 text-white",
+        blue: "border-transparent bg-indigo-50 text-indigo-700",
+        orange: "border-transparent bg-orange-50 text-orange-700",
+        purple: "border-transparent bg-purple-50 text-purple-700",
       },
     },
     defaultVariants: {

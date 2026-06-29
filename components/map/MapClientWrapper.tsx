@@ -39,7 +39,7 @@ const WorldCollegeMap = dynamic(
       <div className="w-full h-full bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <Globe
-            className="h-12 w-12 text-primary-400 mx-auto mb-4 animate-spin"
+            className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-spin"
             style={{ animationDuration: "3s" }}
           />
           <p className="text-white text-lg font-semibold">Loading World Map…</p>

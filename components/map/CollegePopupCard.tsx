@@ -32,15 +32,15 @@ export function CollegePopupCard({ college, onClose }: Props) {
   return (
     <div className="bg-white rounded-xl shadow-2xl w-72 overflow-hidden" style={{ fontFamily: "system-ui, sans-serif" }}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 px-4 py-3 flex items-start justify-between">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-4 py-3 flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <h3 className="text-white font-bold text-sm leading-tight truncate">{college.name}</h3>
           <div className="flex items-center gap-1 mt-1">
-            <MapPin className="h-3 w-3 text-primary-200 flex-shrink-0" />
-            <span className="text-primary-100 text-xs truncate">{[college.city, college.state].filter(Boolean).join(", ")}</span>
+            <MapPin className="h-3 w-3 text-blue-200 flex-shrink-0" />
+            <span className="text-blue-100 text-xs truncate">{[college.city, college.state].filter(Boolean).join(", ")}</span>
           </div>
         </div>
-        <button suppressHydrationWarning onClick={onClose} className="ml-2 text-primary-200 hover:text-white transition-colors flex-shrink-0">
+        <button suppressHydrationWarning onClick={onClose} className="ml-2 text-blue-200 hover:text-white transition-colors flex-shrink-0">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -49,16 +49,16 @@ export function CollegePopupCard({ college, onClose }: Props) {
       <div className="p-4">
         <div className="grid grid-cols-3 gap-2 mb-3">
           {college.nirfRank && (
-            <div className="bg-primary-50 rounded-lg p-2 text-center">
-              <div className="text-primary-700 font-bold text-sm">#{college.nirfRank}</div>
+            <div className="bg-blue-50 rounded-lg p-2 text-center">
+              <div className="text-blue-700 font-bold text-sm">#{college.nirfRank}</div>
               <div className="text-gray-500 text-xs">NIRF</div>
             </div>
           )}
           {college.rating && (
-            <div className="bg-accent-50 rounded-lg p-2 text-center">
+            <div className="bg-amber-50 rounded-lg p-2 text-center">
               <div className="flex items-center justify-center gap-0.5">
-                <Star className="h-3 w-3 text-accent-500 fill-accent-500" />
-                <span className="text-accent-700 font-bold text-sm">{college.rating}</span>
+                <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                <span className="text-amber-700 font-bold text-sm">{college.rating}</span>
               </div>
               <div className="text-gray-500 text-xs">Rating</div>
             </div>
@@ -84,7 +84,7 @@ export function CollegePopupCard({ college, onClose }: Props) {
 
         <Link
           href={`/colleges/${college.slug}`}
-          className="flex items-center justify-center gap-2 w-full py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg transition-colors"
+          className="flex items-center justify-center gap-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
         >
           View College <ExternalLink className="h-3.5 w-3.5" />
         </Link>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { CollegeCard } from "../colleges/CollegeCard";
 import { cn } from "../../lib/utils";
 
@@ -47,64 +48,88 @@ type Props = {
   ctaLink: string;
 };
 
-export function TopCollegesClient({ colleges, totalCount, title, subtitle, ctaLink }: Props) {
+export function TopCollegesClient({ colleges, totalCount, title, subtitle, ctaLabel, ctaLink }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("All");
+  const [revealed, setRevealed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setRevealed(true); observer.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
 
   const filteredColleges =
     activeTab === "All"
-      ? colleges.slice(0, 6)
-      : colleges.filter((c) => c.streams.includes(activeTab)).slice(0, 6);
+      ? colleges.slice(0, 8)
+      : colleges.filter((c) => c.streams.includes(activeTab)).slice(0, 8);
 
-  const mapCollege = (c: CollegeData) =>
-    ({
-      ...c,
-      type: c.type as "Government" | "Private" | "Deemed" | "Autonomous",
-      nirfRank: c.nirfRank ?? undefined,
-      avgPackage: c.avgPackage ?? undefined,
-      topPackage: c.topPackage ?? undefined,
-      placementRate: c.placementRate ?? undefined,
-      fees: { min: c.feesMin, max: c.feesMax },
-    } as import("../../types").College);
+  const mapCollege = (c: CollegeData) => ({
+    ...c,
+    type: c.type as "Government" | "Private" | "Deemed" | "Autonomous",
+    nirfRank: c.nirfRank ?? undefined,
+    avgPackage: c.avgPackage ?? undefined,
+    topPackage: c.topPackage ?? undefined,
+    placementRate: c.placementRate ?? undefined,
+    fees: { min: c.feesMin, max: c.feesMax },
+  } as import("../../types").College);
 
   return (
-    <section className="section">
-      <div className="container">
-        <div className="section-head">
+    <section className="section-padding bg-gradient-to-b from-gray-50/80 via-white to-white relative" ref={ref}>
+      <div className="absolute inset-0 mesh-bg pointer-events-none" />
+      <div className="container mx-auto relative">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
-            <span className="kicker">Ranked &amp; verified</span>
-            <h2 className="h-2" style={{ marginTop: 12 }}>{title}</h2>
-            <p>{subtitle}</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">{title}</h2>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base max-w-lg">{subtitle}</p>
           </div>
-          <Link className="link-arrow" href={ctaLink}>
-            All {totalCount.toLocaleString("en-IN")} colleges <span className="ar">→</span>
+          <Link
+            href={ctaLink}
+            className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 transition-all duration-300 whitespace-nowrap group flex-shrink-0"
+          >
+            {ctaLabel}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
-        <div className="col-tabs">
+        {/* Premium Tab Switcher */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-10 scrollbar-none">
           {tabs.map((tab) => (
             <button
+              suppressHydrationWarning
               key={tab}
-              className={cn("col-tab", activeTab === tab && "active")}
               onClick={() => setActiveTab(tab)}
+              className={cn(
+                "flex-shrink-0 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border",
+                activeTab === tab
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent shadow-lg shadow-indigo-500/20"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:text-indigo-600 hover:bg-indigo-50/30"
+              )}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        <div className="college-grid">
-          {filteredColleges.length > 0 ? (
-            filteredColleges.map((college) => (
-              <CollegeCard key={college.id} college={mapCollege(college)} />
-            ))
-          ) : (
-            <div
-              className="card"
-              style={{ gridColumn: "1/-1", padding: 30, textAlign: "center", color: "var(--ink-3)" }}
+        <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children", revealed && "revealed")}>
+          {filteredColleges.map((college) => (
+            <CollegeCard key={college.id} college={mapCollege(college)} />
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link href={ctaLink}>
+            <button
+              suppressHydrationWarning
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl border-2 border-indigo-200 text-indigo-700 font-semibold hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 group"
             >
-              No colleges in this filter yet.
-            </div>
-          )}
+              Explore All {totalCount.toLocaleString()}+ Colleges
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </Link>
         </div>
       </div>
     </section>

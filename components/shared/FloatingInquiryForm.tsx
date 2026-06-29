@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronDown, ChevronUp, MessageSquarePlus } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -44,10 +44,7 @@ export function FloatingInquiryForm() {
   const COURSE_OPTIONS = masterData?.leadInterests
     ? masterData.leadInterests.map((i) => i.label)
     : FALLBACK_COURSE_OPTIONS;
-  // Start collapsed so the widget sits as a compact bottom-right tab and
-  // doesn't blanket page content / CTAs. It expands on click and via the
-  // "Free counselling" CTAs (mayra:open-enquiry).
-  const [minimized, setMinimized] = useState(true);
+  const [minimized, setMinimized] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -62,16 +59,6 @@ export function FloatingInquiryForm() {
     message: "",
     _hp: "",
   });
-
-  // Open (expand) the form when "Free counselling" CTAs dispatch the event.
-  useEffect(() => {
-    const open = () => {
-      setMinimized(false);
-      window.scrollTo({ top: window.scrollY }); // no-op scroll keeps focus context
-    };
-    window.addEventListener("mayra:open-enquiry", open);
-    return () => window.removeEventListener("mayra:open-enquiry", open);
-  }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -106,12 +93,12 @@ export function FloatingInquiryForm() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] shadow-premium-lg rounded-xl overflow-hidden transition-all duration-500 ease-out-expo border border-[#E8E1D4]"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] shadow-premium-lg rounded-3xl overflow-hidden transition-all duration-500 ease-out-expo"
       style={{ maxHeight: minimized ? "52px" : "80vh" }}
     >
       {/* Header — always visible */}
       <div
-        className="flex items-center justify-between px-4 py-3.5 bg-[#1C5A42] text-white cursor-pointer select-none"
+        className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-indigo-700 to-purple-700 text-white cursor-pointer select-none"
         onClick={() => setMinimized((m) => !m)}
       >
         <div className="flex items-center gap-2">

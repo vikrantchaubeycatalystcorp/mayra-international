@@ -25,10 +25,10 @@ export function QuestionNav() {
           <span className="h-3 w-3 rounded-sm bg-gray-300" /> Not visited
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm border-2 border-accent-500 bg-accent-100" /> Marked
+          <span className="h-3 w-3 rounded-sm border-2 border-amber-500 bg-amber-100" /> Marked
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-primary-500 ring-2 ring-primary-300" /> Current
+          <span className="h-3 w-3 rounded-sm bg-indigo-500 ring-2 ring-indigo-300" /> Current
         </div>
       </div>
 
@@ -47,9 +47,9 @@ export function QuestionNav() {
               const isMarked = !!answer?.isMarked;
 
               let bg = "bg-gray-200 text-gray-600 hover:bg-gray-300";
-              if (isCurrent) bg = "bg-primary-600 text-white ring-2 ring-primary-300 shadow-md";
-              else if (isMarked && isAnswered) bg = "bg-emerald-500 text-white ring-2 ring-accent-400";
-              else if (isMarked) bg = "bg-accent-100 text-accent-700 ring-2 ring-accent-400";
+              if (isCurrent) bg = "bg-indigo-600 text-white ring-2 ring-indigo-300 shadow-md";
+              else if (isMarked && isAnswered) bg = "bg-emerald-500 text-white ring-2 ring-amber-400";
+              else if (isMarked) bg = "bg-amber-100 text-amber-700 ring-2 ring-amber-400";
               else if (isAnswered) bg = "bg-emerald-500 text-white";
 
               return (
@@ -76,7 +76,7 @@ export function QuestionNav() {
         </div>
         <div className="flex justify-between text-xs text-gray-600">
           <span>Marked</span>
-          <span className="font-bold text-accent-600">
+          <span className="font-bold text-amber-600">
             {Array.from(answers.values()).filter((a) => a.isMarked).length}
           </span>
         </div>

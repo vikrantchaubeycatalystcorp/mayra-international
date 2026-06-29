@@ -28,7 +28,7 @@ function CountryCard({ country }: { country: StudyAbroadCountryRow }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
       {/* Flag Banner */}
-      <div className="bg-gradient-to-br from-primary-50 to-primary-100 p-8 text-center border-b border-gray-100">
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 text-center border-b border-gray-100">
         <span className="text-7xl">{country.flag}</span>
         <h3 className="font-black text-xl text-gray-900 mt-3">{country.name}</h3>
         <p className="text-sm text-gray-500 mt-0.5">{country.universities}+ universities</p>
@@ -92,7 +92,7 @@ export default async function StudyAbroadPage() {
       <JsonLd data={studyAbroadFaqJsonLd()} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Study Abroad" }])} />
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#11392B] via-[#164A37] to-[#1C5A42] text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 hero-grid opacity-20" />
         <div className="container mx-auto py-16 relative z-10">
           <Breadcrumb
@@ -106,11 +106,11 @@ export default async function StudyAbroadPage() {
             </div>
             <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
               Study at World&apos;s{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent-400 to-accent-300">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent-400 to-yellow-300">
                 Best Universities
               </span>
             </h1>
-            <p className="text-primary-200 text-lg mb-8 leading-relaxed">
+            <p className="text-blue-200 text-lg mb-8 leading-relaxed">
               Join 3.3 lakh+ Indian students studying abroad. Get expert guidance on university selection, scholarship, visa, and accommodation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -192,7 +192,7 @@ export default async function StudyAbroadPage() {
         {/* CTA */}
         <div className="mt-8 bg-gradient-to-r from-primary-900 to-primary-700 rounded-2xl p-8 text-center text-white">
           <h3 className="text-2xl font-black mb-3">Ready to Study Abroad?</h3>
-          <p className="text-primary-200 mb-6 max-w-lg mx-auto">
+          <p className="text-blue-200 mb-6 max-w-lg mx-auto">
             Our expert counselors have helped 50,000+ students get admission in top global universities. Get your free session today.
           </p>
           <Button variant="accent" size="xl">

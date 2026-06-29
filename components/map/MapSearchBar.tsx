@@ -45,7 +45,7 @@ export function MapSearchBar({ countriesData, colleges, onSelectCountry, onSelec
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-full max-w-lg px-4">
       <div className="relative">
-        <div className={`flex items-center bg-white rounded-2xl shadow-2xl border-2 transition-colors ${focused ? "border-primary-500" : "border-transparent"}`}>
+        <div className={`flex items-center bg-white rounded-2xl shadow-2xl border-2 transition-colors ${focused ? "border-blue-500" : "border-transparent"}`}>
           <Search className="h-5 w-5 text-gray-400 ml-4 flex-shrink-0" />
           <input
             suppressHydrationWarning
@@ -76,10 +76,10 @@ export function MapSearchBar({ countriesData, colleges, onSelectCountry, onSelec
                     suppressHydrationWarning
                     key={c.countryCode}
                     onMouseDown={() => { onSelectCountry(c); setQuery(""); setFocused(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0">
-                      <Globe className="h-4 w-4 text-primary-600" />
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <Globe className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{c.countryName}</p>
@@ -99,10 +99,10 @@ export function MapSearchBar({ countriesData, colleges, onSelectCountry, onSelec
                     suppressHydrationWarning
                     key={c.id}
                     onMouseDown={() => { onSelectCollege(c); setQuery(""); setFocused(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-accent-100 flex items-center justify-center flex-shrink-0">
-                      <Building2 className="h-4 w-4 text-accent-600" />
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{c.name}</p>
