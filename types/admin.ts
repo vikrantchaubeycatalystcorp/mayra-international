@@ -111,6 +111,7 @@ export const collegeFormSchema = z
     description: z.string().max(5000).optional().default(""),
     highlights: z.array(z.string()).optional().default([]),
     website: z.string().url().or(z.literal("")).optional(),
+    brochureUrl: z.string().url().or(z.literal("")).optional(),
     phone: z.string().optional(),
     totalStudents: z.coerce.number().nullable().optional(),
     faculty: z.coerce.number().nullable().optional(),

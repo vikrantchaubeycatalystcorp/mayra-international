@@ -348,6 +348,7 @@ model College {
   highlights    String[]
   address       String   @default("")
   website       String?
+  brochureUrl   String?
   phone         String?
   totalStudents Int?
   faculty       Int?

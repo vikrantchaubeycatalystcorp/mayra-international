@@ -82,6 +82,7 @@ export async function PUT(
         description: data.description || "",
         highlights: data.highlights || [],
         website: data.website || null,
+        brochureUrl: data.brochureUrl || null,
         phone: data.phone || null,
         totalStudents: data.totalStudents ?? null,
         faculty: data.faculty ?? null,

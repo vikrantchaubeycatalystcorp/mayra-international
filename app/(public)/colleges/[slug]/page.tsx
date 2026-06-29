@@ -18,7 +18,7 @@ import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
-import { cn, formatCurrency, getGradientForLetter } from "../../../../lib/utils";
+import { cn, formatCurrency, getGradientForLetter, normalizeDownloadUrl } from "../../../../lib/utils";
 import { JsonLd, collegeJsonLd, collegeFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
 
 export const revalidate = 60;
@@ -74,6 +74,7 @@ export default async function CollegeDetailPage({ params }: Props) {
   });
 
   const gradient = getGradientForLetter(college.name[0]);
+  const brochureUrl = normalizeDownloadUrl(college.brochureUrl);
 
   // Build a compatible object for JSON-LD helpers that expect the old interface
   const collegeSeo = {
@@ -176,9 +177,13 @@ export default async function CollegeDetailPage({ params }: Props) {
                   Apply Now
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="lg">
-                  Download Brochure
-                </Button>
+                {brochureUrl && (
+                  <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download>
+                    <Button variant="outline" size="lg">
+                      Download Brochure
+                    </Button>
+                  </a>
+                )}
                 {college.website && (
                   <a href={college.website} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="lg" className="gap-1.5">
@@ -405,12 +410,16 @@ export default async function CollegeDetailPage({ params }: Props) {
               <Button variant="accent" className="w-full mb-2">
                 Apply Now
               </Button>
-              <Button
-                variant="outline"
-                className="w-full border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
-              >
-                Download Brochure
-              </Button>
+              {brochureUrl && (
+                <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download className="block">
+                  <Button
+                    variant="outline"
+                    className="w-full border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
+                  >
+                    Download Brochure
+                  </Button>
+                </a>
+              )}
               {college.phone && (
                 <div className="mt-4 flex items-center justify-center gap-2 text-sm text-blue-200">
                   <Phone className="h-4 w-4" />

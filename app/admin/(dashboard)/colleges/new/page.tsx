@@ -26,7 +26,7 @@ export default function NewCollegePage() {
     accreditation: [] as string[], courses: [] as string[], description: "",
     highlights: [] as string[], website: "", phone: "", totalStudents: null as number | null,
     faculty: null as number | null, latitude: null as number | null, longitude: null as number | null,
-    isFeatured: false, isActive: true, logo: "", topRecruiterIds: [] as string[],
+    isFeatured: false, isActive: true, logo: "", brochureUrl: "", topRecruiterIds: [] as string[],
   });
 
   const update = (key: string, value: unknown) => setForm((p) => ({ ...p, [key]: value }));
@@ -231,6 +231,11 @@ export default function NewCollegePage() {
             <div>
               <label className={labelClass}>Phone</label>
               <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} className={inputClass} />
+            </div>
+            <div className="md:col-span-3">
+              <label className={labelClass}>Brochure URL</label>
+              <input type="url" value={form.brochureUrl} onChange={(e) => update("brochureUrl", e.target.value)} className={inputClass} placeholder="Google Drive share link or direct PDF/image URL" />
+              <p className="mt-1 text-xs text-gray-400">Used by the &quot;Download Brochure&quot; button on the college page. Paste a Google Drive share link (PDF or image) or a direct file URL.</p>
             </div>
           </div>
         </div>
