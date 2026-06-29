@@ -62,6 +62,28 @@ export function normalizeImageUrl(url?: string | null): string {
   return `https://drive.google.com/thumbnail?id=${id}&sz=w1600`;
 }
 
+/**
+ * Convert a Google Drive *share* link into a direct *download* URL.
+ *
+ * Drive share links (e.g. `https://drive.google.com/file/d/FILE_ID/view?usp=sharing`)
+ * point at the web viewer. The `uc?export=download` endpoint streams the file bytes
+ * and forces a download, which works for both PDFs and images. Non-Drive URLs (a
+ * direct PDF/image link) are returned unchanged.
+ */
+export function normalizeDownloadUrl(url?: string | null): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (!/drive\.google\.com|docs\.google\.com/i.test(trimmed)) return trimmed;
+
+  const id =
+    trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1] ??
+    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/)?.[1] ??
+    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+
+  if (!id) return trimmed;
+  return `https://drive.google.com/uc?export=download&id=${id}`;
+}
+
 export function getReadTime(content: string): number {
   const wordsPerMinute = 200;
   const words = content.split(/\s+/).length;

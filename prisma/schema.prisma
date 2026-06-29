@@ -137,7 +137,7 @@ model Lead {
   city               String?
   state              String?
   currentClass       String?
-  courseInterested    String?
+  courseInterested   String?
   message            String?
   rawPayload         Json?
   adminEmailStatus   EmailDeliveryStatus @default(PENDING)
@@ -148,11 +148,11 @@ model Lead {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 
-  @@map("lead")
   @@index([source])
   @@index([status])
   @@index([createdAt])
   @@index([email])
+  @@map("lead")
 }
 
 model NewsletterSubscriber {
@@ -186,14 +186,14 @@ model AdminActivity {
 }
 
 model AdminNotification {
-  id        String   @id @default(cuid())
-  type      String   // enquiry, system, success, warning
-  title     String
-  message   String
+  id         String   @id @default(cuid())
+  type       String // enquiry, system, success, warning
+  title      String
+  message    String
   entityType String? // Lead, Newsletter, College, etc.
-  entityId  String?
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  entityId   String?
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
   @@index([read])
   @@index([createdAt])
@@ -348,6 +348,7 @@ model College {
   highlights    String[]
   address       String   @default("")
   website       String?
+  brochureUrl   String?
   phone         String?
   totalStudents Int?
   faculty       Int?
@@ -368,6 +369,7 @@ model College {
   recruiters    CollegeRecruiter[]
   feeStructures CollegeFeeStructure[]
   admissionInfo CollegeAdmissionInfo?
+  topRecruiters Recruiter[]           @relation("CollegeTopRecruiters")
 
   @@index([slug])
   @@index([streams])
@@ -399,6 +401,18 @@ model CollegeRecruiter {
   sortOrder Int     @default(0)
 
   @@index([collegeId])
+}
+
+model Recruiter {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  isActive  Boolean   @default(true)
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  colleges  College[] @relation("CollegeTopRecruiters")
+
+  @@index([isActive])
 }
 
 model CollegeFeeStructure {
@@ -822,12 +836,12 @@ model MediaAsset {
 model YouTubeShort {
   id          String   @id @default(cuid())
   title       String
-  url         String              // original link the admin pasted
-  videoId     String              // extracted 11-char YouTube ID (for embeds/thumbs)
-  type        String   @default("short")   // "short" (9:16) | "video" (16:9)
-  thumbnail   String   @default("")        // optional override; else derived from videoId
+  url         String // original link the admin pasted
+  videoId     String // extracted 11-char YouTube ID (for embeds/thumbs)
+  type        String   @default("short") // "short" (9:16) | "video" (16:9)
+  thumbnail   String   @default("") // optional override; else derived from videoId
   description String   @default("")
-  category    String?              // optional badge/grouping label
+  category    String? // optional badge/grouping label
   isFeatured  Boolean  @default(false)
   isActive    Boolean  @default(true)
   sortOrder   Int      @default(0)
@@ -918,27 +932,27 @@ model AppDownloadLink {
 // ============================================================
 
 model MockExam {
-  id               String   @id @default(cuid())
-  name             String
-  slug             String   @unique
-  category         String
-  subject          String
-  description      String   @default("")
-  duration         Int
-  totalQuestions   Int
-  totalMarks       Int
-  negativeMarking  Float    @default(0)
-  difficulty       String   @default("Medium")
-  icon             String   @default("BookOpen")
-  color            String   @default("text-indigo-600")
-  gradient         String   @default("from-indigo-600 to-purple-700")
-  tags             String[]
-  attemptCount     Int      @default(0)
-  avgScore         Float    @default(50)
-  isFeatured       Boolean  @default(false)
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  category        String
+  subject         String
+  description     String   @default("")
+  duration        Int
+  totalQuestions  Int
+  totalMarks      Int
+  negativeMarking Float    @default(0)
+  difficulty      String   @default("Medium")
+  icon            String   @default("BookOpen")
+  color           String   @default("text-indigo-600")
+  gradient        String   @default("from-indigo-600 to-purple-700")
+  tags            String[]
+  attemptCount    Int      @default(0)
+  avgScore        Float    @default(50)
+  isFeatured      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   questions MockQuestion[]
   attempts  MockAttempt[]

@@ -14,7 +14,10 @@ export async function GET(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const college = await prisma.college.findUnique({ where: { id } });
+  const college = await prisma.college.findUnique({
+    where: { id },
+    include: { topRecruiters: { select: { id: true } } },
+  });
   if (!college) return notFound("College not found");
 
   return success(college);
@@ -79,6 +82,7 @@ export async function PUT(
         description: data.description || "",
         highlights: data.highlights || [],
         website: data.website || null,
+        brochureUrl: data.brochureUrl || null,
         phone: data.phone || null,
         totalStudents: data.totalStudents ?? null,
         faculty: data.faculty ?? null,
@@ -87,6 +91,7 @@ export async function PUT(
         isFeatured: data.isFeatured,
         isActive: data.isActive,
         updatedBy: auth.admin.id,
+        topRecruiters: { set: data.topRecruiterIds.map((id) => ({ id })) },
       },
     });
 

@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { fetchOne, updateItem } from "@/hooks/admin/useAdminCRUD";
 import { STREAMS as FALLBACK_STREAMS, COLLEGE_TYPES as FALLBACK_COLLEGE_TYPES, INDIAN_STATES as FALLBACK_INDIAN_STATES } from "@/types/admin";
 import { useMasterData } from "@/hooks/useMasterData";
+import { RecruiterMultiSelect } from "@/components/admin/shared/RecruiterMultiSelect";
 
 export default function EditCollegePage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function EditCollegePage() {
     accreditation: [] as string[], courses: [] as string[], description: "",
     highlights: [] as string[], website: "", phone: "", totalStudents: null as number | null,
     faculty: null as number | null, latitude: null as number | null, longitude: null as number | null,
-    isFeatured: false, isActive: true, logo: "",
+    isFeatured: false, isActive: true, logo: "", brochureUrl: "", topRecruiterIds: [] as string[],
   });
 
   useEffect(() => {
@@ -54,6 +55,8 @@ export default function EditCollegePage() {
           faculty: data.faculty as number | null,
           latitude: data.latitude as number | null, longitude: data.longitude as number | null,
           isFeatured: Boolean(data.isFeatured), isActive: data.isActive !== false, logo: String(data.logo || ""),
+          brochureUrl: String(data.brochureUrl || ""),
+          topRecruiterIds: ((data.topRecruiters as { id: string }[]) || []).map((r) => r.id),
         });
       }
       setFetching(false);
@@ -172,7 +175,17 @@ export default function EditCollegePage() {
             <div><label className={labelClass}>Avg Package (INR)</label><input type="number" value={form.avgPackage ?? ""} onChange={(e) => update("avgPackage", e.target.value ? Number(e.target.value) : null)} className={inputClass} /></div>
             <div><label className={labelClass}>Placement Rate (%)</label><input type="number" step="0.1" value={form.placementRate ?? ""} onChange={(e) => update("placementRate", e.target.value ? Number(e.target.value) : null)} className={inputClass} /></div>
             <div><label className={labelClass}>Rating (0-5)</label><input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => update("rating", Number(e.target.value))} className={inputClass} /></div>
+            <div className="md:col-span-3">
+              <label className={labelClass}>Brochure URL</label>
+              <input type="url" value={form.brochureUrl} onChange={(e) => update("brochureUrl", e.target.value)} className={inputClass} placeholder="Google Drive share link or direct PDF/image URL" />
+              <p className="mt-1 text-xs text-gray-400">Used by the &quot;Download Brochure&quot; button on the college page. Paste a Google Drive share link (PDF or image) or a direct file URL.</p>
+            </div>
           </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Top Recruiters</h3>
+          <RecruiterMultiSelect value={form.topRecruiterIds} onChange={(ids) => update("topRecruiterIds", ids)} />
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-2">

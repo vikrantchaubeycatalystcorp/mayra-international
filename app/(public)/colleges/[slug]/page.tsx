@@ -18,7 +18,7 @@ import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
-import { cn, formatCurrency, getGradientForLetter } from "../../../../lib/utils";
+import { cn, formatCurrency, getGradientForLetter, normalizeDownloadUrl } from "../../../../lib/utils";
 import { JsonLd, collegeJsonLd, collegeFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
 
 export const revalidate = 60;
@@ -58,6 +58,7 @@ export default async function CollegeDetailPage({ params }: Props) {
       recruiters: { orderBy: { sortOrder: "asc" } },
       feeStructures: { orderBy: { sortOrder: "asc" } },
       admissionInfo: true,
+      topRecruiters: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
     },
   });
   if (!college) notFound();
@@ -73,11 +74,7 @@ export default async function CollegeDetailPage({ params }: Props) {
   });
 
   const gradient = getGradientForLetter(college.name[0]);
-
-  const defaultRecruiters = ["Google", "Microsoft", "Amazon", "Goldman Sachs", "McKinsey", "BCG", "Flipkart", "Apple", "Deloitte", "KPMG"];
-  const recruiterNames = college.recruiters.length > 0
-    ? college.recruiters.map((r) => r.name)
-    : defaultRecruiters;
+  const brochureUrl = normalizeDownloadUrl(college.brochureUrl);
 
   // Build a compatible object for JSON-LD helpers that expect the old interface
   const collegeSeo = {
@@ -180,9 +177,13 @@ export default async function CollegeDetailPage({ params }: Props) {
                   Apply Now
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="lg">
-                  Download Brochure
-                </Button>
+                {brochureUrl && (
+                  <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download>
+                    <Button variant="outline" size="lg">
+                      Download Brochure
+                    </Button>
+                  </a>
+                )}
                 {college.website && (
                   <a href={college.website} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="lg" className="gap-1.5">
@@ -355,6 +356,23 @@ export default async function CollegeDetailPage({ params }: Props) {
               </Accordion>
             </section>
 
+            {/* Top Recruiters */}
+            {college.topRecruiters.length > 0 && (
+              <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Top Recruiters</h2>
+                <div className="flex flex-wrap gap-2">
+                  {college.topRecruiters.map((r) => (
+                    <span
+                      key={r.id}
+                      className="px-4 py-2 bg-primary-50 border border-primary-100 rounded-xl text-primary-700 text-sm font-medium"
+                    >
+                      {r.name}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Placements */}
             {college.avgPackage && (
               <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
@@ -377,20 +395,6 @@ export default async function CollegeDetailPage({ params }: Props) {
                     </div>
                   ))}
                 </div>
-
-                <h3 className="font-semibold text-gray-800 mb-3 text-sm">Top Recruiters</h3>
-                <div className="flex flex-wrap gap-2">
-                  {recruiterNames.map(
-                    (company) => (
-                      <span
-                        key={company}
-                        className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700 font-medium"
-                      >
-                        {company}
-                      </span>
-                    )
-                  )}
-                </div>
               </section>
             )}
           </div>
@@ -406,12 +410,16 @@ export default async function CollegeDetailPage({ params }: Props) {
               <Button variant="accent" className="w-full mb-2">
                 Apply Now
               </Button>
-              <Button
-                variant="outline"
-                className="w-full border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
-              >
-                Download Brochure
-              </Button>
+              {brochureUrl && (
+                <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download className="block">
+                  <Button
+                    variant="outline"
+                    className="w-full border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
+                  >
+                    Download Brochure
+                  </Button>
+                </a>
+              )}
               {college.phone && (
                 <div className="mt-4 flex items-center justify-center gap-2 text-sm text-blue-200">
                   <Phone className="h-4 w-4" />
