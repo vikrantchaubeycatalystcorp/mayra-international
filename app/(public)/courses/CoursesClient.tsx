@@ -84,10 +84,13 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
     return courses.filter((c) => {
       const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.stream.toLowerCase().includes(search.toLowerCase());
       const matchStream = stream === "All" || c.stream === stream;
-      const matchLevel = level === "All" || c.level === level;
+      // Level buttons may show full names ("Undergraduate") from master-data while
+      // course records store codes ("UG"). Match against either the label or its code.
+      const levelCode = masterData?.courseLevels?.find((cl) => cl.name === level)?.code;
+      const matchLevel = level === "All" || c.level === level || c.level === levelCode;
       return matchSearch && matchStream && matchLevel;
     });
-  }, [search, stream, level, courses]);
+  }, [search, stream, level, courses, masterData]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

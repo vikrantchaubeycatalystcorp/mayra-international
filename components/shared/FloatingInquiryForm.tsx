@@ -4,46 +4,8 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronUp, MessageSquarePlus } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { useMasterData } from "../../hooks/useMasterData";
-
-const FALLBACK_COURSE_OPTIONS = [
-  "Engineering (B.Tech / M.Tech)",
-  "Medical (MBBS / BDS)",
-  "Management (MBA / BBA)",
-  "Law (LLB / LLM)",
-  "Science (B.Sc / M.Sc)",
-  "Arts & Humanities",
-  "Commerce (B.Com / M.Com)",
-  "Design & Architecture",
-  "Study Abroad",
-  "Other",
-];
-
-const FALLBACK_CLASS_OPTIONS = [
-  "Class 10 (Appearing)",
-  "Class 10 (Passed)",
-  "Class 12 (Appearing)",
-  "Class 12 (Passed)",
-  "Graduate (Appearing)",
-  "Graduate (Passed)",
-  "Post Graduate",
-];
 
 export function FloatingInquiryForm() {
-  const { data: masterData } = useMasterData();
-  const CLASS_OPTIONS = masterData?.leadQualifications
-    ? masterData.leadQualifications.map((q) => q.label)
-    : FALLBACK_CLASS_OPTIONS;
-  const COURSE_OPTIONS = masterData?.leadInterests
-    ? masterData.leadInterests.map((i) => i.label)
-    : FALLBACK_COURSE_OPTIONS;
   const [minimized, setMinimized] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,19 +15,11 @@ export function FloatingInquiryForm() {
     name: "",
     email: "",
     phone: "",
-    city: "",
-    currentClass: "",
-    courseInterest: "",
-    message: "",
     _hp: "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-
-  function handleSelect(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -139,7 +93,7 @@ export function FloatingInquiryForm() {
                 className="text-xs text-primary-600 underline mt-1"
                 onClick={() => {
                   setSubmitted(false);
-                  setForm({ name: "", email: "", phone: "", city: "", currentClass: "", courseInterest: "", message: "", _hp: "" });
+                  setForm({ name: "", email: "", phone: "", _hp: "" });
                 }}
               >
                 Submit another
@@ -195,83 +149,12 @@ export function FloatingInquiryForm() {
                 />
               </div>
 
-              <div>
-                <label className="text-[11px] font-medium text-gray-600 mb-0.5 block">
-                  City
-                </label>
-                <Input
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  placeholder="Your city"
-                  className="h-8 text-xs"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-medium text-gray-600 mb-0.5 block">
-                  Current Class / Qualification <span className="text-red-500">*</span>
-                </label>
-                <Select
-                  value={form.currentClass}
-                  onValueChange={(v) => handleSelect("currentClass", v)}
-                  required
-                >
-                  <SelectTrigger className="h-8 text-xs" aria-label="Current class or qualification">
-                    <SelectValue placeholder="Select class" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CLASS_OPTIONS.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-medium text-gray-600 mb-0.5 block">
-                  Course Interest <span className="text-red-500">*</span>
-                </label>
-                <Select
-                  value={form.courseInterest}
-                  onValueChange={(v) => handleSelect("courseInterest", v)}
-                  required
-                >
-                  <SelectTrigger className="h-8 text-xs" aria-label="Course interest">
-                    <SelectValue placeholder="Select course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COURSE_OPTIONS.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-medium text-gray-600 mb-0.5 block">
-                  Message / Query
-                </label>
-                <textarea
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  placeholder="Any specific questions or requirements..."
-                  rows={2}
-                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none transition-colors"
-                />
-              </div>
-
               <Button
                 type="submit"
                 variant="gradient"
                 size="sm"
                 className="w-full mt-0.5 text-xs"
-                disabled={loading || !form.name || !form.phone || !form.currentClass || !form.courseInterest}
+                disabled={loading || !form.name || !form.phone}
               >
                 {loading ? "Submitting..." : "Get Free Counselling"}
               </Button>

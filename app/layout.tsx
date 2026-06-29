@@ -92,9 +92,9 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [seo?.ogImage || "/og-image.png"],
     },
     icons: {
-      icon: [{ url: "/icon", sizes: "48x48", type: "image/png" }],
-      shortcut: ["/icon"],
-      apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+      icon: [{ url: "/icon.png", sizes: "512x512", type: "image/png" }],
+      shortcut: ["/icon.png"],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
     },
     manifest: "/manifest.webmanifest",
     verification: {

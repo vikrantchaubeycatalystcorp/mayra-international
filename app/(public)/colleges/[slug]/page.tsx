@@ -244,7 +244,7 @@ export default async function CollegeDetailPage({ params }: Props) {
         {/* Tab Navigation */}
         <div className="container mx-auto">
           <nav className="flex gap-1 overflow-x-auto scrollbar-none pb-px">
-            {["Overview", "Courses", "Admission", "Placements", "Reviews"].map(
+            {["Overview"].map(
               (tab) => (
                 <button suppressHydrationWarning
                   key={tab}
