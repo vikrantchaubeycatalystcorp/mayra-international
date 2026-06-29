@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Clock, Eye, Tag } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { LiveBadge } from "../shared/LiveBadge";
-import { cn, formatDate, getReadTime, truncate } from "../../lib/utils";
+import { cn, formatDate, getReadTime, truncate, normalizeImageUrl } from "../../lib/utils";
 
 type ArticleData = {
   id: string;
@@ -30,7 +30,7 @@ function NewsCard({ article, variant = "default" }: { article: ArticleData; vari
         <div className={`h-52 ${article.imageUrl ? "" : `bg-gradient-to-br ${article.imageColor}`} relative overflow-hidden flex-shrink-0`}>
           {article.imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+            <img src={normalizeImageUrl(article.imageUrl)} alt={article.title} className="w-full h-full object-cover" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
           <div className="absolute top-4 left-4 flex gap-2">
@@ -63,7 +63,7 @@ function NewsCard({ article, variant = "default" }: { article: ArticleData; vari
       {article.imageUrl ? (
         <div className="h-16 w-16 rounded-xl flex-shrink-0 shadow-sm overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+          <img src={normalizeImageUrl(article.imageUrl)} alt={article.title} className="w-full h-full object-cover" />
         </div>
       ) : (
         <div className={`h-16 w-16 rounded-xl bg-gradient-to-br ${article.imageColor} flex-shrink-0 shadow-sm`} />

@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Loader2, X, ImageIcon } from "lucide-react";
 import { createItem } from "@/hooks/admin/useAdminCRUD";
 import { NEWS_CATEGORIES as FALLBACK_NEWS_CATEGORIES } from "@/types/admin";
 import { useMasterData } from "@/hooks/useMasterData";
+import { normalizeImageUrl } from "@/lib/utils";
 
 export default function NewArticlePage() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function NewArticlePage() {
             {form.imageUrl && (
               <div className="mt-2 relative rounded-xl border border-gray-200 overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={form.imageUrl} alt="Preview" className="w-full h-40 object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <img src={normalizeImageUrl(form.imageUrl)} alt="Preview" className="w-full h-40 object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                 <button type="button" onClick={() => update("imageUrl", "")} className="absolute top-2 right-2 p-1 rounded-lg bg-white/90 shadow-sm hover:bg-white text-gray-500 hover:text-red-600"><X className="w-4 h-4" /></button>
               </div>
             )}

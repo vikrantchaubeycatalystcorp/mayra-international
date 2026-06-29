@@ -4,7 +4,7 @@ import { requireAdmin, success, notFound, badRequest } from "@/lib/admin/middlew
 import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
 import { newsFormSchema } from "@/types/admin";
-import { createSlug } from "@/lib/utils";
+import { createSlug, normalizeImageUrl } from "@/lib/utils";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin(req, "news", "view");
@@ -34,7 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       if (dup) return badRequest("An article with this title already exists");
     }
 
-    const article = await prisma.newsArticle.update({ where: { id }, data: { ...data, slug, updatedBy: auth.admin.id } });
+    const article = await prisma.newsArticle.update({ where: { id }, data: { ...data, imageUrl: normalizeImageUrl(data.imageUrl), slug, updatedBy: auth.admin.id } });
     await logActivity({ adminId: auth.admin.id, action: "UPDATE", entity: "News", entityId: article.id, details: `Updated article: ${article.title}` });
     revalidateEntity("News", article.slug);
     return success(article);

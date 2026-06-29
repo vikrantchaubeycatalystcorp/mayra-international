@@ -4,7 +4,7 @@ import { requireAdmin, success, paginated, badRequest, getSearchParams } from "@
 import { logActivity } from "@/lib/admin/activity-logger";
 import { revalidateEntity } from "@/lib/revalidate";
 import { newsFormSchema } from "@/types/admin";
-import { createSlug } from "@/lib/utils";
+import { createSlug, normalizeImageUrl } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const auth = await requireAdmin(req, "news", "view");
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     if (existing) return badRequest("An article with this title already exists");
 
     const article = await prisma.newsArticle.create({
-      data: { ...data, slug, createdBy: auth.admin.id, source: "admin" },
+      data: { ...data, imageUrl: normalizeImageUrl(data.imageUrl), slug, createdBy: auth.admin.id, source: "admin" },
     });
 
     await logActivity({ adminId: auth.admin.id, action: "CREATE", entity: "News", entityId: article.id, details: `Created article: ${article.title}` });
