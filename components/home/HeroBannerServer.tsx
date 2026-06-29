@@ -20,8 +20,8 @@ export async function HeroBannerServer() {
   const bgImage = banner?.bgImage || DEFAULT_BG;
 
   return (
-    <section className="relative min-h-[72vh] md:min-h-[82vh] flex items-center overflow-hidden border-b border-[#E8E1D4]">
-      {/* Background image in server component for faster LCP — kept as-is */}
+    <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
+      {/* Background image in server component for faster LCP */}
       <Image
         src={bgImage}
         alt=""
@@ -32,11 +32,9 @@ export async function HeroBannerServer() {
         className="object-cover object-center"
         quality={75}
       />
-      {/* Editorial scrim — keeps the left-aligned headline legible while the photo stays visible */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1B1814]/70 via-[#1B1814]/35 to-transparent" />
+      {/* Light scrim — keeps text legible on the left while the photo stays clearly visible */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
       <HeroBannerClient banner={banner || null} />
-      {/* Fade into the paper page below */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FBF9F4] to-transparent" />
     </section>
   );
 }

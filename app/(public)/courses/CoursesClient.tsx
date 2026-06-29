@@ -31,11 +31,12 @@ const streamIconMap: Record<string, LucideIcon> = {
   "Veterinary Sciences": Heart,
 };
 
-function CourseStreamIcon({ stream }: { stream: string }) {
+function CourseStreamIcon({ stream, color }: { stream: string; color?: string | null }) {
   const Icon = streamIconMap[stream] ?? BookOpen;
   return (
     <div className={cn(
-      "h-12 w-12 rounded-2xl bg-gradient-to-br from-[#256B50] to-[#164A37] flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300"
+      "h-12 w-12 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300",
+      color || "from-blue-600 to-blue-400"
     )}>
       <Icon className="h-5 w-5 text-white" />
     </div>
@@ -141,8 +142,8 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
                   stream === s
-                    ? "bg-accent-500 text-white border-accent-500"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-accent-200"
+                    ? "bg-orange-500 text-white border-orange-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-orange-200"
                 )}
               >
                 {s}
@@ -159,7 +160,7 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
           {paginated.map((course) => (
             <Link key={course.id} href={`/courses/${course.slug}`}>
               <article className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 p-5 group cursor-pointer h-full">
-                <CourseStreamIcon stream={course.stream} />
+                <CourseStreamIcon stream={course.stream} color={course.color} />
 
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="secondary" className="text-xs">{course.level}</Badge>
@@ -173,7 +174,7 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
 
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <Clock className="h-3.5 w-3.5 text-primary-500" />
+                    <Clock className="h-3.5 w-3.5 text-blue-500" />
                     {course.duration}
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-gray-500">
@@ -181,7 +182,7 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
                     {course.topColleges.toLocaleString()}+ colleges
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-gray-500 col-span-2">
-                    <TrendingUp className="h-3.5 w-3.5 text-primary-500" />
+                    <TrendingUp className="h-3.5 w-3.5 text-purple-500" />
                     Avg Fees: {formatCurrency(course.avgFees)}/yr
                   </div>
                 </div>

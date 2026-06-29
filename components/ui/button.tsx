@@ -4,32 +4,30 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all duration-200 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-300 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Pine primary — editorial brand
         default:
-          "bg-[#1C5A42] text-white hover:bg-[#164A37] active:translate-y-px",
+          "bg-indigo-600 text-white shadow-md shadow-indigo-500/15 hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98]",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-[#D8CFBE] bg-white text-[#1B1814] hover:border-[#1B1814] hover:bg-[#FCFAF6]",
+          "border border-indigo-200 bg-white text-indigo-700 shadow-sm hover:bg-indigo-50/50 hover:border-indigo-300",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "text-[#1C5A42] hover:text-[#164A37] hover:bg-[#F4F0E7]",
-        link: "text-[#1C5A42] underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-gray-100 text-gray-700 hover:text-gray-900",
+        link: "text-indigo-600 underline-offset-4 hover:underline",
         gradient:
-          "bg-[#1C5A42] text-white hover:bg-[#164A37] active:translate-y-px",
-        // Marigold accent
+          "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/25 hover:from-indigo-500 hover:to-purple-500 active:scale-[0.98]",
         accent:
-          "bg-[#C8841B] text-[#231603] hover:bg-[#A96A0F] hover:text-white active:translate-y-px",
+          "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/25 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98]",
       },
       size: {
         default: "h-10 px-5 py-2",
-        sm: "h-9 rounded-md px-3.5 text-[13.5px]",
-        lg: "h-12 rounded-md px-7 text-base",
-        xl: "h-14 rounded-lg px-10 text-base",
+        sm: "h-8 rounded-lg px-3 text-xs",
+        lg: "h-12 rounded-xl px-8 text-base",
+        xl: "h-14 rounded-2xl px-10 text-base",
         icon: "h-10 w-10",
       },
     },

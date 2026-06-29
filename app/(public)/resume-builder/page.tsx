@@ -525,8 +525,8 @@ function ResumeBuilderContent() {
   // --- Severity icons/colors ---
   const severityIcon = (sev: string) => {
     if (sev === "critical") return <AlertCircle className="h-4 w-4 text-red-500 shrink-0" />;
-    if (sev === "warning") return <AlertTriangle className="h-4 w-4 text-accent-500 shrink-0" />;
-    return <Lightbulb className="h-4 w-4 text-primary-500 shrink-0" />;
+    if (sev === "warning") return <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />;
+    return <Lightbulb className="h-4 w-4 text-blue-500 shrink-0" />;
   };
 
   // --- Render editor per active section ---
@@ -565,7 +565,7 @@ function ResumeBuilderContent() {
               <button
                 onClick={generateSummary}
                 disabled={summaryLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-primary-500 to-primary-500 text-white rounded-lg hover:from-primary-600 hover:to-primary-600 transition-all disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-50"
                 suppressHydrationWarning
               >
                 {summaryLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
@@ -577,14 +577,14 @@ function ResumeBuilderContent() {
             </Field>
             <p className="text-xs text-gray-400">{summary.length} characters</p>
             {summarySuggestions && summarySuggestions.variants && (
-              <div className="bg-primary-50 rounded-xl p-4 space-y-3 border border-primary-100">
+              <div className="bg-indigo-50 rounded-xl p-4 space-y-3 border border-indigo-100">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-primary-700">AI-Generated Summaries</span>
+                  <span className="text-sm font-semibold text-indigo-700">AI-Generated Summaries</span>
                   <button onClick={() => setSummarySuggestions(null)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-4 w-4" /></button>
                 </div>
                 {summarySuggestions.variants.map((v: any, vi: number) => (
-                  <button key={vi} onClick={() => { updateSummary(v.text); setSummarySuggestions(null); }} className="w-full text-left p-3 rounded-lg hover:bg-white text-sm transition-colors border border-transparent hover:border-primary-200">
-                    <span className="text-xs font-medium text-primary-500 uppercase">{v.style || v.tone || `Option ${vi + 1}`}</span>
+                  <button key={vi} onClick={() => { updateSummary(v.text); setSummarySuggestions(null); }} className="w-full text-left p-3 rounded-lg hover:bg-white text-sm transition-colors border border-transparent hover:border-indigo-200">
+                    <span className="text-xs font-medium text-indigo-500 uppercase">{v.style || v.tone || `Option ${vi + 1}`}</span>
                     <p className="text-gray-700 mt-1">{v.text}</p>
                   </button>
                 ))}
@@ -615,7 +615,7 @@ function ResumeBuilderContent() {
                 <Field label="Achievements"><textarea value={edu.achievements} onChange={e => updateEducation(edu.id, "achievements", e.target.value)} placeholder="Dean's list, relevant coursework..." className={cn(inputCls, "h-16")} /></Field>
               </div>
             ))}
-            <button onClick={addEducation} className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Education</button>
+            <button onClick={addEducation} className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Education</button>
           </div>
         );
 
@@ -654,7 +654,7 @@ function ResumeBuilderContent() {
                           <button
                             onClick={() => improveBullet(b, bulletKey)}
                             disabled={aiLoading === bulletKey}
-                            className="px-2 py-1 text-primary-500 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="px-2 py-1 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
                             title="AI Improve"
                             suppressHydrationWarning
                           >
@@ -665,31 +665,31 @@ function ResumeBuilderContent() {
                           )}
                         </div>
                         {aiSuggestions[bulletKey] && (
-                          <div className="ml-6 mt-2 bg-primary-50 rounded-lg p-3 space-y-2 border border-primary-100">
+                          <div className="ml-6 mt-2 bg-indigo-50 rounded-lg p-3 space-y-2 border border-indigo-100">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-semibold text-primary-700">AI Suggestions</span>
+                              <span className="text-xs font-semibold text-indigo-700">AI Suggestions</span>
                               <button onClick={() => setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; })} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-3 w-3" /></button>
                             </div>
                             {aiSuggestions[bulletKey].variants?.map((v: any, vi: number) => (
                               <button key={vi} onClick={() => { updateExperienceBullet(exp.id, bi, v.text); setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; }); }} className="w-full text-left p-2 rounded-lg hover:bg-white text-sm transition-colors">
-                                <span className="text-xs font-medium text-primary-500 uppercase">{v.style}</span>
+                                <span className="text-xs font-medium text-indigo-500 uppercase">{v.style}</span>
                                 <p className="text-gray-700 mt-0.5">{v.text}</p>
                                 <p className="text-xs text-gray-400 mt-0.5">{v.changes}</p>
                               </button>
                             ))}
                             {aiSuggestions[bulletKey].metrics_prompt && (
-                              <p className="text-xs text-accent-600 bg-accent-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
+                              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
                             )}
                           </div>
                         )}
                       </div>
                     );
                   })}
-                  <button onClick={() => addExperienceBullet(exp.id)} className="text-xs text-primary-600 hover:text-primary-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
+                  <button onClick={() => addExperienceBullet(exp.id)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
                 </div>
               </div>
             ))}
-            <button onClick={addExperience} className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Experience</button>
+            <button onClick={addExperience} className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Experience</button>
           </div>
         );
 
@@ -719,7 +719,7 @@ function ResumeBuilderContent() {
                           <button
                             onClick={() => improveBullet(b, bulletKey)}
                             disabled={aiLoading === bulletKey}
-                            className="px-2 py-1 text-primary-500 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="px-2 py-1 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
                             title="AI Improve"
                             suppressHydrationWarning
                           >
@@ -730,31 +730,31 @@ function ResumeBuilderContent() {
                           )}
                         </div>
                         {aiSuggestions[bulletKey] && (
-                          <div className="ml-6 mt-2 bg-primary-50 rounded-lg p-3 space-y-2 border border-primary-100">
+                          <div className="ml-6 mt-2 bg-indigo-50 rounded-lg p-3 space-y-2 border border-indigo-100">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-semibold text-primary-700">AI Suggestions</span>
+                              <span className="text-xs font-semibold text-indigo-700">AI Suggestions</span>
                               <button onClick={() => setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; })} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-3 w-3" /></button>
                             </div>
                             {aiSuggestions[bulletKey].variants?.map((v: any, vi: number) => (
                               <button key={vi} onClick={() => { updateProjectBullet(proj.id, bi, v.text); setAiSuggestions(prev => { const n = {...prev}; delete n[bulletKey]; return n; }); }} className="w-full text-left p-2 rounded-lg hover:bg-white text-sm transition-colors">
-                                <span className="text-xs font-medium text-primary-500 uppercase">{v.style}</span>
+                                <span className="text-xs font-medium text-indigo-500 uppercase">{v.style}</span>
                                 <p className="text-gray-700 mt-0.5">{v.text}</p>
                                 <p className="text-xs text-gray-400 mt-0.5">{v.changes}</p>
                               </button>
                             ))}
                             {aiSuggestions[bulletKey].metrics_prompt && (
-                              <p className="text-xs text-accent-600 bg-accent-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
+                              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">{aiSuggestions[bulletKey].metrics_prompt}</p>
                             )}
                           </div>
                         )}
                       </div>
                     );
                   })}
-                  <button onClick={() => addProjectBullet(proj.id)} className="text-xs text-primary-600 hover:text-primary-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
+                  <button onClick={() => addProjectBullet(proj.id)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium" suppressHydrationWarning><Plus className="h-3 w-3 inline mr-1" />Add bullet</button>
                 </div>
               </div>
             ))}
-            <button onClick={addProject} className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Project</button>
+            <button onClick={addProject} className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Project</button>
           </div>
         );
 
@@ -787,7 +787,7 @@ function ResumeBuilderContent() {
                 <div className="flex flex-wrap gap-2 min-h-[2.5rem]">
                   {group.skills.length === 0 && <p className="text-xs text-gray-400">No skills added yet</p>}
                   {group.skills.map(skill => (
-                    <button key={skill} onClick={() => updateSkillGroup(gi, group.skills.filter(s => s !== skill))} className="flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium hover:bg-red-50 hover:text-red-600 transition-colors" suppressHydrationWarning>
+                    <button key={skill} onClick={() => updateSkillGroup(gi, group.skills.filter(s => s !== skill))} className="flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium hover:bg-red-50 hover:text-red-600 transition-colors" suppressHydrationWarning>
                       {skill}<X className="h-3 w-3" />
                     </button>
                   ))}
@@ -805,7 +805,7 @@ function ResumeBuilderContent() {
                   const exists = skills.some(g => g.skills.includes(s));
                   return (
                     <button key={s} onClick={() => { if (!exists && skills.length > 0) updateSkillGroup(0, [...skills[0].skills, s]); }}
-                      className={cn("px-2.5 py-1 rounded-full text-xs border transition-all", exists ? "bg-primary-100 text-primary-700 border-primary-200" : "border-gray-200 text-gray-600 hover:border-primary-200")} suppressHydrationWarning>
+                      className={cn("px-2.5 py-1 rounded-full text-xs border transition-all", exists ? "bg-indigo-100 text-indigo-700 border-indigo-200" : "border-gray-200 text-gray-600 hover:border-indigo-200")} suppressHydrationWarning>
                       + {s}
                     </button>
                   );
@@ -833,7 +833,7 @@ function ResumeBuilderContent() {
                 </div>
               </div>
             ))}
-            <button onClick={addCertification} className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Certification</button>
+            <button onClick={addCertification} className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Certification</button>
           </div>
         );
 
@@ -849,7 +849,7 @@ function ResumeBuilderContent() {
                 <Field label="Description"><textarea value={ach.description} onChange={e => updateAchievement(ach.id, "description", e.target.value)} placeholder="Won first place at..." className={cn(inputCls, "h-16")} /></Field>
               </div>
             ))}
-            <button onClick={addAchievement} className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Achievement</button>
+            <button onClick={addAchievement} className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold" suppressHydrationWarning><Plus className="h-4 w-4" /> Add Achievement</button>
           </div>
         );
 
@@ -891,7 +891,7 @@ function ResumeBuilderContent() {
         <div className="bg-white border-b border-gray-100 sticky top-0 z-30">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
                 <FileText className="h-5 w-5" />
               </div>
               <div>
@@ -900,7 +900,7 @@ function ResumeBuilderContent() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={cn("text-xs font-medium transition-colors", saveStatus === 'saving' ? "text-accent-500" : "text-green-500")}>
+              <span className={cn("text-xs font-medium transition-colors", saveStatus === 'saving' ? "text-amber-500" : "text-green-500")}>
                 {saveStatus === 'saving' ? 'Saving...' : 'Saved'}
               </span>
               <Button variant="outline" onClick={() => setShowUpload(true)} className="gap-1.5 hidden sm:flex">
@@ -909,7 +909,7 @@ function ResumeBuilderContent() {
               </Button>
               <ScoreChip />
               <button onClick={() => setShowJdMatch(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-xs font-semibold text-gray-700 hidden sm:flex" suppressHydrationWarning>
-                <ClipboardCheck className="h-4 w-4 text-primary-500" />JD Match
+                <ClipboardCheck className="h-4 w-4 text-indigo-500" />JD Match
               </button>
               <Button variant="outline" onClick={() => setShowFullPreview(true)} className="gap-1.5 hidden sm:flex"><LayoutTemplate className="h-4 w-4" />Templates</Button>
               <Button variant="outline" onClick={handleDocxExport} className="gap-1.5 hidden sm:flex"><FileDown className="h-4 w-4" />DOCX</Button>
@@ -921,10 +921,10 @@ function ResumeBuilderContent() {
 
         {!personal.name && !personal.email && (
           <div className="container mx-auto px-4 mb-4 mt-4">
-            <div className="bg-gradient-to-r from-primary-50 to-primary-50 border border-primary-100 rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-white shadow-sm">
-                  <Upload className="h-5 w-5 text-primary-500" />
+                  <Upload className="h-5 w-5 text-indigo-500" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-800">Already have a resume?</p>
@@ -946,7 +946,7 @@ function ResumeBuilderContent() {
               <div className="sticky top-24 space-y-1">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">Sections</p>
                 {/* Personal (always first, non-configurable) */}
-                <button onClick={() => setActiveSection("personal")} className={cn("w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all", activeSection === "personal" ? "bg-primary-50 text-primary-700" : "text-gray-600 hover:bg-gray-100")} suppressHydrationWarning>
+                <button onClick={() => setActiveSection("personal")} className={cn("w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all", activeSection === "personal" ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-100")} suppressHydrationWarning>
                   <User className="h-4 w-4 shrink-0" />
                   <span className="flex-1 text-left">Personal Info</span>
                 </button>
@@ -959,7 +959,7 @@ function ResumeBuilderContent() {
                         <button onClick={() => moveSection(sec.id, -1)} className="text-gray-400 hover:text-gray-600 p-0.5" suppressHydrationWarning><ChevronLeft className="h-3 w-3 rotate-90" /></button>
                         <button onClick={() => moveSection(sec.id, 1)} className="text-gray-400 hover:text-gray-600 p-0.5" suppressHydrationWarning><ChevronLeft className="h-3 w-3 -rotate-90" /></button>
                       </div>
-                      <button onClick={() => setActiveSection(sec.id)} className={cn("flex-1 flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all", activeSection === sec.id ? "bg-primary-50 text-primary-700" : "text-gray-600 hover:bg-gray-100", !sec.visible && "opacity-50")} suppressHydrationWarning>
+                      <button onClick={() => setActiveSection(sec.id)} className={cn("flex-1 flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all", activeSection === sec.id ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-100", !sec.visible && "opacity-50")} suppressHydrationWarning>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="flex-1 text-left">{sec.label}</span>
                       </button>
@@ -977,13 +977,13 @@ function ResumeBuilderContent() {
               {navItems.slice(0, 5).map(item => {
                 const Icon = item.icon;
                 return (
-                  <button key={item.id} onClick={() => { setActiveSection(item.id); setShowPreview(false); }} className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0", activeSection === item.id && !showPreview ? "bg-primary-50 text-primary-700" : "text-gray-500")} suppressHydrationWarning>
+                  <button key={item.id} onClick={() => { setActiveSection(item.id); setShowPreview(false); }} className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0", activeSection === item.id && !showPreview ? "bg-indigo-50 text-indigo-700" : "text-gray-500")} suppressHydrationWarning>
                     <Icon className="h-4 w-4" />
                     {item.label.split(" ")[0]}
                   </button>
                 );
               })}
-              <button onClick={() => setShowPreview(true)} className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0", showPreview ? "bg-primary-50 text-primary-700" : "text-gray-500")} suppressHydrationWarning>
+              <button onClick={() => setShowPreview(true)} className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0", showPreview ? "bg-indigo-50 text-indigo-700" : "text-gray-500")} suppressHydrationWarning>
                 <Eye className="h-4 w-4" />Preview
               </button>
             </div>
@@ -994,13 +994,13 @@ function ResumeBuilderContent() {
                 {renderEditor()}
               </div>
               {/* AI Toolbar (desktop) */}
-              <div className="hidden lg:flex items-center gap-2 mt-4 p-3 bg-gradient-to-r from-primary-50 to-primary-50 rounded-xl border border-primary-100 mb-20 lg:mb-0">
-                <Sparkles className="h-4 w-4 text-primary-500" />
-                <span className="text-xs font-medium text-primary-700">AI Actions:</span>
-                <button onClick={() => { if (activeSection !== 'experience' && activeSection !== 'projects') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 transition-colors" suppressHydrationWarning>Improve Bullet</button>
-                <button onClick={() => { if (activeSection !== 'experience') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 transition-colors" suppressHydrationWarning>Add Metrics</button>
-                <button onClick={() => setShowJdMatch(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 transition-colors" suppressHydrationWarning>Match to JD</button>
-                <button onClick={() => setShowScore(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 transition-colors" suppressHydrationWarning>ATS Check</button>
+              <div className="hidden lg:flex items-center gap-2 mt-4 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100 mb-20 lg:mb-0">
+                <Sparkles className="h-4 w-4 text-indigo-500" />
+                <span className="text-xs font-medium text-indigo-700">AI Actions:</span>
+                <button onClick={() => { if (activeSection !== 'experience' && activeSection !== 'projects') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Improve Bullet</button>
+                <button onClick={() => { if (activeSection !== 'experience') setActiveSection('experience'); }} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Add Metrics</button>
+                <button onClick={() => setShowJdMatch(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>Match to JD</button>
+                <button onClick={() => setShowScore(true)} className="px-3 py-1.5 text-xs font-medium bg-white rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors" suppressHydrationWarning>ATS Check</button>
               </div>
             </div>
 
@@ -1009,7 +1009,7 @@ function ResumeBuilderContent() {
               <div className="sticky top-24 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-gray-700 text-sm">Live Preview</h3>
-                  <button onClick={() => setShowFullPreview(true)} className="text-xs text-primary-600 hover:text-primary-700 font-medium" suppressHydrationWarning>Expand</button>
+                  <button onClick={() => setShowFullPreview(true)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium" suppressHydrationWarning>Expand</button>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                   <div className="max-h-[60vh] overflow-y-auto">
@@ -1066,7 +1066,7 @@ function ResumeBuilderContent() {
             <div className="relative w-full max-w-md bg-white shadow-2xl h-full overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="p-6 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><ClipboardCheck className="h-5 w-5 text-primary-600" /> JD Match</h2>
+                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><ClipboardCheck className="h-5 w-5 text-indigo-600" /> JD Match</h2>
                   <button onClick={() => setShowJdMatch(false)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-5 w-5" /></button>
                 </div>
                 <div>
@@ -1081,7 +1081,7 @@ function ResumeBuilderContent() {
                 <button
                   onClick={analyzeJd}
                   disabled={jdLoading || !jdText.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-500 to-primary-500 text-white rounded-lg font-medium text-sm hover:from-primary-600 hover:to-primary-600 transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-medium text-sm hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-50"
                   suppressHydrationWarning
                 >
                   {jdLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -1143,8 +1143,8 @@ function ResumeBuilderContent() {
                       <div className="space-y-2">
                         <p className="text-sm font-semibold text-gray-700">Recommendations</p>
                         {jdResult.recommendations.map((rec: any, i: number) => (
-                          <div key={i} className={cn("flex gap-2.5 p-3 rounded-lg text-xs", rec.priority === 'high' ? "bg-red-50" : rec.priority === 'medium' ? "bg-accent-50" : "bg-primary-50")}>
-                            {rec.priority === 'high' ? <AlertCircle className="h-4 w-4 text-red-500 shrink-0" /> : rec.priority === 'medium' ? <AlertTriangle className="h-4 w-4 text-accent-500 shrink-0" /> : <Lightbulb className="h-4 w-4 text-primary-500 shrink-0" />}
+                          <div key={i} className={cn("flex gap-2.5 p-3 rounded-lg text-xs", rec.priority === 'high' ? "bg-red-50" : rec.priority === 'medium' ? "bg-amber-50" : "bg-blue-50")}>
+                            {rec.priority === 'high' ? <AlertCircle className="h-4 w-4 text-red-500 shrink-0" /> : rec.priority === 'medium' ? <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" /> : <Lightbulb className="h-4 w-4 text-blue-500 shrink-0" />}
                             <p className="font-medium text-gray-800">{rec.text}</p>
                           </div>
                         ))}
@@ -1164,7 +1164,7 @@ function ResumeBuilderContent() {
             <div className="relative w-full max-w-md bg-white shadow-2xl h-full overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="p-6 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Target className="h-5 w-5 text-primary-600" /> Resume Score</h2>
+                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Target className="h-5 w-5 text-indigo-600" /> Resume Score</h2>
                   <button onClick={() => setShowScore(false)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning><X className="h-5 w-5" /></button>
                 </div>
                 {/* Overall score circle */}
@@ -1202,7 +1202,7 @@ function ResumeBuilderContent() {
                     <p className="text-sm font-semibold text-gray-700">Issues & Suggestions</p>
                     <div className="space-y-2">
                       {scoreResult.issues.slice(0, 15).map((issue, i) => (
-                        <div key={i} className={cn("flex gap-2.5 p-3 rounded-lg text-xs", issue.severity === "critical" ? "bg-red-50" : issue.severity === "warning" ? "bg-accent-50" : "bg-primary-50")}>
+                        <div key={i} className={cn("flex gap-2.5 p-3 rounded-lg text-xs", issue.severity === "critical" ? "bg-red-50" : issue.severity === "warning" ? "bg-amber-50" : "bg-blue-50")}>
                           {severityIcon(issue.severity)}
                           <div>
                             <p className="font-medium text-gray-800">{issue.message}</p>
@@ -1240,17 +1240,17 @@ function ResumeBuilderContent() {
                   </div>
                 )}
 
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-primary-300 transition-colors">
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-indigo-300 transition-colors">
                   {uploadLoading ? (
                     <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-10 w-10 text-primary-500 animate-spin" />
+                      <Loader2 className="h-10 w-10 text-indigo-500 animate-spin" />
                       <p className="text-sm font-medium text-gray-700">Parsing your resume...</p>
                       <p className="text-xs text-gray-400">Extracting data and mapping to sections</p>
                     </div>
                   ) : (
                     <label className="cursor-pointer flex flex-col items-center gap-3">
-                      <div className="p-4 rounded-full bg-primary-50">
-                        <Upload className="h-8 w-8 text-primary-500" />
+                      <div className="p-4 rounded-full bg-indigo-50">
+                        <Upload className="h-8 w-8 text-indigo-500" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700">Drop your resume here or click to browse</p>
@@ -1282,8 +1282,8 @@ function ResumeBuilderContent() {
                   </div>
                 </div>
 
-                <div className="mt-4 p-3 bg-accent-50 border border-accent-200 rounded-lg">
-                  <p className="text-xs text-accent-700">
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-xs text-amber-700">
                     <strong>Note:</strong> Importing will replace your current data. The parser works best with well-structured resumes. You can edit any extracted data after import.
                   </p>
                 </div>

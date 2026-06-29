@@ -26,7 +26,7 @@ function ShortCard({ short, onPlay }: { short: ShortItem; onPlay: () => void }) 
       aria-label={`Play ${short.title}`}
       className={cn(
         "group relative block w-full overflow-hidden rounded-2xl bg-gray-900 shadow-md ring-1 ring-black/5",
-        "transition-all duration-300 hover:shadow-xl hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1C5A42]"
+        "transition-all duration-300 hover:shadow-xl hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
       )}
       style={{ aspectRatio: isShort ? "9 / 16" : "16 / 9" }}
     >
@@ -117,7 +117,7 @@ export function ShortsCarouselClient({ shorts, title, subtitle, ctaLabel, ctaLin
   }, []);
 
   return (
-    <section className="section-padding bg-[#FCFAF6] border-y border-[#E8E1D4] relative" ref={sectionRef}>
+    <section className="section-padding bg-gradient-to-b from-gray-50 to-white relative" ref={sectionRef}>
       <div className="container mx-auto">
         {/* Header */}
         <div className="flex items-end justify-between mb-8">
@@ -133,7 +133,7 @@ export function ShortsCarouselClient({ shorts, title, subtitle, ctaLabel, ctaLin
             {ctaLabel && ctaLink && (
               <Link
                 href={ctaLink}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#1C5A42] hover:text-[#164A37] bg-[#E7F0EB] hover:bg-[#C9DFD5] border border-[#C9DFD5] transition-all duration-300 whitespace-nowrap group"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 transition-all duration-300 whitespace-nowrap group"
               >
                 {ctaLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -144,7 +144,7 @@ export function ShortsCarouselClient({ shorts, title, subtitle, ctaLabel, ctaLin
               onClick={() => emblaApi?.scrollPrev()}
               disabled={!canPrev}
               aria-label="Previous"
-              className="grid h-10 w-10 place-items-center rounded-full border border-[#D8CFBE] bg-white text-[#574F45] transition-all hover:border-[#1C5A42] hover:text-[#1C5A42] disabled:opacity-40 disabled:hover:border-[#D8CFBE] disabled:hover:text-[#574F45]"
+              className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 bg-white text-gray-600 transition-all hover:border-indigo-200 hover:text-indigo-600 disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -153,7 +153,7 @@ export function ShortsCarouselClient({ shorts, title, subtitle, ctaLabel, ctaLin
               onClick={() => emblaApi?.scrollNext()}
               disabled={!canNext}
               aria-label="Next"
-              className="grid h-10 w-10 place-items-center rounded-full border border-[#D8CFBE] bg-white text-[#574F45] transition-all hover:border-[#1C5A42] hover:text-[#1C5A42] disabled:opacity-40 disabled:hover:border-[#D8CFBE] disabled:hover:text-[#574F45]"
+              className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 bg-white text-gray-600 transition-all hover:border-indigo-200 hover:text-indigo-600 disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -196,7 +196,7 @@ export function ShortsCarouselClient({ shorts, title, subtitle, ctaLabel, ctaLin
                 onClick={() => emblaApi?.scrollTo(i)}
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-300",
-                  i === selectedIndex ? "w-6 bg-[#1C5A42]" : "w-1.5 bg-[#D8CFBE] hover:bg-[#ADA496]"
+                  i === selectedIndex ? "w-6 bg-indigo-600" : "w-1.5 bg-gray-300 hover:bg-gray-400"
                 )}
               />
             ))}

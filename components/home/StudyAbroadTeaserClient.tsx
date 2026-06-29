@@ -1,6 +1,9 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 type CountryData = {
   id: string;
@@ -12,30 +15,30 @@ type CountryData = {
   description: string;
 };
 
-const ISO: Record<string, string> = {
-  Canada: "CA", Australia: "AU", Germany: "DE", "United Kingdom": "GB", UK: "GB",
-  "United States": "US", USA: "US", "United States of America": "US", America: "US",
-  France: "FR", Ireland: "IE", "New Zealand": "NZ", Singapore: "SG", Netherlands: "NL",
-  Italy: "IT", Sweden: "SE", Switzerland: "CH", Japan: "JP", Spain: "ES", China: "CN",
-  Russia: "RU", Malaysia: "MY", Finland: "FI", Norway: "NO", Denmark: "DK", Austria: "AT",
-  Belgium: "BE", Poland: "PL", Hungary: "HU", "Czech Republic": "CZ", Portugal: "PT",
-  "South Korea": "KR", "Hong Kong": "HK", Dubai: "AE", "United Arab Emirates": "AE", UAE: "AE",
-};
-
-const PALETTE = ["#C9302C", "#1C5A42", "#5C564E", "#1C3A6E", "#2B4C7E", "#0E6E78", "#A96A0F", "#6E6457"];
-
-/** ISO 3166-1 alpha-2 code for a country name, if known. */
-function isoCode(name: string): string | null {
-  return ISO[name.trim()] || null;
-}
-
-/** Detect an emoji flag already stored on the record (e.g. "🇨🇦"). */
-function isEmojiFlag(flag: string | undefined): boolean {
-  return !!flag && /\p{Regional_Indicator}/u.test(flag);
-}
-
-function openEnquiry() {
-  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("mayra:open-enquiry"));
+function CountryCard({ country }: { country: CountryData }) {
+  return (
+    <Link href="/study-abroad">
+      <article className="group card-premium p-5 cursor-pointer h-full">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{country.flag}</span>
+          <div>
+            <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">{country.name}</h3>
+            <p className="text-xs text-gray-500">{country.universities}+ universities</p>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mb-3 line-clamp-2 leading-relaxed">{country.description.slice(0, 90)}...</p>
+        <div className="bg-indigo-50/50 rounded-xl p-2.5 mb-3 border border-indigo-100/30">
+          <p className="text-[10px] text-indigo-600 font-semibold uppercase tracking-wider mb-0.5">Average Cost</p>
+          <p className="text-xs font-bold text-gray-800">{country.avgCost}</p>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {country.popularCourses.slice(0, 3).map((course) => (
+            <span key={course} className="px-2 py-0.5 bg-gray-50 border border-gray-100/80 rounded-lg text-[10px] text-gray-500 font-medium">{course}</span>
+          ))}
+        </div>
+      </article>
+    </Link>
+  );
 }
 
 type Props = {
@@ -47,66 +50,65 @@ type Props = {
 };
 
 export function StudyAbroadTeaserClient({ countries, title, subtitle, ctaLabel, ctaLink }: Props) {
+  const [revealed, setRevealed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setRevealed(true); observer.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="section" style={{ background: "var(--surface-2)", borderBlock: "1px solid var(--line)" }}>
-      <div className="container">
-        <div className="section-head">
+    <section className="section-padding bg-white relative" ref={ref}>
+      <div className="container mx-auto">
+        <div className="flex items-end justify-between mb-10">
           <div>
-            <span className="kicker">Beyond India</span>
-            <h2 className="h-2" style={{ marginTop: 12 }}>{title}</h2>
-            <p>{subtitle}</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">{title}</h2>
+            <p className="text-gray-500 mt-2 text-base max-w-lg">{subtitle}</p>
           </div>
-          <Link className="link-arrow" href={ctaLink}>
-            {ctaLabel} <span className="ar">→</span>
+          <Link href={ctaLink} className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 transition-all duration-300 whitespace-nowrap group">
+            {ctaLabel}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
-        <div className="card teaser">
-          <div className="country-tiles">
-            {countries.map((country, i) => {
-              const iso = isoCode(country.name);
-              return (
-                <Link key={country.id} href={ctaLink} className="country-tile">
-                  {iso ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
-                      srcSet={`https://flagcdn.com/w160/${iso.toLowerCase()}.png 2x`}
-                      alt={`${country.name} flag`}
-                      width={34}
-                      height={24}
-                      loading="lazy"
-                      style={{
-                        width: 34,
-                        height: 24,
-                        objectFit: "cover",
-                        borderRadius: 4,
-                        flex: "none",
-                        boxShadow: "0 0 0 1px rgba(27,24,20,.08)",
-                      }}
-                    />
-                  ) : isEmojiFlag(country.flag) ? (
-                    <span style={{ fontSize: 24, lineHeight: "24px", flex: "none" }}>{country.flag}</span>
-                  ) : (
-                    <span className="iso" style={{ background: PALETTE[i % PALETTE.length] }}>
-                      {country.name.slice(0, 2).toUpperCase()}
-                    </span>
-                  )}
-                  <div className="cn">{country.name}</div>
-                  <div className="cu">{country.universities}+ universities</div>
-                </Link>
-              );
-            })}
-          </div>
-          <div className="mini-cta">
-            <span className="mc-ico">✓</span>
-            <div style={{ flex: 1 }}>
-              <div className="mc-t">Free counselling + IELTS prep</div>
-              <div className="mc-s">Shortlisting, SOPs, visa and 1,000+ practice questions.</div>
+        <div className={cn("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 stagger-children", revealed && "revealed")}>
+          {countries.map((country) => (
+            <CountryCard key={country.id} country={country} />
+          ))}
+        </div>
+
+        {/* CTA Banners */}
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="relative overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700" />
+            <div className="absolute inset-0 hero-grid opacity-15" />
+            <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-indigo-400/20 blur-[50px]" />
+            <div className="relative p-8 text-white">
+              <h3 className="text-xl font-black mb-2 tracking-tight">Free IELTS/TOEFL Preparation</h3>
+              <p className="text-indigo-200/70 text-sm mb-6 leading-relaxed">Get access to 1000+ practice questions, mock tests, and expert tips to ace your English proficiency exam.</p>
+              <button suppressHydrationWarning className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-700 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+                Start Preparing Free
+                <ExternalLink className="h-3.5 w-3.5" />
+              </button>
             </div>
-            <button className="btn btn-primary btn-sm" onClick={openEnquiry}>
-              Book
-            </button>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-amber-500 to-orange-500" />
+            <div className="absolute inset-0 hero-grid opacity-15" />
+            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-yellow-400/20 blur-[50px]" />
+            <div className="relative p-8 text-white">
+              <h3 className="text-xl font-black mb-2 tracking-tight">Free Study Abroad Counseling</h3>
+              <p className="text-orange-100/80 text-sm mb-6 leading-relaxed">Our expert counselors will guide you through university selection, SOP writing, visa process, and scholarships.</p>
+              <button suppressHydrationWarning className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-orange-700 rounded-xl font-semibold text-sm hover:bg-orange-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+                Book Free Session
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

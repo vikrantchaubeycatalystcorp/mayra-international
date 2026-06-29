@@ -17,13 +17,13 @@ export const allExams: MockExam[] = [
 ];
 
 export const examCategories: { id: ExamCategory; label: string; icon: string; color: string; count: number }[] = [
-  { id: "JEE", label: "JEE Main & Advanced", icon: "Atom", color: "bg-primary-100 text-primary-700", count: jeeExams.length },
+  { id: "JEE", label: "JEE Main & Advanced", icon: "Atom", color: "bg-blue-100 text-blue-700", count: jeeExams.length },
   { id: "NEET", label: "NEET UG", icon: "Heart", color: "bg-green-100 text-green-700", count: neetExams.length },
-  { id: "GATE", label: "GATE", icon: "Cpu", color: "bg-primary-100 text-primary-700", count: gateExams.length },
-  { id: "CAT", label: "CAT / MBA", icon: "Calculator", color: "bg-accent-100 text-accent-700", count: catExams.length },
+  { id: "GATE", label: "GATE", icon: "Cpu", color: "bg-purple-100 text-purple-700", count: gateExams.length },
+  { id: "CAT", label: "CAT / MBA", icon: "Calculator", color: "bg-amber-100 text-amber-700", count: catExams.length },
   { id: "UPSC", label: "UPSC Civil Services", icon: "Landmark", color: "bg-red-100 text-red-700", count: upscExams.length },
   { id: "SSC", label: "SSC CGL / CHSL", icon: "Brain", color: "bg-teal-100 text-teal-700", count: sscExams.length },
-  { id: "Banking", label: "Banking PO / Clerk", icon: "IndianRupee", color: "bg-primary-100 text-primary-700", count: bankingExams.length },
+  { id: "Banking", label: "Banking PO / Clerk", icon: "IndianRupee", color: "bg-sky-100 text-sky-700", count: bankingExams.length },
   { id: "CUET", label: "CUET UG", icon: "GraduationCap", color: "bg-emerald-100 text-emerald-700", count: cuetExams.length },
   { id: "NDA", label: "NDA / CDS", icon: "Shield", color: "bg-slate-100 text-slate-700", count: ndaExams.length },
 ];
