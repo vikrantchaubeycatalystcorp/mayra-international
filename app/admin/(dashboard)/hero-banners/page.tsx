@@ -1,39 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { Image, Plus, Edit3, Trash2, X, Loader2 } from "lucide-react";
+import { Plus, X, Loader2, ImageOff } from "lucide-react";
 import { useAdminCRUD } from "@/hooks/admin/useAdminCRUD";
 import { AdminDataTable, type Column } from "@/components/admin/shared/AdminDataTable";
 import { ConfirmDialog } from "@/components/admin/shared/ConfirmDialog";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
+import { normalizeImageUrl } from "@/lib/utils";
 
 interface HeroBanner {
   id: string;
-  badge: string;
-  headingStart: string;
-  headingHighlight: string;
-  headingEnd: string;
-  subheading: string;
+  badgeText: string | null;
+  heading: string;
+  headingHighlight: string | null;
+  subheading: string | null;
+  bgImage: string | null;
+  ctaText: string;
   isActive: boolean;
   sortOrder: number;
 }
 
 interface FormData {
-  badge: string;
-  headingStart: string;
+  badgeText: string;
+  heading: string;
   headingHighlight: string;
-  headingEnd: string;
   subheading: string;
+  bgImage: string;
+  ctaText: string;
   isActive: boolean;
   sortOrder: number;
 }
 
 const EMPTY_FORM: FormData = {
-  badge: "",
-  headingStart: "",
-  headingHighlight: "",
-  headingEnd: "",
+  badgeText: "",
+  heading: "Find Your Dream College",
+  headingHighlight: "Dream College",
   subheading: "",
+  bgImage: "",
+  ctaText: "Search",
   isActive: true,
   sortOrder: 0,
 };
@@ -64,11 +68,12 @@ export default function AdminHeroBannersPage() {
 
   const openEdit = (item: HeroBanner) => {
     setForm({
-      badge: item.badge || "",
-      headingStart: item.headingStart || "",
+      badgeText: item.badgeText || "",
+      heading: item.heading || "",
       headingHighlight: item.headingHighlight || "",
-      headingEnd: item.headingEnd || "",
       subheading: item.subheading || "",
+      bgImage: item.bgImage || "",
+      ctaText: item.ctaText || "Search",
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -78,6 +83,10 @@ export default function AdminHeroBannersPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.heading.trim()) {
+      setMessage({ type: "error", text: "Heading is required." });
+      return;
+    }
     setSaving(true);
     setMessage(null);
     try {
@@ -111,20 +120,38 @@ export default function AdminHeroBannersPage() {
   const inputClass = "w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all";
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
+  const previewSrc = normalizeImageUrl(form.bgImage);
+
   const columns: Column<HeroBanner>[] = [
     {
-      key: "badge",
-      label: "Badge",
-      render: (item) => <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.badge || "—"}</span>,
+      key: "bgImage",
+      label: "Image",
+      render: (item) =>
+        item.bgImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={normalizeImageUrl(item.bgImage)}
+            alt=""
+            className="h-10 w-16 rounded-md object-cover border border-gray-200"
+          />
+        ) : (
+          <div className="h-10 w-16 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
+            <ImageOff className="w-4 h-4" />
+          </div>
+        ),
     },
     {
-      key: "headingStart",
+      key: "badgeText",
+      label: "Badge",
+      render: (item) => <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.badgeText || "—"}</span>,
+    },
+    {
+      key: "heading",
       label: "Heading",
       render: (item) => (
         <div className="max-w-[300px]">
-          <p className="text-sm font-semibold text-gray-900 truncate">
-            {item.headingStart} <span className="text-blue-600">{item.headingHighlight}</span> {item.headingEnd}
-          </p>
+          <p className="text-sm font-semibold text-gray-900 truncate">{item.heading}</p>
+          {item.headingHighlight && <p className="text-xs text-blue-600 truncate">Highlight: {item.headingHighlight}</p>}
         </div>
       ),
     },
@@ -156,7 +183,7 @@ export default function AdminHeroBannersPage() {
 
       <AdminDataTable
         title="Hero Banners"
-        description="Manage homepage hero banner slides"
+        description="Manage the homepage hero — background image, heading and badge"
         columns={columns}
         data={crud.data}
         total={crud.total}
@@ -190,30 +217,53 @@ export default function AdminHeroBannersPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <X className="w-5 h-5" />
             </button>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">{editId ? "Edit Banner" : "Add Banner"}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Background image — the primary control */}
+              <div>
+                <label className={labelClass}>Background Image URL</label>
+                <input
+                  type="url"
+                  className={inputClass}
+                  value={form.bgImage}
+                  onChange={(e) => set("bgImage", e.target.value)}
+                  placeholder="Direct image URL or Google Drive share link"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Leave blank to use the default image.
+                </p>
+                <div className="mt-2 relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                  {previewSrc ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={previewSrc} alt="Hero preview" className="w-full h-full object-cover object-center" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-1 text-gray-300">
+                      <ImageOff className="w-6 h-6" />
+                      <span className="text-xs text-gray-400">No image — default hero photo will be used</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className={labelClass}>Badge Text</label>
-                <input className={inputClass} value={form.badge} onChange={(e) => set("badge", e.target.value)} />
+                <input className={inputClass} value={form.badgeText} onChange={(e) => set("badgeText", e.target.value)} placeholder="e.g. NIRF 2025 Rankings Released" />
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Heading Start</label>
-                  <input className={inputClass} value={form.headingStart} onChange={(e) => set("headingStart", e.target.value)} />
+                  <label className={labelClass}>Heading <span className="text-red-500">*</span></label>
+                  <input className={inputClass} value={form.heading} onChange={(e) => set("heading", e.target.value)} required />
                 </div>
                 <div>
-                  <label className={labelClass}>Highlight</label>
-                  <input className={inputClass} value={form.headingHighlight} onChange={(e) => set("headingHighlight", e.target.value)} />
-                </div>
-                <div>
-                  <label className={labelClass}>Heading End</label>
-                  <input className={inputClass} value={form.headingEnd} onChange={(e) => set("headingEnd", e.target.value)} />
+                  <label className={labelClass}>Highlighted Phrase</label>
+                  <input className={inputClass} value={form.headingHighlight} onChange={(e) => set("headingHighlight", e.target.value)} placeholder="Part of heading to accent" />
                 </div>
               </div>
+              <p className="-mt-2 text-xs text-gray-400">The highlighted phrase must appear inside the heading to be accented (e.g. heading &quot;Find Your Dream College&quot; + highlight &quot;Dream College&quot;).</p>
               <div>
                 <label className={labelClass}>Subheading</label>
                 <textarea
@@ -222,7 +272,11 @@ export default function AdminHeroBannersPage() {
                   onChange={(e) => set("subheading", e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className={labelClass}>Button Text</label>
+                  <input className={inputClass} value={form.ctaText} onChange={(e) => set("ctaText", e.target.value)} />
+                </div>
                 <div>
                   <label className={labelClass}>Sort Order</label>
                   <input className={inputClass} type="number" value={form.sortOrder} onChange={(e) => set("sortOrder", parseInt(e.target.value) || 0)} />

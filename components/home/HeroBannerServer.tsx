@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { prisma } from "../../lib/db";
+import { normalizeImageUrl } from "../../lib/utils";
 import { HeroBannerClient } from "./HeroBannerClient";
 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=80&auto=format&fit=crop";
@@ -17,7 +18,9 @@ export async function HeroBannerServer() {
     orderBy: { sortOrder: "asc" },
   });
 
-  const bgImage = banner?.bgImage || DEFAULT_BG;
+  // Normalize the admin-supplied URL (Google Drive share links → direct thumbnail);
+  // returns "" for null/empty so we fall back to the default hero photo.
+  const bgImage = normalizeImageUrl(banner?.bgImage) || DEFAULT_BG;
 
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
