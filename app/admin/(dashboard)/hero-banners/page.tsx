@@ -121,13 +121,6 @@ export default function AdminHeroBannersPage() {
     setDeleteTarget(null);
   };
 
-  const openCreate = () => {
-    setForm(EMPTY_FORM);
-    setEditId(null);
-    setImageMode("upload");
-    setShowForm(true);
-  };
-
   const openEdit = (item: HeroBanner) => {
     setForm({
       badgeText: item.badgeText || "",
@@ -268,11 +261,9 @@ export default function AdminHeroBannersPage() {
         onSort={crud.setSort}
         sortBy={crud.sortBy}
         sortOrder={crud.sortOrder}
-        onCreate={crud.data.length === 0 ? openCreate : undefined}
-        createLabel="Add Banner"
         onEdit={openEdit}
         onDelete={setDeleteTarget}
-        emptyMessage="No hero set yet — click Add Banner to set the homepage hero"
+        emptyMessage="No hero configured yet"
       />
 
       {showForm && mounted && createPortal(
