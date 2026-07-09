@@ -21,6 +21,9 @@ export async function HeroBannerServer() {
   // Normalize the admin-supplied URL (Google Drive share links → direct thumbnail);
   // returns "" for null/empty so we fall back to the default hero photo.
   const bgImage = normalizeImageUrl(banner?.bgImage) || DEFAULT_BG;
+  // Uploaded images are stored inline as data: URLs — the Next image optimizer
+  // can't process those, so render them directly (unoptimized).
+  const isDataUrl = bgImage.startsWith("data:");
 
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
@@ -34,6 +37,7 @@ export async function HeroBannerServer() {
         sizes="100vw"
         className="object-cover object-center"
         quality={75}
+        unoptimized={isDataUrl}
       />
       {/* Light scrim — keeps text legible on the left while the photo stays clearly visible */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />

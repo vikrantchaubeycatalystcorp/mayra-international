@@ -1,12 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, X, Loader2, ImageOff } from "lucide-react";
+import { useRef, useState } from "react";
+import { Plus, X, Loader2, ImageOff, Upload, Link2 } from "lucide-react";
 import { useAdminCRUD } from "@/hooks/admin/useAdminCRUD";
 import { AdminDataTable, type Column } from "@/components/admin/shared/AdminDataTable";
 import { ConfirmDialog } from "@/components/admin/shared/ConfirmDialog";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
 import { normalizeImageUrl } from "@/lib/utils";
+
+/**
+ * Read an image file, downscale it in the browser (max 1920px wide, JPEG),
+ * and return a compact `data:` URL. Keeps the payload small enough to store
+ * inline in the DB and inline in the hero HTML without a filesystem or cloud.
+ */
+async function fileToDownscaledDataUrl(file: File, maxWidth = 1920, quality = 0.82): Promise<string> {
+  const readAsDataUrl = (f: File) =>
+    new Promise<string>((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result as string);
+      fr.onerror = () => reject(new Error("Could not read the file"));
+      fr.readAsDataURL(f);
+    });
+
+  const sourceUrl = await readAsDataUrl(file);
+  const img = document.createElement("img");
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("Could not decode the image"));
+    img.src = sourceUrl;
+  });
+
+  const scale = Math.min(1, maxWidth / (img.naturalWidth || img.width));
+  const w = Math.round((img.naturalWidth || img.width) * scale);
+  const h = Math.round((img.naturalHeight || img.height) * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas not supported");
+  ctx.drawImage(img, 0, 0, w, h);
+  return canvas.toDataURL("image/jpeg", quality);
+}
 
 interface HeroBanner {
   id: string;
@@ -50,7 +84,29 @@ export default function AdminHeroBannersPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "Please choose an image file." });
+      return;
+    }
+    setUploading(true);
+    setMessage(null);
+    try {
+      const dataUrl = await fileToDownscaledDataUrl(file);
+      setForm((prev) => ({ ...prev, bgImage: dataUrl }));
+    } catch {
+      setMessage({ type: "error", text: "Could not process that image. Try a different file." });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -121,6 +177,8 @@ export default function AdminHeroBannersPage() {
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
   const previewSrc = normalizeImageUrl(form.bgImage);
+  const isUploaded = form.bgImage.startsWith("data:");
+  const uploadedKb = isUploaded ? Math.round((form.bgImage.length * 3) / 4 / 1024) : 0;
 
   const columns: Column<HeroBanner>[] = [
     {
@@ -223,19 +281,65 @@ export default function AdminHeroBannersPage() {
             </button>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">{editId ? "Edit Banner" : "Add Banner"}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Background image — the primary control */}
+              {/* Background image — the primary control (URL / Google Drive / upload) */}
               <div>
-                <label className={labelClass}>Background Image URL</label>
-                <input
-                  type="url"
-                  className={inputClass}
-                  value={form.bgImage}
-                  onChange={(e) => set("bgImage", e.target.value)}
-                  placeholder="Direct image URL or Google Drive share link"
-                />
-                <p className="mt-1 text-xs text-gray-400">
-                  Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Leave blank to use the default image.
+                <label className={labelClass}>Hero Background Image</label>
+
+                {/* Method 1 & 2: paste a direct image URL or a Google Drive link */}
+                <div className="relative">
+                  <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    className={`${inputClass} pl-9`}
+                    value={isUploaded ? "" : form.bgImage}
+                    onChange={(e) => set("bgImage", e.target.value)}
+                    placeholder="Paste an image URL or Google Drive share link"
+                    disabled={isUploaded}
+                  />
+                </div>
+
+                {/* Divider */}
+                <div className="flex items-center gap-3 my-3">
+                  <div className="h-px flex-1 bg-gray-100" />
+                  <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">or</span>
+                  <div className="h-px flex-1 bg-gray-100" />
+                </div>
+
+                {/* Method 3: upload from computer */}
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFilePick}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                  >
+                    {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {uploading ? "Processing…" : "Upload from computer"}
+                  </button>
+                  {form.bgImage && (
+                    <button
+                      type="button"
+                      onClick={() => set("bgImage", "")}
+                      className="inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50"
+                    >
+                      <X className="w-4 h-4" />
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <p className="mt-2 text-xs text-gray-400">
+                  Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Uploads are auto-resized. Leave blank to use the default image.
+                  {isUploaded && <span className="text-gray-500"> Uploaded image ({uploadedKb} KB).</span>}
                 </p>
+
                 <div className="mt-2 relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                   {previewSrc ? (
                     // eslint-disable-next-line @next/next/no-img-element
