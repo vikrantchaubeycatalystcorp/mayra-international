@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Loader2, ImageOff, Upload, Link2 } from "lucide-react";
 import { useAdminCRUD } from "@/hooks/admin/useAdminCRUD";
 import { AdminDataTable, type Column } from "@/components/admin/shared/AdminDataTable";
@@ -87,7 +88,10 @@ export default function AdminHeroBannersPage() {
   const [uploading, setUploading] = useState(false);
   const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => setMounted(true), []);
 
   const handleFilePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -271,10 +275,11 @@ export default function AdminHeroBannersPage() {
         emptyMessage="No hero set yet — click Add Banner to set the homepage hero"
       />
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+      {showForm && mounted && createPortal(
+        <div className="fixed inset-0 z-[200] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+          <div className="relative min-h-full flex items-start sm:items-center justify-center p-4" onClick={() => setShowForm(false)}>
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 my-4 animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <X className="w-5 h-5" />
             </button>
@@ -355,7 +360,7 @@ export default function AdminHeroBannersPage() {
                   Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Uploads are auto-resized.
                 </p>
 
-                <div className="mt-2 relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                <div className="mt-2 relative w-full h-40 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                   {previewSrc ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={previewSrc} alt="Hero preview" className="w-full h-full object-cover object-center" />
@@ -415,8 +420,10 @@ export default function AdminHeroBannersPage() {
                 </button>
               </div>
             </form>
+            </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <ConfirmDialog
