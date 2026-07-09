@@ -125,7 +125,17 @@ function AnimatedCounter({ value }: { value: string }) {
 }
 
 export function HeroBannerClient({ banner }: { banner: BannerData }) {
-  const data = banner || defaultBanner;
+  // Merge with defaults so an admin banner that only sets the background image
+  // (or image + heading) never blanks out the structural stats row / search box.
+  const data = banner
+    ? {
+        ...banner,
+        stats: banner.stats.length ? banner.stats : defaultBanner.stats,
+        searchTabs: banner.searchTabs.length ? banner.searchTabs : defaultBanner.searchTabs,
+        quickFilters: banner.quickFilters.length ? banner.quickFilters : defaultBanner.quickFilters,
+        popularSearches: banner.popularSearches.length ? banner.popularSearches : defaultBanner.popularSearches,
+      }
+    : defaultBanner;
   const tabs = data.searchTabs;
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const [query, setQuery] = useState("");
