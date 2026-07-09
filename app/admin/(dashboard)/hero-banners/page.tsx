@@ -1,12 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, X, Loader2, ImageOff } from "lucide-react";
+import { useRef, useState } from "react";
+import { X, Loader2, ImageOff, Upload, Link2 } from "lucide-react";
 import { useAdminCRUD } from "@/hooks/admin/useAdminCRUD";
 import { AdminDataTable, type Column } from "@/components/admin/shared/AdminDataTable";
 import { ConfirmDialog } from "@/components/admin/shared/ConfirmDialog";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
 import { normalizeImageUrl } from "@/lib/utils";
+
+/**
+ * Read an image file, downscale it in the browser (max 1920px wide, JPEG),
+ * and return a compact `data:` URL. Keeps the payload small enough to store
+ * inline in the DB and inline in the hero HTML without a filesystem or cloud.
+ */
+async function fileToDownscaledDataUrl(file: File, maxWidth = 1920, quality = 0.82): Promise<string> {
+  const readAsDataUrl = (f: File) =>
+    new Promise<string>((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result as string);
+      fr.onerror = () => reject(new Error("Could not read the file"));
+      fr.readAsDataURL(f);
+    });
+
+  const sourceUrl = await readAsDataUrl(file);
+  const img = document.createElement("img");
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("Could not decode the image"));
+    img.src = sourceUrl;
+  });
+
+  const scale = Math.min(1, maxWidth / (img.naturalWidth || img.width));
+  const w = Math.round((img.naturalWidth || img.width) * scale);
+  const h = Math.round((img.naturalHeight || img.height) * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas not supported");
+  ctx.drawImage(img, 0, 0, w, h);
+  return canvas.toDataURL("image/jpeg", quality);
+}
 
 interface HeroBanner {
   id: string;
@@ -50,7 +84,30 @@ export default function AdminHeroBannersPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "Please choose an image file." });
+      return;
+    }
+    setUploading(true);
+    setMessage(null);
+    try {
+      const dataUrl = await fileToDownscaledDataUrl(file);
+      setForm((prev) => ({ ...prev, bgImage: dataUrl }));
+    } catch {
+      setMessage({ type: "error", text: "Could not process that image. Try a different file." });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -63,6 +120,7 @@ export default function AdminHeroBannersPage() {
   const openCreate = () => {
     setForm(EMPTY_FORM);
     setEditId(null);
+    setImageMode("upload");
     setShowForm(true);
   };
 
@@ -77,8 +135,16 @@ export default function AdminHeroBannersPage() {
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
+    // Start in whichever mode matches the existing image (data: URL = uploaded).
+    setImageMode((item.bgImage || "").startsWith("data:") ? "upload" : "url");
     setEditId(item.id);
     setShowForm(true);
+  };
+
+  // Switch input method; clears the current value so only one source is ever used.
+  const switchImageMode = (mode: "upload" | "url") => {
+    setImageMode(mode);
+    setForm((prev) => ({ ...prev, bgImage: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,6 +187,8 @@ export default function AdminHeroBannersPage() {
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
   const previewSrc = normalizeImageUrl(form.bgImage);
+  const isUploaded = form.bgImage.startsWith("data:");
+  const uploadedKb = isUploaded ? Math.round((form.bgImage.length * 3) / 4 / 1024) : 0;
 
   const columns: Column<HeroBanner>[] = [
     {
@@ -182,8 +250,8 @@ export default function AdminHeroBannersPage() {
       )}
 
       <AdminDataTable
-        title="Hero Banners"
-        description="Manage the homepage hero — background image, heading and badge"
+        title="Hero Banner"
+        description="Manage the single homepage hero — background image, heading and badge"
         columns={columns}
         data={crud.data}
         total={crud.total}
@@ -196,23 +264,12 @@ export default function AdminHeroBannersPage() {
         onSort={crud.setSort}
         sortBy={crud.sortBy}
         sortOrder={crud.sortOrder}
-        createHref={undefined}
+        onCreate={crud.data.length === 0 ? openCreate : undefined}
         createLabel="Add Banner"
         onEdit={openEdit}
         onDelete={setDeleteTarget}
-        emptyMessage="No hero banners found"
+        emptyMessage="No hero set yet — click Add Banner to set the homepage hero"
       />
-
-      {/* Floating Add Button */}
-      <div className="flex justify-end -mt-[52px] mr-4 relative z-10 pointer-events-none">
-        <button
-          onClick={openCreate}
-          className="pointer-events-auto inline-flex items-center gap-2 h-10 px-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
-        >
-          <Plus className="w-4 h-4" />
-          Add Banner
-        </button>
-      </div>
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -223,19 +280,81 @@ export default function AdminHeroBannersPage() {
             </button>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">{editId ? "Edit Banner" : "Add Banner"}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Background image — the primary control */}
+              {/* Background image — single homepage image; choose ONE source. */}
               <div>
-                <label className={labelClass}>Background Image URL</label>
-                <input
-                  type="url"
-                  className={inputClass}
-                  value={form.bgImage}
-                  onChange={(e) => set("bgImage", e.target.value)}
-                  placeholder="Direct image URL or Google Drive share link"
-                />
-                <p className="mt-1 text-xs text-gray-400">
-                  Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Leave blank to use the default image.
+                <label className={labelClass}>Hero Background Image</label>
+                <p className="-mt-0.5 mb-2 text-xs text-gray-400">
+                  This is the single homepage hero image. Setting a new one replaces the current image.
                 </p>
+
+                {/* Either/or source toggle */}
+                <div className="grid grid-cols-2 gap-1 p-1 bg-gray-100 rounded-lg mb-3">
+                  <button
+                    type="button"
+                    onClick={() => switchImageMode("upload")}
+                    className={`inline-flex items-center justify-center gap-2 h-9 rounded-md text-sm font-medium transition-all ${imageMode === "upload" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload from computer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchImageMode("url")}
+                    className={`inline-flex items-center justify-center gap-2 h-9 rounded-md text-sm font-medium transition-all ${imageMode === "url" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    <Link2 className="w-4 h-4" />
+                    Attach a URL
+                  </button>
+                </div>
+
+                {imageMode === "url" ? (
+                  <div className="relative">
+                    <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      className={`${inputClass} pl-9`}
+                      value={isUploaded ? "" : form.bgImage}
+                      onChange={(e) => set("bgImage", e.target.value)}
+                      placeholder="Paste an image URL or Google Drive share link"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFilePick}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                    >
+                      {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      {uploading ? "Processing…" : isUploaded ? "Choose a different image" : "Choose image…"}
+                    </button>
+                    {isUploaded && <span className="text-xs text-gray-500">Uploaded ({uploadedKb} KB)</span>}
+                  </div>
+                )}
+
+                {form.bgImage && (
+                  <button
+                    type="button"
+                    onClick={() => set("bgImage", "")}
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-red-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    Remove image (use default)
+                  </button>
+                )}
+
+                <p className="mt-2 text-xs text-gray-400">
+                  Use a wide landscape photo (≈1920×1080, 16:9, at least 1600px wide). It is center-cropped to fill the hero — never stretched. Uploads are auto-resized.
+                </p>
+
                 <div className="mt-2 relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                   {previewSrc ? (
                     // eslint-disable-next-line @next/next/no-img-element
