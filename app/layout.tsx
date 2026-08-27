@@ -91,14 +91,15 @@ export async function generateMetadata(): Promise<Metadata> {
       description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
       images: [seo?.ogImage || "/og-image.png"],
     },
+    // Google requires the favicon to be a square multiple of 48px (48, 96, 144…);
+    // anything else falls back to the generic globe in search results. Serve these
+    // from /public so the URLs stay stable across deploys and skip /_next/image.
     icons: {
       icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-        { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-        { url: "/icon.png", sizes: "512x512", type: "image/png" },
+        { url: "/favicon-96.png", sizes: "96x96", type: "image/png" },
+        { url: "/favicon-144.png", sizes: "144x144", type: "image/png" },
+        { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
       ],
-      shortcut: ["/favicon.ico"],
       apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
     },
     manifest: "/manifest.webmanifest",
