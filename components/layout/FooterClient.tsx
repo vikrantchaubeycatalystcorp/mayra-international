@@ -230,6 +230,10 @@ export function FooterClient({
             &copy; {new Date().getFullYear()} {safeCopyrightText}. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-xs text-gray-400">
+            {/* Site-wide crawl path to every college/course/exam page (see lib/browse.ts). */}
+            <Link href="/browse" prefetch={false} className="hover:text-white transition-colors">
+              Browse A–Z
+            </Link>
             {legalLinks.map((link) => (
               <Link
                 key={link.id}

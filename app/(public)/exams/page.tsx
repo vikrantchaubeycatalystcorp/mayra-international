@@ -1,4 +1,5 @@
 import { prisma } from "../../../lib/db";
+import { BrowseAllLink } from "../../../components/shared/BrowseAllLink";
 import { ExamsClient } from "./ExamsClient";
 
 export const revalidate = 60;
@@ -26,5 +27,10 @@ export default async function ExamsPage() {
     },
   });
 
-  return <ExamsClient exams={exams} />;
+  return (
+    <>
+      <ExamsClient exams={exams} />
+      <BrowseAllLink type="exams" />
+    </>
+  );
 }
