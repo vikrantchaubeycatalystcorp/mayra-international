@@ -20,10 +20,16 @@ export async function HeroBannerServer() {
 
   // Normalize the admin-supplied URL (Google Drive share links → direct thumbnail);
   // returns "" for null/empty so we fall back to the default hero photo.
-  const bgImage = normalizeImageUrl(banner?.bgImage) || DEFAULT_BG;
-  // Uploaded images are stored inline as data: URLs — the Next image optimizer
-  // can't process those, so render them directly (unoptimized).
-  const isDataUrl = bgImage.startsWith("data:");
+  // Uploaded images are stored inline as data: URLs — never put those in the HTML
+  // (they bloat <head> via the preload and hide the favicon from Google); serve
+  // them from /media/hero instead, versioned by updatedAt for cache busting.
+  const rawBg = normalizeImageUrl(banner?.bgImage);
+  const bgImage =
+    banner && rawBg.startsWith("data:")
+      ? `/media/hero/${banner.id}/${banner.updatedAt.getTime()}`
+      : rawBg || DEFAULT_BG;
+  // The client never renders bgImage; keep the raw value out of the RSC payload.
+  const clientBanner = banner ? { ...banner, bgImage: null } : null;
 
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
@@ -37,11 +43,10 @@ export async function HeroBannerServer() {
         sizes="100vw"
         className="object-cover object-center"
         quality={75}
-        unoptimized={isDataUrl}
       />
       {/* Light scrim — keeps text legible on the left while the photo stays clearly visible */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
-      <HeroBannerClient banner={banner || null} />
+      <HeroBannerClient banner={clientBanner} />
     </section>
   );
 }
