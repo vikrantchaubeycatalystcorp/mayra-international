@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "./db";
+import { BROWSE_PAGE_SIZE, browsePath, type BrowseType } from "./browse";
 
 export const SITE_URL = "https://www.mayrainternational.com";
 
@@ -53,13 +54,14 @@ export async function getSitemapIds(): Promise<number[]> {
 }
 
 export async function buildPagesSitemap(): Promise<MetadataRoute.Sitemap> {
-  const [courses, exams, news, countries, collegesMax, worldStatsMax] = await Promise.all([
+  const [courses, exams, news, countries, collegesMax, worldStatsMax, collegeCount] = await Promise.all([
     prisma.course.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
     prisma.exam.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
     prisma.newsArticle.findMany({ where: { isActive: true, isLive: true }, select: { slug: true, publishedAt: true }, orderBy: { createdAt: "desc" } }),
     prisma.studyAbroadCountry.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
     prisma.college.aggregate({ where: { isActive: true }, _max: { updatedAt: true } }),
     prisma.worldCollegeStat.aggregate({ where: { isActive: true }, _max: { updatedAt: true } }),
+    prisma.college.count({ where: { isActive: true } }),
   ]);
 
   const collegesUpdated = collegesMax._max.updatedAt ?? undefined;
@@ -109,7 +111,25 @@ export async function buildPagesSitemap(): Promise<MetadataRoute.Sitemap> {
     return [{ url: `${SITE_URL}/study-abroad/${slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 }];
   });
 
-  const entries = [...staticPages, ...coursePages, ...examPages, ...newsPages, ...countryPages];
+  // A–Z directory pages (lib/browse.ts) — the crawlable link path to every detail page.
+  const browseCounts: [BrowseType, number, Date | undefined][] = [
+    ["colleges", collegeCount, collegesUpdated],
+    ["courses", courses.length, coursesUpdated],
+    ["exams", exams.length, examsUpdated],
+  ];
+  const browsePages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/browse`, changeFrequency: "weekly", priority: 0.5 },
+    ...browseCounts.flatMap(([type, count, lastModified]) =>
+      Array.from({ length: Math.max(1, Math.ceil(count / BROWSE_PAGE_SIZE)) }, (_, i) => ({
+        url: `${SITE_URL}${browsePath(type, i + 1)}`,
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      }))
+    ),
+  ];
+
+  const entries = [...staticPages, ...browsePages, ...coursePages, ...examPages, ...newsPages, ...countryPages];
   if (entries.length > MAX_URLS_PER_SITEMAP) {
     throw new Error(`pages sitemap has ${entries.length} URLs, over the ${MAX_URLS_PER_SITEMAP} limit`);
   }

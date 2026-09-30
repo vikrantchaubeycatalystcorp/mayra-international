@@ -1,4 +1,5 @@
 import { prisma } from "../../../lib/db";
+import { BrowseAllLink } from "../../../components/shared/BrowseAllLink";
 import { CoursesClient } from "./CoursesClient";
 
 export const revalidate = 60;
@@ -26,5 +27,10 @@ export default async function CoursesPage() {
   const streams = [...new Set(courses.map((c) => c.stream))].sort();
   const levels = [...new Set(courses.map((c) => c.level))].sort();
 
-  return <CoursesClient courses={courses} streams={streams} levels={levels} />;
+  return (
+    <>
+      <CoursesClient courses={courses} streams={streams} levels={levels} />
+      <BrowseAllLink type="courses" />
+    </>
+  );
 }
