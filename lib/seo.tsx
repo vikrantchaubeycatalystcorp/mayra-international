@@ -418,6 +418,85 @@ export function studyAbroadFaqJsonLd() {
   };
 }
 
+// ── Study Abroad Country Schema ────────────────────────────────────────────
+export function studyAbroadCountryJsonLd(country: { name: string; slug: string; description: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `Study in ${country.name} from India`,
+    url: `${SITE_URL}/study-abroad/${country.slug}`,
+    description: country.description,
+    about: { "@type": "Country", name: country.name },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+}
+
+// ── Vashi Office (LocalBusiness) Schema ────────────────────────────────────
+// The only physical office. Local service pages reference it as the provider;
+// other localities appear only in areaServed, never as an address.
+const VASHI_OFFICE_ID = `${SITE_URL}/#vashi-office`;
+
+export function localBusinessJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["LocalBusiness", "EducationalOrganization"],
+    "@id": VASHI_OFFICE_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: ORG_LOGO,
+    image: ORG_LOGO,
+    telephone: "+91-7506799678",
+    email: "info@mayrainternational.com",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Office No 613, 6th Floor, Satra Plaza, Palm Beach Road, Phase 2, Sector 19D",
+      addressLocality: "Vashi, Navi Mumbai",
+      postalCode: "400703",
+      addressRegion: "Maharashtra",
+      addressCountry: "IN",
+    },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "19:00",
+    },
+    areaServed: [
+      { "@type": "City", name: "Navi Mumbai" },
+      { "@type": "City", name: "Mumbai" },
+    ],
+  };
+}
+
+export function localServiceJsonLd(page: { slug: string; serviceName: string; description: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: page.serviceName,
+    serviceType: page.serviceName,
+    url: `${SITE_URL}/${page.slug}`,
+    description: page.description,
+    provider: localBusinessJsonLd(),
+    areaServed: [
+      { "@type": "City", name: "Navi Mumbai" },
+      { "@type": "City", name: "Mumbai" },
+    ],
+  };
+}
+
+// ── Generic FAQ Schema (only for FAQs rendered visibly on the page) ────────
+export function faqJsonLd(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  };
+}
+
 // ── ItemList Schema for Listing Pages (AEO: enables carousel in search) ──
 export function collegeListJsonLd(colleges: College[]) {
   return {

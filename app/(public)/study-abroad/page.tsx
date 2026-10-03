@@ -71,9 +71,11 @@ function CountryCard({ country }: { country: StudyAbroadCountryRow }) {
           </ul>
         </div>
 
-        <Button variant="gradient" className="w-full text-sm gap-1.5">
-          Explore {country.name}
-          <ArrowRight className="h-4 w-4" />
+        <Button asChild variant="gradient" className="w-full text-sm gap-1.5">
+          <Link href={`/study-abroad/${country.slug}`}>
+            Explore {country.name}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </Button>
       </div>
     </div>
