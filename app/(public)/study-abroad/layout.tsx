@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Study Abroad from India 2026 — Countries, Universities, Costs, Scholarships",
+  title: { absolute: "Study Abroad from India — Countries, Costs & Scholarships" },
   description:
     "Complete guide to studying abroad for Indian students. Explore top destinations — USA, UK, Canada, Australia, Germany. Compare universities, costs, scholarships, visa requirements, and MBBS abroad options.",
   keywords: [
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     "international universities for indian students",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Study Abroad from India 2026 — Complete Guide",
     description:
       "Explore top study abroad destinations. Compare universities, costs, scholarships, and visa requirements.",

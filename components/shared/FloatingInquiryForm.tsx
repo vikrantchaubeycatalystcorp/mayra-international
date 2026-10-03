@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, MessageSquarePlus, Phone } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { trackLead } from "../../lib/analytics";
 
 const CONTACT_PHONE = "+917506799678";
 const WHATSAPP_NUMBER = "917506799678";
@@ -22,7 +23,12 @@ function WhatsAppIcon({ className }: { className?: string }) {
 }
 
 export function FloatingInquiryForm() {
-  const [minimized, setMinimized] = useState(false);
+  // Starts collapsed so it never covers content on phones (Google treats that as an
+  // intrusive interstitial); opens automatically on wider screens after mount.
+  const [minimized, setMinimized] = useState(true);
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 640px)").matches) setMinimized(false);
+  }, []);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -54,6 +60,7 @@ export function FloatingInquiryForm() {
         return;
       }
       setSubmitted(true);
+      trackLead("floating_form");
     } catch {
       setErrorMsg("Network error. Please check your connection and try again.");
     } finally {

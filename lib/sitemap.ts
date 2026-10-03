@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "./db";
 import { BROWSE_PAGE_SIZE, browsePath, type BrowseType } from "./browse";
+import { LOCAL_SEO_HUB_PATH, LOCAL_SEO_PAGES } from "./local-seo";
+import { allExams as mockTests } from "./mock-tests/data";
 
 export const SITE_URL = "https://www.mayrainternational.com";
 
@@ -82,7 +84,6 @@ export async function buildPagesSitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/study-abroad`, lastModified: countriesUpdated, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/compare`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/resume-builder`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE_URL}/articles`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/map`, lastModified: mapUpdated, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/mock-tests`, changeFrequency: "weekly", priority: 0.7 },
   ];
@@ -111,6 +112,24 @@ export async function buildPagesSitemap(): Promise<MetadataRoute.Sitemap> {
     return [{ url: `${SITE_URL}/study-abroad/${slug}`, lastModified: c.updatedAt, changeFrequency: "monthly" as const, priority: 0.7 }];
   });
 
+  // Local service pages (lib/local-seo.ts) take the date their content was last reviewed.
+  const localPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}${LOCAL_SEO_HUB_PATH}`, lastModified: latest(LOCAL_SEO_PAGES.map((p) => parseDate(p.updatedAt))), changeFrequency: "monthly", priority: 0.7 },
+    ...LOCAL_SEO_PAGES.map((p) => ({
+      url: `${SITE_URL}/${p.slug}`,
+      lastModified: parseDate(p.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  ];
+
+  // Mock tests are bundled with the code, so they carry no content date.
+  const mockTestPages: MetadataRoute.Sitemap = mockTests.map((t) => ({
+    url: `${SITE_URL}/mock-tests/${encodeURIComponent(t.slug)}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
   // A–Z directory pages (lib/browse.ts) — the crawlable link path to every detail page.
   const browseCounts: [BrowseType, number, Date | undefined][] = [
     ["colleges", collegeCount, collegesUpdated],
@@ -129,7 +148,7 @@ export async function buildPagesSitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   ];
 
-  const entries = [...staticPages, ...browsePages, ...coursePages, ...examPages, ...newsPages, ...countryPages];
+  const entries = [...staticPages, ...localPages, ...mockTestPages, ...browsePages, ...coursePages, ...examPages, ...newsPages, ...countryPages];
   if (entries.length > MAX_URLS_PER_SITEMAP) {
     throw new Error(`pages sitemap has ${entries.length} URLs, over the ${MAX_URLS_PER_SITEMAP} limit`);
   }

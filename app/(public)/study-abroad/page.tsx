@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ExternalLink, Globe, BookOpen, DollarSign, GraduationCap, ArrowRight, Users, MapPin, BadgeDollarSign, BadgeCheck, Target, FileText, Send, Trophy, Plane } from "lucide-react";
+import { ExternalLink, Globe, BookOpen, DollarSign, GraduationCap, ArrowRight, Users, MapPin, Stethoscope, BadgeCheck, Target, FileText, Send, Trophy, Plane } from "lucide-react";
 import { prisma } from "../../../lib/db";
 import { Breadcrumb } from "../../../components/shared/Breadcrumb";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { JsonLd, studyAbroadHowToJsonLd, studyAbroadFaqJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
+import { JsonLd, STUDY_ABROAD_FAQS, faqJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
+import { FaqSection } from "../../../components/shared/FaqSection";
 
 export const revalidate = 60;
 
@@ -71,9 +72,11 @@ function CountryCard({ country }: { country: StudyAbroadCountryRow }) {
           </ul>
         </div>
 
-        <Button variant="gradient" className="w-full text-sm gap-1.5">
-          Explore {country.name}
-          <ArrowRight className="h-4 w-4" />
+        <Button asChild variant="gradient" className="w-full text-sm gap-1.5">
+          <Link href={`/study-abroad/${country.slug}`}>
+            Explore {country.name}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </Button>
       </div>
     </div>
@@ -85,11 +88,16 @@ export default async function StudyAbroadPage() {
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
   });
+  // Stats come from our own data rather than unsourced industry figures.
+  const universitiesListed = studyAbroadCountries.reduce(
+    (sum, c) => sum + (Array.isArray(c.topUniversities) ? c.topUniversities.length : 0),
+    0
+  );
+  const mbbsDestinations = studyAbroadCountries.filter((c) => c.popularCourses.some((course) => /mbbs/i.test(course))).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <JsonLd data={studyAbroadHowToJsonLd()} />
-      <JsonLd data={studyAbroadFaqJsonLd()} />
+      <JsonLd data={faqJsonLd(STUDY_ABROAD_FAQS)} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Study Abroad" }])} />
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white relative overflow-hidden">
@@ -111,19 +119,22 @@ export default async function StudyAbroadPage() {
               </span>
             </h1>
             <p className="text-blue-200 text-lg mb-8 leading-relaxed">
-              Join 3.3 lakh+ Indian students studying abroad. Get expert guidance on university selection, scholarship, visa, and accommodation.
+              Compare destinations, universities and costs, and get expert guidance on university selection, scholarships, visas and accommodation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="accent" size="lg">
-                Get Free Counseling
-                <ArrowRight className="h-4 w-4" />
+              <Button asChild variant="accent" size="lg">
+                <Link href="/study-abroad-consultant-in-vashi">
+                  Get Free Counselling
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
               <Button
+                asChild
                 size="lg"
                 variant="outline"
                 className="border-white/30 bg-transparent text-white hover:border-white/50 hover:bg-white/10 hover:text-white"
               >
-                Explore Scholarships
+                <a href="#destinations">Explore Destinations</a>
               </Button>
             </div>
           </div>
@@ -135,10 +146,10 @@ export default async function StudyAbroadPage() {
         <div className="container mx-auto py-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {[
-              { value: "3.3L+", label: "Indians Studying Abroad", Icon: GraduationCap },
-              { value: "10+", label: "Top Destinations", Icon: MapPin },
-              { value: "$50K+", label: "Scholarships Available", Icon: BadgeDollarSign },
-              { value: "85%", label: "F-1 Visa Approval Rate", Icon: BadgeCheck },
+              { value: String(studyAbroadCountries.length), label: "Destinations", Icon: MapPin },
+              { value: `${universitiesListed}+`, label: "Universities Listed", Icon: GraduationCap },
+              { value: String(mbbsDestinations), label: "MBBS Destinations", Icon: Stethoscope },
+              { value: "Free", label: "First Counselling Session", Icon: BadgeCheck },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="h-10 w-10 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-2">
@@ -153,10 +164,10 @@ export default async function StudyAbroadPage() {
       </div>
 
       {/* Countries Grid */}
-      <div className="container mx-auto py-12">
+      <div id="destinations" className="container mx-auto py-12 scroll-mt-24">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-black text-gray-900 mb-2">Top Study Destinations</h2>
-          <p className="text-gray-500">Choose from 10 countries with world-class universities and student-friendly policies</p>
+          <p className="text-gray-500">Choose from {studyAbroadCountries.length} countries with world-class universities and student-friendly policies</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -193,12 +204,18 @@ export default async function StudyAbroadPage() {
         <div className="mt-8 bg-gradient-to-r from-primary-900 to-primary-700 rounded-2xl p-8 text-center text-white">
           <h3 className="text-2xl font-black mb-3">Ready to Study Abroad?</h3>
           <p className="text-blue-200 mb-6 max-w-lg mx-auto">
-            Our expert counselors have helped 50,000+ students get admission in top global universities. Get your free session today.
+            Talk to a counsellor at our Vashi office about universities, costs, scholarships and visas. The first session is free.
           </p>
-          <Button variant="accent" size="xl">
-            Book Free Counseling Session
-            <ArrowRight className="h-5 w-5" />
+          <Button asChild variant="accent" size="xl">
+            <Link href="/contact#inquiry-form">
+              Book Free Counselling Session
+              <ArrowRight className="h-5 w-5" />
+            </Link>
           </Button>
+        </div>
+
+        <div className="mt-8">
+          <FaqSection faqs={STUDY_ABROAD_FAQS} />
         </div>
       </div>
     </div>

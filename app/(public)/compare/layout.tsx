@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Compare Colleges — Side-by-Side Rankings, Fees, Placements",
+  title: { absolute: "Compare Colleges — Rankings, Fees & Placements Side by Side" },
   description:
     "Compare top colleges in India side by side. Analyze NIRF rankings, fee structures, placement statistics, courses offered, and accreditations to make the right choice.",
   keywords: [
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     "placement comparison",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Compare Colleges — Side-by-Side Analysis",
     description:
       "Compare top colleges side by side on rankings, fees, placements, and more.",

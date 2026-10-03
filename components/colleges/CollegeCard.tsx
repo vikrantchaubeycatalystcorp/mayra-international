@@ -101,7 +101,8 @@ export function CollegeCard({ college, className, titleMinHeight }: CollegeCardP
           ))}
         </div>
 
-        {/* Rating */}
+        {/* Rating — only when backed by real reviews */}
+        {college.reviewCount > 0 && (
         <div className="flex items-center gap-1.5 mt-2.5">
           <div className="flex items-center gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -125,6 +126,7 @@ export function CollegeCard({ college, className, titleMinHeight }: CollegeCardP
             ({college.reviewCount.toLocaleString()})
           </span>
         </div>
+        )}
       </div>
 
       {/* Stats Grid */}

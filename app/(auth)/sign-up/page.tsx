@@ -76,7 +76,7 @@ export default function SignUpPage() {
           {step === 1 ? (
             <>
               <h1 className="text-2xl font-black text-gray-900 mb-1">Create Account</h1>
-              <p className="text-gray-500 text-sm mb-6">Join 10 lakh+ students on Mayra</p>
+              <p className="text-gray-500 text-sm mb-6">Save colleges, track enquiries and get exam alerts</p>
 
               {/* Google */}
               <button suppressHydrationWarning className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors mb-5">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X, MapPin, Star, ExternalLink } from "lucide-react";
+import { X, MapPin, ExternalLink } from "lucide-react";
 
 interface CollegePoint {
   id: string;
@@ -52,15 +52,6 @@ export function CollegePopupCard({ college, onClose }: Props) {
             <div className="bg-blue-50 rounded-lg p-2 text-center">
               <div className="text-blue-700 font-bold text-sm">#{college.nirfRank}</div>
               <div className="text-gray-500 text-xs">NIRF</div>
-            </div>
-          )}
-          {college.rating && (
-            <div className="bg-amber-50 rounded-lg p-2 text-center">
-              <div className="flex items-center justify-center gap-0.5">
-                <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                <span className="text-amber-700 font-bold text-sm">{college.rating}</span>
-              </div>
-              <div className="text-gray-500 text-xs">Rating</div>
             </div>
           )}
           {college.fees && (

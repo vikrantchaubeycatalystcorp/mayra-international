@@ -95,9 +95,11 @@ function toTemplateData(store: ReturnType<typeof useResumeStore.getState>): any 
 function LoadingSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="animate-pulse space-y-4 w-full max-w-2xl px-4">
-        <div className="h-8 bg-gray-200 rounded w-48" />
-        <div className="h-4 bg-gray-200 rounded w-72" />
+      <div className="space-y-4 w-full max-w-2xl px-4">
+        {/* Real heading in the server-rendered shell; the builder UI mounts client-side. */}
+        <h1 className="text-xl font-black text-gray-900">Resume Builder</h1>
+        <p className="text-sm text-gray-500">Create a professional, ATS-ready resume in minutes</p>
+        <div className="h-64 bg-gray-200 rounded-2xl animate-pulse" />
         <div className="h-64 bg-gray-200 rounded-2xl" />
       </div>
     </div>
@@ -928,7 +930,7 @@ function ResumeBuilderContent() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-800">Already have a resume?</p>
-                  <p className="text-xs text-gray-500">Upload your PDF or DOCX and we'll fill everything in automatically</p>
+                  <p className="text-xs text-gray-500">Upload your PDF or DOCX and we&apos;ll fill everything in automatically</p>
                 </div>
               </div>
               <Button variant="outline" onClick={() => setShowUpload(true)} className="gap-1.5 shrink-0">
@@ -1227,7 +1229,7 @@ function ResumeBuilderContent() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-lg font-bold text-gray-900">Import Existing Resume</h2>
-                    <p className="text-sm text-gray-500 mt-1">Upload your PDF or DOCX resume and we'll extract all the data</p>
+                    <p className="text-sm text-gray-500 mt-1">Upload your PDF or DOCX resume and we&apos;ll extract all the data</p>
                   </div>
                   <button onClick={() => !uploadLoading && setShowUpload(false)} className="text-gray-400 hover:text-gray-600" suppressHydrationWarning>
                     <X className="h-5 w-5" />

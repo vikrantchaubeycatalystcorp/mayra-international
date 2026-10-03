@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { Send, CheckCircle2, Loader2 } from "lucide-react";
+import { trackLead } from "../../../lib/analytics";
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [renderTs] = useState(() => Date.now());
   const [form, setForm] = useState({
@@ -25,15 +27,22 @@ export function ContactForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
     try {
       const { _hp, ...fields } = form;
-      await fetch("/api/enquiry", {
+      const response = await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...fields, _hp, _ts: renderTs }),
       });
+      if (!response.ok) {
+        setErrorMsg("We couldn't submit your enquiry. Please check your details or call us on +91 7506799678.");
+        return;
+      }
       setSubmitted(true);
-      window.dispatchEvent(new Event("inquiry-submitted"));
+      trackLead("contact_page");
+    } catch {
+      setErrorMsg("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -122,6 +131,11 @@ export function ContactForm() {
       </div>
 
       {/* Submit */}
+      {errorMsg && (
+        <p role="alert" className="text-sm text-red-600">
+          {errorMsg}
+        </p>
+      )}
       <Button
         type="submit"
         variant="gradient"
@@ -154,7 +168,7 @@ export function ContactForm() {
         className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
       />
 
-      <p className="text-xs text-gray-400 text-center">
+      <p className="text-xs text-gray-500 text-center">
         By submitting, you agree to our privacy policy. Your information is safe
         with us and will never be shared.
       </p>

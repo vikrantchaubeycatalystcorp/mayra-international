@@ -139,9 +139,9 @@ export const getFooterData = unstable_cache(
     ]);
 
     const defaultAddress =
-      "Office No 613, 6th Floor, Satra Plaza, Vashi, Navi Mumbai-400703";
+      "Office No 613, 6th Floor, Satra Plaza, Palm Beach Road, Phase 2, Sector 19D, Vashi, Navi Mumbai 400703, Maharashtra";
     const defaultTagline =
-      "India's most trusted education platform. Helping students discover the right college, exam, and career since 2015.";
+      "Education consultancy in Vashi, Navi Mumbai. Helping students choose the right college, exam and career since 2015.";
 
     const company = {
       name: "Mayra International",
@@ -169,7 +169,8 @@ export const getFooterData = unstable_cache(
     if (!company.copyrightText || /\b(?:myra|mayra)\s+india\b/i.test(company.copyrightText)) {
       company.copyrightText = "Mayra International";
     }
-    if (!company.tagline || /since\s+2020/i.test(company.tagline)) {
+    // Unsubstantiated superlatives ("most trusted") are replaced with the factual default.
+    if (!company.tagline || /since\s+2020|most trusted/i.test(company.tagline)) {
       company.tagline = defaultTagline;
     }
     if (!company.foundedYear || company.foundedYear === 2020) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { X, MapPin, Star, ChevronRight, Building2, Globe } from "lucide-react";
+import { X, MapPin, ChevronRight, Building2, Globe } from "lucide-react";
 interface CountryCollegeStat {
   countryCode: string;
   countryName: string;
@@ -100,12 +100,6 @@ export function CountryCollegePanel({ open, country, colleges, selectedCollegeId
                   <div className="flex items-center gap-2 mt-1">
                     {c.nirfRank && (
                       <span className="text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5 font-medium">NIRF #{c.nirfRank}</span>
-                    )}
-                    {c.rating && (
-                      <span className="flex items-center gap-0.5 text-xs text-amber-600">
-                        <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" />
-                        {c.rating}
-                      </span>
                     )}
                   </div>
                 </div>

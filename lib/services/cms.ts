@@ -68,7 +68,7 @@ export async function getCompanyInfo() {
   const info = await prisma.companyInfo.findFirst();
   return info || {
     name: "Mayra International",
-    tagline: "India's most trusted education platform",
+    tagline: "Education consultancy in Vashi, Navi Mumbai",
     description: "",
     email: "info@mayrainternational.com",
     phone: "+91 7506799678",

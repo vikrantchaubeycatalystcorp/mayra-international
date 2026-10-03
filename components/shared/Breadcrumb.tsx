@@ -20,6 +20,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
     >
       <Link
         href="/"
+        aria-label="Home"
         className="flex items-center hover:text-primary-600 transition-colors"
       >
         <Home className="h-3.5 w-3.5" />

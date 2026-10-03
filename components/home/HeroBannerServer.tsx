@@ -2,6 +2,7 @@ import Image from "next/image";
 import { prisma } from "../../lib/db";
 import { normalizeImageUrl } from "../../lib/utils";
 import { HeroBannerClient } from "./HeroBannerClient";
+import { CATALOG, correctCatalogCopy } from "../../lib/site-stats";
 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=80&auto=format&fit=crop";
 
@@ -29,7 +30,25 @@ export async function HeroBannerServer() {
       ? `/media/hero/${banner.id}/${banner.updatedAt.getTime()}`
       : rawBg || DEFAULT_BG;
   // The client never renders bgImage; keep the raw value out of the RSC payload.
-  const clientBanner = banner ? { ...banner, bgImage: null } : null;
+  // CMS copy still carries old catalogue figures; correct them before rendering.
+  const clientBanner = banner
+    ? {
+        ...banner,
+        bgImage: null,
+        heading: correctCatalogCopy(banner.heading),
+        subheading: correctCatalogCopy(banner.subheading),
+        badgeText: correctCatalogCopy(banner.badgeText),
+        stats: banner.stats
+          .filter((stat) => !/students|accuracy|satisfaction/i.test(stat.label))
+          .map((stat) => {
+            const label = stat.label.toLowerCase();
+            const value = label.includes("college") ? CATALOG.colleges : label.includes("exam") ? CATALOG.exams : label.includes("course") ? CATALOG.courses : stat.value;
+            return { ...stat, value };
+          }),
+        searchTabs: banner.searchTabs.map((tab) => ({ ...tab, placeholder: correctCatalogCopy(tab.placeholder) })),
+        floatingCards: banner.floatingCards.map((card) => ({ ...card, title: correctCatalogCopy(card.title), subtitle: correctCatalogCopy(card.subtitle) })),
+      }
+    : null;
 
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">

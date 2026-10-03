@@ -234,6 +234,10 @@ export function FooterClient({
             <Link href="/browse" prefetch={false} className="hover:text-white transition-colors">
               Browse A–Z
             </Link>
+            {/* Site-wide link to the local service pages hub (see lib/local-seo.ts). */}
+            <Link href="/education-consultant" prefetch={false} className="hover:text-white transition-colors">
+              Counselling in Navi Mumbai
+            </Link>
             {legalLinks.map((link) => (
               <Link
                 key={link.id}

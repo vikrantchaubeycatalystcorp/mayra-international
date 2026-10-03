@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
+import { CATALOG } from "../../../lib/site-stats";
 
 export const metadata: Metadata = {
-  title: "Entrance Exams in India 2026 — Dates, Registration, Syllabus",
+  title: { absolute: "Entrance Exams in India 2026 — Dates, Syllabus & Registration" },
   description:
-    "Complete guide to 500+ entrance exams in India including JEE Main, NEET, CAT, GATE, CLAT, and more. Get exam dates, registration deadlines, syllabus, eligibility, and preparation tips.",
+    `Complete guide to ${CATALOG.exams} entrance exams in India including JEE Main, NEET, CAT, GATE, CLAT, and more. Get exam dates, registration deadlines, syllabus, eligibility, and preparation tips.`,
   keywords: [
     "entrance exams india 2026",
     "JEE Main 2026",
@@ -17,9 +19,10 @@ export const metadata: Metadata = {
     "entrance exam preparation",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Entrance Exams in India 2026 — Dates, Syllabus, Registration",
     description:
-      "Complete guide to 500+ entrance exams. Get dates, registration links, syllabus, and preparation tips.",
+      `Complete guide to ${CATALOG.exams} entrance exams. Get dates, registration links, syllabus, and preparation tips.`,
     url: "https://www.mayrainternational.com/exams",
     type: "website",
   },

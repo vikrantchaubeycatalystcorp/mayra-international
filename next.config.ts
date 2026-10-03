@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-tooltip",
     ],
   },
+  // /articles was a placeholder page; editorial content lives under /news.
+  async redirects() {
+    return [{ source: "/articles", destination: "/news", permanent: true }];
+  },
   // Enable compression and optimize output
   compress: true,
   poweredByHeader: false,

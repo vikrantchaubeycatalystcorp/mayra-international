@@ -9,8 +9,8 @@ const ENTITY_PATH_MAP: Record<string, string[]> = {
   College: ["/", "/colleges", "/compare", "/map"],
   Course: ["/", "/courses"],
   Exam: ["/", "/exams"],
-  News: ["/", "/news", "/articles"],
-  StudyAbroad: ["/", "/study-abroad"],
+  News: ["/", "/news"],
+  StudyAbroad: ["/", "/study-abroad", "/study-abroad/[slug]"],
 
   // Homepage settings
   HeroBanner: ["/"],
@@ -66,6 +66,9 @@ export function revalidateEntity(entity: string, slug?: string) {
       if (path === "__layout__") {
         // Revalidate the root layout, which covers all pages
         revalidatePath("/", "layout");
+      } else if (path.includes("[")) {
+        // Dynamic route pattern — revalidates every page of that route
+        revalidatePath(path, "page");
       } else {
         revalidatePath(path);
       }

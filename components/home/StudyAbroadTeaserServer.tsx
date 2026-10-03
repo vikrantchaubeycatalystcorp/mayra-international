@@ -15,7 +15,11 @@ export async function StudyAbroadTeaserServer() {
     <StudyAbroadTeaserClient
       countries={countries}
       title={section?.title || "Study Abroad"}
-      subtitle={section?.subtitle || "Explore world-class universities in 10+ countries. Over 3 lakh Indian students study abroad annually."}
+      subtitle={
+        section?.subtitle && !/lakh|million/i.test(section.subtitle)
+          ? section.subtitle
+          : "Compare universities, costs and courses across popular study abroad destinations."
+      }
       ctaLabel={section?.ctaLabel || "Explore All"}
       ctaLink={section?.ctaLink || "/study-abroad"}
     />

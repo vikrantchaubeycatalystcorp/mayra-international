@@ -100,12 +100,10 @@ export function StatsSectionClient({ stats, title, subtitle }: Props) {
   }, []);
 
   const defaultStats: StatData[] = [
-    { id: "1", icon: "GraduationCap", value: 25000, suffix: "+", label: "Colleges Listed", sublabel: "Across 28 states", color: "from-indigo-600 to-indigo-400", bgColor: "bg-indigo-50", iconColor: "text-indigo-600" },
-    { id: "2", icon: "BookOpen", value: 500, suffix: "+", label: "Entrance Exams", sublabel: "National & State level", color: "from-orange-500 to-amber-400", bgColor: "bg-orange-50", iconColor: "text-orange-500" },
-    { id: "3", icon: "Users", value: 1000000, suffix: "+", label: "Students Guided", sublabel: "Made better decisions", color: "from-emerald-600 to-emerald-400", bgColor: "bg-emerald-50", iconColor: "text-emerald-600" },
-    { id: "4", icon: "TrendingUp", value: 800, suffix: "+", label: "Courses Available", sublabel: "UG, PG & Diploma", color: "from-purple-600 to-violet-400", bgColor: "bg-purple-50", iconColor: "text-purple-600" },
-    { id: "5", icon: "Award", value: 99, suffix: "%", label: "Accuracy Rate", sublabel: "Verified information", color: "from-rose-500 to-pink-400", bgColor: "bg-rose-50", iconColor: "text-rose-500" },
-    { id: "6", icon: "Globe", value: 10, suffix: "+", label: "Study Abroad Countries", sublabel: "International admissions", color: "from-cyan-600 to-sky-400", bgColor: "bg-cyan-50", iconColor: "text-cyan-600" },
+    { id: "1", icon: "GraduationCap", value: 18000, suffix: "+", label: "Colleges Listed", sublabel: "Across India", color: "from-indigo-600 to-indigo-400", bgColor: "bg-indigo-50", iconColor: "text-indigo-600" },
+    { id: "2", icon: "BookOpen", value: 380, suffix: "+", label: "Entrance Exams", sublabel: "National & State level", color: "from-orange-500 to-amber-400", bgColor: "bg-orange-50", iconColor: "text-orange-500" },
+    { id: "4", icon: "TrendingUp", value: 680, suffix: "+", label: "Courses Available", sublabel: "UG, PG & Diploma", color: "from-purple-600 to-violet-400", bgColor: "bg-purple-50", iconColor: "text-purple-600" },
+    { id: "6", icon: "Globe", value: 21, suffix: "", label: "Study Abroad Countries", sublabel: "International admissions", color: "from-cyan-600 to-sky-400", bgColor: "bg-cyan-50", iconColor: "text-cyan-600" },
   ];
 
   const displayStats = stats.length > 0 ? stats : defaultStats;

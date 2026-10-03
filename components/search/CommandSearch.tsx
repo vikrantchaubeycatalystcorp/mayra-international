@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { CATALOG } from "../../lib/site-stats";
 import {
   Command,
   CommandEmpty,
@@ -132,9 +133,9 @@ function clearRecentSearches() {
 
 // ─── Quick navigation pages (shown when no query) ─────────
 const defaultPages = [
-  { id: "p-colleges", label: "Browse Colleges", desc: "25,000+ colleges across India", href: "/colleges", icon: GraduationCap, color: "from-indigo-600 to-purple-500" },
+  { id: "p-colleges", label: "Browse Colleges", desc: `${CATALOG.colleges} colleges across India`, href: "/colleges", icon: GraduationCap, color: "from-indigo-600 to-purple-500" },
   { id: "p-exams", label: "Entrance Exams", desc: "Exam dates, eligibility & registration", href: "/exams", icon: FileText, color: "from-orange-500 to-amber-400" },
-  { id: "p-courses", label: "Explore Courses", desc: "800+ courses across all streams", href: "/courses", icon: BookOpen, color: "from-emerald-500 to-teal-400" },
+  { id: "p-courses", label: "Explore Courses", desc: `${CATALOG.courses} courses across all streams`, href: "/courses", icon: BookOpen, color: "from-emerald-500 to-teal-400" },
   { id: "p-news", label: "Latest News", desc: "Education news & updates", href: "/news", icon: Newspaper, color: "from-red-500 to-rose-400" },
   { id: "p-compare", label: "Compare Colleges", desc: "Side-by-side comparison", href: "/compare", icon: Scale, color: "from-blue-600 to-blue-400" },
   { id: "p-abroad", label: "Study Abroad", desc: "International options", href: "/study-abroad", icon: Globe, color: "from-cyan-500 to-sky-400" },
@@ -551,12 +552,6 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          {college.rating && college.rating > 0 && (
-                            <div className="flex items-center gap-0.5 text-xs text-amber-500">
-                              <Star className="h-3 w-3 fill-amber-400" />
-                              {college.rating.toFixed(1)}
-                            </div>
-                          )}
                           {(college.feesMin || college.feesMax) && (
                             <div className="flex items-center gap-0.5 text-[10px] text-gray-400 mt-0.5">
                               <IndianRupee className="h-2.5 w-2.5" />

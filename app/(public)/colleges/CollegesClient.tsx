@@ -123,6 +123,22 @@ export function CollegesClient({ totalCount }: CollegesClientProps) {
   const [loading, setLoading] = useState(true);
   const abortRef = useRef<AbortController | null>(null);
 
+  // Apply filters passed in the URL by the navbar, hero search and other links
+  // (?search=, ?name=, ?stream=, ?type=, ?state=). Read once on mount.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initial: Partial<FilterState> = {};
+    const search = params.get("search") || params.get("name");
+    if (search) initial.search = search;
+    const stream = params.get("stream");
+    if (stream) initial.streams = [stream];
+    const type = params.get("type");
+    if (type) initial.types = [type];
+    const state = params.get("state");
+    if (state) initial.states = [state];
+    if (Object.keys(initial).length > 0) setFilters(initial);
+  }, []);
+
   const fetchColleges = useCallback(async () => {
     // Cancel previous in-flight request
     abortRef.current?.abort();

@@ -175,7 +175,7 @@ export const useTestStore = create<TestState>((set, get) => ({
 
     // Track time on current question + emit leave event
     const currentQ = exam.questions[currentQuestionIndex];
-    let newAnswers = new Map(answers);
+    const newAnswers = new Map(answers);
     let newTelemetry = new Map(telemetry);
 
     if (currentQ && questionStartTime) {
