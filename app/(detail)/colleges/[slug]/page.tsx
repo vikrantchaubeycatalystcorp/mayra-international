@@ -19,7 +19,8 @@ import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
 import { cn, formatCurrency, getGradientForLetter, normalizeDownloadUrl } from "../../../../lib/utils";
-import { JsonLd, collegeJsonLd, collegeFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+import { JsonLd, collegeJsonLd, collegeFaqs, faqJsonLd, breadcrumbJsonLd, DEFAULT_OG_IMAGES, pageTitle } from "../../../../lib/seo";
+import { FaqSection } from "../../../../components/shared/FaqSection";
 
 export const revalidate = 60;
 
@@ -35,9 +36,10 @@ export async function generateMetadata({ params }: Props) {
   const college = await prisma.college.findUnique({ where: { slug } });
   if (!college) return { title: "College Not Found" };
   return {
-    title: `${college.name} — Admissions, Courses, Fees, Placements ${new Date().getFullYear() + 1}`,
+    title: pageTitle(`${college.name} — Admissions, Fees & Placements`),
     description: `${college.name} — ${college.description.slice(0, 140)}. Check NIRF ranking, fee structure, placement record, courses offered, and admission process.`,
     openGraph: {
+      images: DEFAULT_OG_IMAGES,
       title: `${college.name} — Admissions, Fees & Placements`,
       description: college.description.slice(0, 160),
       url: `https://www.mayrainternational.com/colleges/${college.slug}`,
@@ -81,11 +83,12 @@ export default async function CollegeDetailPage({ params }: Props) {
     ...college,
     fees: { min: college.feesMin, max: college.feesMax },
   };
+  const faqs = collegeFaqs(collegeSeo as any);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <JsonLd data={collegeJsonLd(collegeSeo as any)} />
-      <JsonLd data={collegeFaqJsonLd(collegeSeo as any)} />
+      <JsonLd data={faqJsonLd(faqs)} />
       <JsonLd data={breadcrumbJsonLd([
         { name: "Colleges", url: "/colleges" },
         { name: college.name },
@@ -149,7 +152,8 @@ export default async function CollegeDetailPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Rating */}
+              {/* Rating — only shown when backed by real reviews */}
+              {college.reviewCount > 0 && (
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex items-center gap-0.5">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -171,11 +175,14 @@ export default async function CollegeDetailPage({ params }: Props) {
                   ({college.reviewCount.toLocaleString()} reviews)
                 </span>
               </div>
+              )}
 
               <div className="flex flex-wrap gap-2">
-                <Button variant="gradient" size="lg">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4" />
+                <Button asChild variant="gradient" size="lg">
+                  <Link href="/contact#inquiry-form">
+                    Apply Now
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
                 {brochureUrl && (
                   <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download>
@@ -380,12 +387,11 @@ export default async function CollegeDetailPage({ params }: Props) {
                   <TrendingUp className="h-5 w-5 text-green-600" />
                   Placement Statistics
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                   {[
                     { label: "Placement Rate", value: `${college.placementRate}%`, color: "text-blue-600" },
                     { label: "Average Package", value: `${(college.avgPackage / 100000).toFixed(1)} LPA`, color: "text-green-600" },
-                    { label: "Highest Package", value: `${college.topPackage ? (college.topPackage / 100000).toFixed(0) : "N/A"} LPA`, color: "text-purple-600" },
-                    { label: "Companies", value: "500+", color: "text-orange-600" },
+                    { label: "Highest Package", value: college.topPackage ? `${(college.topPackage / 100000).toFixed(0)} LPA` : "N/A", color: "text-purple-600" },
                   ].map((stat) => (
                     <div key={stat.label} className="bg-gray-50 rounded-xl p-4 text-center">
                       <p className={cn("text-2xl font-black mb-1", stat.color)}>
@@ -397,6 +403,8 @@ export default async function CollegeDetailPage({ params }: Props) {
                 </div>
               </section>
             )}
+
+            <FaqSection faqs={faqs} />
           </div>
 
           {/* Sidebar */}
@@ -407,8 +415,8 @@ export default async function CollegeDetailPage({ params }: Props) {
               <p className="text-blue-200 text-sm mb-4">
                 Apply now and get expert guidance on your application
               </p>
-              <Button variant="accent" className="w-full mb-2">
-                Apply Now
+              <Button asChild variant="accent" className="w-full mb-2">
+                <Link href="/contact#inquiry-form">Apply Now</Link>
               </Button>
               {brochureUrl && (
                 <a href={brochureUrl} target="_blank" rel="noopener noreferrer" download className="block">

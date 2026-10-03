@@ -5,7 +5,7 @@ import { Breadcrumb } from "../../../components/shared/Breadcrumb";
 import { AreasServed, ContactButtons, OfficeCard } from "../../../components/local-seo/LocalSeoBlocks";
 import { LOCAL_SEO_HUB_PATH, LOCAL_SEO_PAGES } from "../../../lib/local-seo";
 import { SITE_URL } from "../../../lib/sitemap";
-import { JsonLd, breadcrumbJsonLd, localBusinessJsonLd } from "../../../lib/seo";
+import { JsonLd, breadcrumbJsonLd, localBusinessJsonLd, DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 // Hub for the local service pages — linked from the footer so none of them are orphaned.
 const TITLE = "Education Counselling Services in Navi Mumbai & Mumbai";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: URL },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: URL, type: "website" },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: URL, type: "website", images: DEFAULT_OG_IMAGES },
 };
 
 export default function EducationConsultantHubPage() {

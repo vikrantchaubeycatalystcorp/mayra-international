@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/db";
+import { CATALOG, correctCatalogCopy } from "../../lib/site-stats";
 import { FeaturedCoursesClient } from "./FeaturedCoursesClient";
 
 export async function FeaturedCoursesServer() {
@@ -16,7 +17,7 @@ export async function FeaturedCoursesServer() {
     <FeaturedCoursesClient
       courses={courses}
       title={section?.title || "Popular Courses"}
-      subtitle={section?.subtitle || "Explore 800+ courses across engineering, medicine, law, management and more"}
+      subtitle={correctCatalogCopy(section?.subtitle ?? null) || `Explore ${CATALOG.courses} courses across engineering, medicine, law, management and more`}
       ctaLabel={section?.ctaLabel || "View All Courses"}
       ctaLink={section?.ctaLink || "/courses"}
       careerCtaHeading={ctaSection?.heading || "Not Sure Which Course to Choose?"}

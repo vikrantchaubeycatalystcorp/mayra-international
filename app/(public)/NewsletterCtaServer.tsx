@@ -9,7 +9,8 @@ export async function NewsletterCtaServer() {
 
   const badge = cta?.badge || "Free for students — always";
   const heading = cta?.heading || "Start Your Education Journey Today";
-  const subheading = cta?.subheading || "Join 10 lakh+ students who use Mayra to make smarter education decisions. Get personalized recommendations, exam alerts, and expert guidance.";
+  // CMS copy with unverifiable user counts ("10 lakh+ students") falls back to the default.
+  const subheading = (cta?.subheading && !/lakh|million/i.test(cta.subheading) ? cta.subheading : null) || "Get exam alerts, admission updates and expert guidance to help you make smarter education decisions.";
   const primaryText = cta?.ctaPrimaryText || "Get Started Free";
   // "Get Started Free" should always take the user to the contact page.
   const primaryLink = "/contact";

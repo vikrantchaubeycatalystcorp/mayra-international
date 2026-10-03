@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, TrendingUp, Award, Users, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
+import { CATALOG } from "../../lib/site-stats";
 
 const tabs = ["Colleges", "Exams", "Courses"] as const;
 type Tab = typeof tabs[number];
@@ -16,16 +17,16 @@ const quickFilters: Record<Tab, string[]> = {
 };
 
 const placeholders: Record<Tab, string> = {
-  Colleges: "Search 25,000+ colleges — IIT, NIT, IIM, AIIMS...",
+  Colleges: `Search ${CATALOG.colleges} colleges — IIT, NIT, IIM, AIIMS...`,
   Exams: "Search entrance exams — JEE, NEET, CAT, GATE...",
   Courses: "Search courses — B.Tech, MBA, MBBS, LLB...",
 };
 
 const statsData = [
-  { icon: Award, value: "25,000+", label: "Colleges", color: "text-blue-300" },
-  { icon: BookOpen, value: "500+", label: "Exams", color: "text-orange-300" },
+  { icon: Award, value: CATALOG.colleges, label: "Colleges", color: "text-blue-300" },
+  { icon: BookOpen, value: CATALOG.exams, label: "Exams", color: "text-orange-300" },
   { icon: Users, value: "10L+", label: "Students", color: "text-green-300" },
-  { icon: TrendingUp, value: "800+", label: "Courses", color: "text-purple-300" },
+  { icon: TrendingUp, value: CATALOG.courses, label: "Courses", color: "text-purple-300" },
 ];
 
 export function HeroBanner() {
@@ -86,7 +87,7 @@ export function HeroBanner() {
           </h1>
 
           <p className="text-lg sm:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Explore 25,000+ colleges, 500+ entrance exams, and get expert guidance to make your best education decision.
+            Explore {CATALOG.colleges} colleges, {CATALOG.exams} entrance exams, and get expert guidance to make your best education decision.
           </p>
 
           {/* Stats Row */}

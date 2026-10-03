@@ -1,25 +1,38 @@
-import type { College, Course, Exam, NewsArticle, StudyAbroadCountry } from "../types";
+import type { College, Course, Exam, NewsArticle } from "../types";
+import { SITE_DESCRIPTION } from "./site-stats";
 
 const SITE_URL = "https://www.mayrainternational.com";
 const SITE_NAME = "Mayra International";
 const ORG_LOGO = `${SITE_URL}/icon.png`;
 
+/**
+ * Default share image (app/opengraph-image.tsx). A page that sets its own `openGraph`
+ * replaces the inherited block entirely, so it must list the image again.
+ */
+export const DEFAULT_OG_IMAGES = [
+  { url: "/opengraph-image", width: 1200, height: 630, alt: "Mayra International — colleges, exams and admission counselling" },
+];
+
+/**
+ * Page <title> that stays within ~60 characters: the brand suffix is added only when
+ * it fits. Returned as `absolute` so the root layout template doesn't append it again.
+ */
+export function pageTitle(base: string): { absolute: string } {
+  const branded = `${base} | ${SITE_NAME}`;
+  return { absolute: branded.length <= 60 ? branded : base };
+}
+
 // ── Organization Schema (root level) ───────────────────────────────────────
-export function organizationJsonLd() {
+/** `sameAs` comes from the CMS social links; placeholder ("#") links are filtered out by the caller. */
+export function organizationJsonLd(sameAs: string[] = []) {
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     name: SITE_NAME,
     url: SITE_URL,
     logo: ORG_LOGO,
-    sameAs: [
-      "https://twitter.com/mayraintl",
-      "https://facebook.com/mayrainternational",
-      "https://instagram.com/mayrainternational",
-      "https://linkedin.com/company/mayra-international",
-    ],
-    description:
-      "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses with expert guidance.",
+    ...(sameAs.length ? { sameAs } : {}),
+    description: SITE_DESCRIPTION,
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+91-7506799678",
@@ -38,21 +51,14 @@ export function organizationJsonLd() {
   };
 }
 
-// ── WebSite Schema with SearchAction (AEO: enables sitelinks search box) ──
+// ── WebSite Schema ─────────────────────────────────────────────────────────
+// No SearchAction: Google retired the sitelinks search box in November 2024.
 export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
     url: SITE_URL,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/colleges?search={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 
@@ -90,14 +96,8 @@ export function collegeJsonLd(college: College) {
       addressRegion: college.state,
       addressCountry: "IN",
     },
-    foundingDate: String(college.established),
+    ...(college.established ? { foundingDate: String(college.established) } : {}),
     ...(college.website ? { sameAs: [college.website] } : {}),
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: college.rating.toFixed(1),
-      bestRating: "5",
-      ratingCount: String(college.reviewCount),
-    },
     ...(college.nirfRank
       ? {
           award: `NIRF Rank #${college.nirfRank}`,
@@ -110,47 +110,47 @@ export function collegeJsonLd(college: College) {
   };
 }
 
-// ── College FAQ Schema (AEO: direct answers for voice/AI) ─────────────────
-export function collegeFaqJsonLd(college: College) {
-  const faqs = [
-    {
-      question: `What is the fee structure of ${college.name}?`,
-      answer: `The annual fees at ${college.name} range from ₹${(college.fees.min / 100000).toFixed(1)} Lakhs to ₹${(college.fees.max / 100000).toFixed(1)} Lakhs depending on the program.`,
-    },
-    {
-      question: `What is the placement record of ${college.name}?`,
-      answer: college.avgPackage
-        ? `${college.name} has a placement rate of ${college.placementRate}%. The average package is ₹${(college.avgPackage / 100000).toFixed(1)} LPA${college.topPackage ? ` and the highest package is ₹${(college.topPackage / 100000).toFixed(0)} LPA` : ""}.`
-        : `${college.name} provides excellent placement support to its students. Contact the college for detailed placement statistics.`,
-    },
-    {
-      question: `What courses are offered at ${college.name}?`,
-      answer: `${college.name} offers the following courses: ${college.courses.join(", ")}.`,
-    },
-    {
-      question: `What is the NIRF ranking of ${college.name}?`,
-      answer: college.nirfRank
-        ? `${college.name} is ranked #${college.nirfRank} in the NIRF Rankings.`
-        : `${college.name} is accredited with ${college.accreditation.join(", ")}.`,
-    },
-    {
-      question: `How to get admission in ${college.name}?`,
-      answer: `Admission to ${college.name} is through national entrance exams. Engineering programs require JEE Main/Advanced qualification. Management programs require CAT/XAT scores. Check the official website for specific cutoffs.`,
-    },
-  ];
+// ── FAQs ───────────────────────────────────────────────────────────────────
+// Each builder returns only questions answerable from our own data. Pages render
+// the same list visibly (components/shared/FaqSection) and pass it to faqJsonLd,
+// so the FAQPage markup always matches what users can see.
+export type Faq = { question: string; answer: string };
 
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+const lakh = (n: number) => (n / 100000).toFixed(1);
+
+export function collegeFaqs(college: College): Faq[] {
+  const faqs: Faq[] = [];
+  if (college.fees.min > 0 && college.fees.max > 0) {
+    faqs.push({
+      question: `What is the fee structure of ${college.name}?`,
+      answer: `The annual fees at ${college.name} range from ₹${lakh(college.fees.min)} lakh to ₹${lakh(college.fees.max)} lakh depending on the programme.`,
+    });
+  }
+  if (college.avgPackage) {
+    faqs.push({
+      question: `What is the placement record of ${college.name}?`,
+      answer: `${college.placementRate ? `${college.name} has a placement rate of ${college.placementRate}%. ` : ""}The average package is ₹${lakh(college.avgPackage)} LPA${college.topPackage ? ` and the highest package is ₹${(college.topPackage / 100000).toFixed(0)} LPA` : ""}.`,
+    });
+  }
+  if (college.courses.length > 0) {
+    faqs.push({
+      question: `What courses are offered at ${college.name}?`,
+      answer: `${college.name} offers ${college.courses.join(", ")}.`,
+    });
+  }
+  if (college.nirfRank) {
+    faqs.push({
+      question: `What is the NIRF ranking of ${college.name}?`,
+      answer: `${college.name} is ranked #${college.nirfRank} in the NIRF rankings.`,
+    });
+  }
+  if (college.accreditation.length > 0) {
+    faqs.push({
+      question: `Is ${college.name} accredited?`,
+      answer: `${college.name} is accredited by ${college.accreditation.join(", ")}.`,
+    });
+  }
+  return faqs;
 }
 
 // ── Course Detail Schema ───────────────────────────────────────────────────
@@ -190,45 +190,46 @@ export function courseJsonLd(course: Course) {
   };
 }
 
-// ── Course FAQ Schema ──────────────────────────────────────────────────────
-export function courseFaqJsonLd(course: Course) {
-  const faqs = [
-    {
-      question: `What is the duration of ${course.name}?`,
-      answer: `${course.name} is a ${course.duration} ${course.level === "UG" ? "undergraduate" : course.level === "PG" ? "postgraduate" : course.level} program.`,
-    },
-    {
+export function courseFaqs(course: Course): Faq[] {
+  const level = course.level === "UG" ? "undergraduate" : course.level === "PG" ? "postgraduate" : course.level;
+  const faqs: Faq[] = [];
+  if (course.duration) {
+    faqs.push({ question: `What is the duration of ${course.name}?`, answer: `${course.name} is a ${course.duration} ${level} programme.` });
+  }
+  if (course.avgFees > 0) {
+    faqs.push({
       question: `What is the average fee for ${course.name} in India?`,
-      answer: `The average annual fee for ${course.name} in India is approximately ₹${(course.avgFees / 100000).toFixed(1)} Lakhs. Fees vary across institutions.`,
-    },
-    {
+      answer: `The average annual fee for ${course.name} in India is approximately ₹${lakh(course.avgFees)} lakh. Fees vary across institutions.`,
+    });
+  }
+  if (course.avgSalary) {
+    faqs.push({
       question: `What is the salary after ${course.name}?`,
-      answer: course.avgSalary
-        ? `The average starting salary after ${course.name} is approximately ₹${(course.avgSalary / 100000).toFixed(1)} LPA. Salaries vary based on college, specialization, and location.`
-        : `Salary after ${course.name} varies based on the institution, specialization, and industry.`,
-    },
-    {
+      answer: `The average starting salary after ${course.name} is approximately ₹${lakh(course.avgSalary)} LPA. Salaries vary by college, specialisation and location.`,
+    });
+  }
+  if (course.topColleges > 0) {
+    faqs.push({
       question: `How many colleges offer ${course.name} in India?`,
-      answer: `There are ${course.topColleges.toLocaleString()}+ colleges offering ${course.name} in India across government and private institutions.`,
-    },
-  ];
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+      answer: `More than ${course.topColleges.toLocaleString("en-IN")} colleges offer ${course.name} in India across government and private institutions.`,
+    });
+  }
+  return faqs;
 }
 
 // ── Exam Detail Schema ─────────────────────────────────────────────────────
+function isoDate(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString().slice(0, 10);
+}
+
+/** Event markup requires a real start date; returns null when the exam date is unknown. */
 export function examJsonLd(exam: Exam) {
+  const startDate = isoDate(exam.examDate);
+  if (!startDate) return null;
+  const validFrom = isoDate(exam.registrationStart);
+  const validThrough = isoDate(exam.registrationEnd);
   return {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -240,59 +241,48 @@ export function examJsonLd(exam: Exam) {
       name: exam.conductingBody,
     },
     eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-    startDate: exam.examDate,
+    eventStatus: "https://schema.org/EventScheduled",
+    startDate,
     location: {
       "@type": "VirtualLocation",
       url: `${SITE_URL}/exams/${exam.slug}`,
     },
-    offers: {
-      "@type": "Offer",
-      price: exam.applicationFee.general,
-      priceCurrency: "INR",
-      availability: "https://schema.org/InStock",
-      validFrom: exam.registrationStart,
-      validThrough: exam.registrationEnd,
-    },
+    ...(exam.applicationFee.general
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: exam.applicationFee.general,
+            priceCurrency: "INR",
+            availability: "https://schema.org/InStock",
+            ...(validFrom ? { validFrom } : {}),
+            ...(validThrough ? { validThrough } : {}),
+          },
+        }
+      : {}),
   };
 }
 
-// ── Exam FAQ Schema ────────────────────────────────────────────────────────
-export function examFaqJsonLd(exam: Exam) {
-  const faqs = [
-    {
-      question: `When is ${exam.name} ${new Date().getFullYear() + 1} exam date?`,
-      answer: `${exam.name} ${new Date().getFullYear() + 1} is scheduled for ${exam.examDate}. Registration ${exam.registrationStart ? `opens on ${exam.registrationStart}` : "dates will be announced soon"}.`,
-    },
-    {
+export function examFaqs(exam: Exam): Faq[] {
+  const faqs: Faq[] = [];
+  if (exam.examDate) {
+    faqs.push({ question: `When is the ${exam.name} exam?`, answer: `${exam.name} is scheduled for ${exam.examDate}.${exam.registrationStart ? ` Registration opens on ${exam.registrationStart}.` : ""}` });
+  }
+  if (exam.applicationFee.general) {
+    faqs.push({
       question: `What is the application fee for ${exam.name}?`,
-      answer: `The application fee for ${exam.name} is ₹${exam.applicationFee.general} for General/OBC category${exam.applicationFee.sc_st ? ` and ₹${exam.applicationFee.sc_st} for SC/ST/PwD category` : ""}.`,
-    },
-    {
-      question: `What is the eligibility for ${exam.name}?`,
-      answer: exam.eligibility,
-    },
-    {
-      question: `Who conducts ${exam.name}?`,
-      answer: `${exam.name} (${exam.fullName}) is conducted by ${exam.conductingBody}.`,
-    },
-    {
-      question: `Is ${exam.name} conducted online or offline?`,
-      answer: `${exam.name} is conducted in ${exam.mode} mode. ${exam.frequency || ""}`.trim(),
-    },
-  ];
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+      answer: `The application fee for ${exam.name} is ₹${exam.applicationFee.general} for the General category${exam.applicationFee.sc_st ? ` and ₹${exam.applicationFee.sc_st} for SC/ST/PwD candidates` : ""}.`,
+    });
+  }
+  if (exam.eligibility) {
+    faqs.push({ question: `What is the eligibility for ${exam.name}?`, answer: exam.eligibility });
+  }
+  if (exam.conductingBody) {
+    faqs.push({ question: `Who conducts ${exam.name}?`, answer: `${exam.fullName && exam.fullName !== exam.name ? `${exam.name} (${exam.fullName})` : exam.name} is conducted by ${exam.conductingBody}.` });
+  }
+  if (exam.mode) {
+    faqs.push({ question: `Is ${exam.name} conducted online or offline?`, answer: `${exam.name} is conducted in ${exam.mode} mode.${exam.frequency ? ` It is held ${exam.frequency.toLowerCase()}.` : ""}` });
+  }
+  return faqs;
 }
 
 // ── News Article Schema ────────────────────────────────────────────────────
@@ -331,92 +321,29 @@ export function newsArticleJsonLd(article: NewsArticle) {
   };
 }
 
-// ── Study Abroad HowTo Schema (AEO) ───────────────────────────────────────
-export function studyAbroadHowToJsonLd() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to Apply for Study Abroad from India",
-    description:
-      "Step-by-step guide for Indian students to apply to international universities.",
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose University",
-        text: "Shortlist universities based on ranking, program, budget, and location. Research admission requirements and deadlines.",
-        position: 1,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Prepare Documents",
-        text: "Prepare your Statement of Purpose (SOP), Letters of Recommendation (LOR), academic transcripts, CV/Resume, and language test scores (IELTS/TOEFL/GRE/GMAT).",
-        position: 2,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Apply Online",
-        text: "Submit applications through university portals or common application platforms. Pay the application fees and upload required documents.",
-        position: 3,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Get Admission",
-        text: "Receive the offer letter from the university. Confirm your enrollment by paying the deposit and accepting the offer.",
-        position: 4,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Get Visa",
-        text: "Apply for student visa with your admission letter, financial proof, and other required documents at the embassy/consulate.",
-        position: 5,
-      },
-    ],
-  };
-}
-
-// ── Study Abroad FAQ Schema ────────────────────────────────────────────────
-export function studyAbroadFaqJsonLd() {
-  const faqs = [
-    {
-      question: "Which country is best for Indian students to study abroad?",
-      answer:
-        "The USA, UK, Canada, Australia, and Germany are the top study abroad destinations for Indian students. The USA offers the best research opportunities, the UK has shorter program durations, Canada has friendly immigration policies, and Germany offers near-free tuition at public universities.",
-    },
-    {
-      question: "How much does it cost to study abroad from India?",
-      answer:
-        "The cost varies by country: USA ($45,000–$85,000/year), UK (£25,000–£40,000/year), Canada (CAD $25,000–$45,000/year), Germany (€500–€3,000/semester at public universities). Scholarships can significantly reduce costs.",
-    },
-    {
-      question: "What exams are required to study abroad?",
-      answer:
-        "Common exams include IELTS/TOEFL (English proficiency), GRE (for MS/PhD programs), GMAT (for MBA), SAT/ACT (for undergraduate in the US), and NEET (for MBBS abroad). Requirements vary by university and country.",
-    },
-    {
-      question: "Can I get a scholarship to study abroad?",
-      answer:
-        "Yes, numerous scholarships are available for Indian students including Fulbright, Chevening, DAAD, Commonwealth, and university-specific merit scholarships. Over $50,000+ in scholarships are available across destinations.",
-    },
-    {
-      question: "How many Indian students study abroad?",
-      answer:
-        "Over 3.3 lakh Indian students study abroad annually, making India one of the largest source countries for international students globally. The numbers are growing by 10-15% every year.",
-    },
-  ];
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-}
+// ── Study Abroad FAQs (rendered on /study-abroad) ──────────────────────────
+export const STUDY_ABROAD_FAQS: Faq[] = [
+  {
+    question: "Which country is best for Indian students to study abroad?",
+    answer:
+      "The USA, UK, Canada, Australia and Germany are among the most popular destinations for Indian students. The USA has the widest choice of universities, the UK offers one-year master's programmes, Canada and Australia offer post-study work options, and Germany's public universities charge little or no tuition. The best choice depends on your course, budget and career plans.",
+  },
+  {
+    question: "How much does it cost to study abroad from India?",
+    answer:
+      "Costs vary widely by country, university and course. Each destination guide on this page lists typical annual costs. Remember to add living expenses, insurance, travel and visa fees, and check scholarships that can reduce the total.",
+  },
+  {
+    question: "What exams are required to study abroad?",
+    answer:
+      "Common exams include IELTS, TOEFL or PTE (English proficiency), GRE (many MS and PhD programmes), GMAT (MBA), SAT (undergraduate study in the USA) and NEET UG (for MBBS abroad). Requirements vary by university and country.",
+  },
+  {
+    question: "Can I get a scholarship to study abroad?",
+    answer:
+      "Yes. Options include government scholarships such as Fulbright-Nehru (USA), Chevening and Commonwealth (UK) and DAAD (Germany), as well as merit scholarships offered by individual universities. Eligibility and deadlines differ for each.",
+  },
+];
 
 // ── Study Abroad Country Schema ────────────────────────────────────────────
 export function studyAbroadCountryJsonLd(country: { name: string; slug: string; description: string }) {
@@ -486,6 +413,7 @@ export function localServiceJsonLd(page: { slug: string; serviceName: string; de
 
 // ── Generic FAQ Schema (only for FAQs rendered visibly on the page) ────────
 export function faqJsonLd(faqs: { question: string; answer: string }[]) {
+  if (faqs.length === 0) return null;
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -544,7 +472,8 @@ export function examListJsonLd(exams: Exam[]) {
 }
 
 // ── JSON-LD Script Tag Helper ──────────────────────────────────────────────
-export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
+export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] | null }) {
+  if (!data) return null;
   return (
     <script
       type="application/ld+json"

@@ -42,7 +42,7 @@ export function OfficeCard() {
           href={OFFICE.whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700"
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-green-700 px-3 py-2 text-xs font-semibold text-white hover:bg-green-800"
         >
           <MessageCircle className="h-3.5 w-3.5" />
           WhatsApp

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CheckCircle, FileText, HelpCircle } from "lucide-react";
+import { CheckCircle, FileText } from "lucide-react";
 import { Breadcrumb } from "../../../components/shared/Breadcrumb";
+import { FaqSection } from "../../../components/shared/FaqSection";
 import {
   AreasServed,
   ContactButtons,
@@ -12,7 +13,7 @@ import {
 } from "../../../components/local-seo/LocalSeoBlocks";
 import { LOCAL_SEO_HUB_PATH, LOCAL_SEO_PAGES, getLocalSeoPage } from "../../../lib/local-seo";
 import { SITE_URL } from "../../../lib/sitemap";
-import { JsonLd, breadcrumbJsonLd, faqJsonLd, localServiceJsonLd } from "../../../lib/seo";
+import { JsonLd, breadcrumbJsonLd, faqJsonLd, localServiceJsonLd, DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 // Local service pages at the site root, e.g. /education-consultant-in-vashi.
 // Only slugs listed in lib/local-seo.ts render; every other root path 404s.
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: url },
-    openGraph: { title: page.title, description: page.description, url, type: "website" },
+    openGraph: { title: page.title, description: page.description, url, type: "website", images: DEFAULT_OG_IMAGES },
   };
 }
 
@@ -75,7 +76,7 @@ export default async function LocalServicePage({ params }: Props) {
             ))}
           </div>
           <ContactButtons />
-          <p className="mt-5 text-xs text-gray-400">Last updated {formatDate(page.updatedAt)}</p>
+          <p className="mt-5 text-xs text-gray-500">Last updated {formatDate(page.updatedAt)}</p>
         </div>
       </div>
 
@@ -135,20 +136,7 @@ export default async function LocalServicePage({ params }: Props) {
               </section>
             )}
 
-            <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
-                <HelpCircle className="h-5 w-5 text-primary-600" />
-                Frequently asked questions
-              </h2>
-              <div className="divide-y divide-gray-100">
-                {page.faqs.map((faq) => (
-                  <div key={faq.question} className="py-4 first:pt-0 last:pb-0">
-                    <h3 className="font-semibold text-gray-900">{faq.question}</h3>
-                    <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <FaqSection faqs={page.faqs} />
 
             <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Areas we serve from Vashi</h2>

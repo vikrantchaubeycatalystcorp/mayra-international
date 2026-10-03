@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
+import { CATALOG } from "../lib/site-stats";
 
-export const alt = "Mayra International — India's Most Trusted Education Portal";
+export const alt = "Mayra International — colleges, entrance exams and admission counselling";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const runtime = "edge";
 
 export default function OgImage() {
   return new ImageResponse(
@@ -68,7 +68,7 @@ export default function OgImage() {
             maxWidth: "800px",
           }}
         >
-          Find Your Dream College in India — 25,000+ Colleges | 500+ Exams | 800+ Courses
+          {`${CATALOG.colleges} Colleges | ${CATALOG.exams} Exams | ${CATALOG.courses} Courses — Admission counselling in Vashi, Navi Mumbai`}
         </div>
 
         <div

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
+import { CATALOG } from "../../../lib/site-stats";
 
 export const metadata: Metadata = {
-  title: "Top Colleges in India 2026 — Rankings, Fees, Admissions, Placements",
+  title: { absolute: "Top Colleges in India 2026 — Rankings, Fees & Placements" },
   description:
-    "Explore 25,000+ colleges in India. Compare NIRF rankings, fees, placements, cutoffs, and reviews for engineering, medical, management, law, and more. Find your perfect college.",
+    `Explore ${CATALOG.colleges} colleges in India. Compare NIRF rankings, fees, placements, cutoffs, and reviews for engineering, medical, management, law, and more. Find your perfect college.`,
   keywords: [
     "top colleges in india",
     "best engineering colleges",
@@ -16,9 +18,10 @@ export const metadata: Metadata = {
     "placement statistics india",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Top Colleges in India 2026 — Rankings, Fees, Placements",
     description:
-      "Explore 25,000+ colleges with NIRF rankings, fees, placements, and reviews. Find your dream college.",
+      `Explore ${CATALOG.colleges} colleges with NIRF rankings, fees, placements, and reviews. Find your dream college.`,
     url: "https://www.mayrainternational.com/colleges",
     type: "website",
   },

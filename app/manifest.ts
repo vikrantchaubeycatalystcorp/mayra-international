@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
+import { SITE_DESCRIPTION } from "../lib/site-stats";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Mayra International — Find Your Dream College in India",
+    name: "Mayra International — Colleges, Exams & Admission Counselling",
     short_name: "Mayra International",
-    description:
-      "India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
+    description: SITE_DESCRIPTION,
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

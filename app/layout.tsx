@@ -9,9 +9,18 @@ const FloatingInquiryForm = dynamic(
   () => import("../components/shared/FloatingInquiryForm").then((m) => m.FloatingInquiryForm),
   { loading: () => null }
 );
-import { JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
+import { DEFAULT_OG_IMAGES, JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
 import { Suspense } from "react";
-import { getLayoutMetadata } from "../lib/cached-queries";
+import { getFooterData, getLayoutMetadata } from "../lib/cached-queries";
+import { GoogleAnalytics } from "../components/shared/GoogleAnalytics";
+import { CATALOG, SITE_DESCRIPTION } from "../lib/site-stats";
+
+// Home-page SEO rows in the CMS still carry old copy (inflated catalogue counts,
+// "most trusted" claims). Ignore such values until the row is corrected.
+const STALE_SEO_COPY = /25,000\+|500\+ (entrance )?exams|800\+ courses|most trusted|^Mayra —/i;
+function freshSeo(value: string | null | undefined): string | undefined {
+  return value && !STALE_SEO_COPY.test(value) ? value : undefined;
+}
 
 export const revalidate = 300;
 
@@ -37,59 +46,48 @@ export async function generateMetadata(): Promise<Metadata> {
     : rawSiteUrl;
   const twitterHandle = company?.twitterHandle || "@mayraintl";
 
+  const title = freshSeo(seo?.title) || `Mayra International — Colleges, Exams & Admission Counselling`;
+  const description = freshSeo(seo?.description) || SITE_DESCRIPTION;
+  const ogTitle = freshSeo(seo?.ogTitle) || title;
+  const ogDescription = freshSeo(seo?.ogDescription) || description;
+
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: seo?.title || "Mayra International — Find Your Dream College in India | 25,000+ Colleges",
+      default: title,
       template: "%s | Mayra International",
     },
-    description: seo?.description || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses. Get expert guidance for JEE, NEET, CAT, GATE, and more.",
+    description,
     keywords: seo?.keywords || [
       "Mayra International",
       "mayrainternational",
-      "mayra international education",
-      "education portal india",
+      "education consultant Vashi",
+      "education consultant Navi Mumbai",
       "college admissions india",
-      "JEE Main 2026",
-      "NEET 2026",
-      "CAT MBA",
-      "GATE",
-      "top colleges india",
-      "NIRF rankings 2026",
-      "engineering colleges",
-      "medical colleges",
-      "study abroad from india",
-      "best colleges in india",
       "entrance exams india",
-      "college fees comparison",
-      "placement statistics",
+      "career counselling",
+      "study abroad from india",
+      `${CATALOG.colleges} colleges`,
     ],
     authors: [{ name: company?.name || "Mayra International" }],
     creator: company?.name || "Mayra International",
     publisher: company?.name || "Mayra International",
+    // og:image comes from app/opengraph-image.tsx; pages that set openGraph re-add DEFAULT_OG_IMAGES.
     openGraph: {
       type: "website",
       locale: "en_IN",
       url: siteUrl,
       siteName: company?.name || "Mayra International",
-      title: seo?.ogTitle || "Mayra International — Find Your Dream College in India",
-      description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges, 500+ entrance exams, and 800+ courses.",
-      images: [
-        {
-          url: seo?.ogImage || "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: `${company?.name || "Mayra International"} — India's Most Trusted Education Portal`,
-        },
-      ],
+      title: ogTitle,
+      description: ogDescription,
     },
     twitter: {
       card: "summary_large_image",
       site: twitterHandle,
       creator: twitterHandle,
-      title: seo?.ogTitle || "Mayra International — Find Your Dream College in India",
-      description: seo?.ogDescription || "Mayra International — India's most trusted education portal. Explore 25,000+ colleges and get expert guidance.",
-      images: [seo?.ogImage || "/og-image.png"],
+      title: ogTitle,
+      description: ogDescription,
+      images: DEFAULT_OG_IMAGES.map((image) => image.url),
     },
     // Google requires the favicon to be a square multiple of 48px (48, 96, 144…);
     // anything else falls back to the generic globe in search results. Serve these
@@ -117,25 +115,24 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-snippet": -1,
       },
     },
-    alternates: {
-      canonical: (seo?.canonical || siteUrl).replace(/https?:\/\/(www\.)?mayra\.in/g, "https://www.mayrainternational.com"),
-    },
     category: "education",
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { socialLinks } = await getFooterData();
+  const profileUrls = socialLinks.map((link) => link.url).filter((url) => /^https:\/\//.test(url));
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="rjceF4dV_VTYq5WSXdlb1UxWTK8SfDSS_SRgsOjQW5E" />
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={organizationJsonLd(profileUrls)} />
         <JsonLd data={websiteJsonLd()} />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
@@ -147,6 +144,7 @@ export default function RootLayout({
           <FooterServer />
         </Suspense>
         <FloatingInquiryForm />
+        <GoogleAnalytics />
       </body>
     </html>
   );

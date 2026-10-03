@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Free Mock Tests 2026 — JEE, NEET, GATE, CAT, UPSC, SSC | Mayra International",
+  title: { absolute: "Free Mock Tests 2026 — JEE, NEET, GATE, CAT, UPSC & SSC" },
   description:
     "Take free mock tests for JEE Main, NEET, GATE, CAT, UPSC, SSC CGL, Banking PO, CUET, and NDA. 200+ questions with real exam patterns, instant results, detailed solutions, and competitive leaderboards.",
   keywords: [
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     "competitive exam practice",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Free Mock Tests — Practice for JEE, NEET, GATE, CAT & More",
     description:
       "200+ questions across 10 exam categories. Take timed tests, compete on leaderboards, and track your progress.",

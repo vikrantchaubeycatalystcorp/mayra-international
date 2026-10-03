@@ -7,7 +7,7 @@ import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { ContactButtons, RelatedLinkGroup, getRelatedLinks } from "../../../../components/local-seo/LocalSeoBlocks";
 import { SITE_URL } from "../../../../lib/sitemap";
-import { JsonLd, breadcrumbJsonLd, studyAbroadCountryJsonLd } from "../../../../lib/seo";
+import { JsonLd, breadcrumbJsonLd, studyAbroadCountryJsonLd, DEFAULT_OG_IMAGES } from "../../../../lib/seo";
 
 export const revalidate = 3600;
 
@@ -42,7 +42,7 @@ function metaDescription(text: string, max = 155): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const country = await getCountry(slug);
-  if (!country) return { title: "Country Not Found" };
+  if (!country) notFound();
   const title = `Study in ${country.name} from India | Mayra International`;
   const description = metaDescription(country.description || `Universities, costs and popular courses in ${country.name} for Indian students.`);
   const url = `${SITE_URL}/study-abroad/${country.slug}`;
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    openGraph: { title, description, url, type: "website", images: DEFAULT_OG_IMAGES },
   };
 }
 

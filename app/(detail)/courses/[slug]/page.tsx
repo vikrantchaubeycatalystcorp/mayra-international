@@ -32,7 +32,8 @@ import { Breadcrumb } from "../../../../components/shared/Breadcrumb";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { formatCurrency } from "../../../../lib/utils";
-import { JsonLd, courseJsonLd, courseFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+import { JsonLd, courseJsonLd, courseFaqs, faqJsonLd, breadcrumbJsonLd, DEFAULT_OG_IMAGES, pageTitle } from "../../../../lib/seo";
+import { FaqSection } from "../../../../components/shared/FaqSection";
 
 export const revalidate = 60;
 
@@ -68,9 +69,10 @@ export async function generateMetadata({ params }: Props) {
   const course = await prisma.course.findUnique({ where: { slug } });
   if (!course) return { title: "Course Not Found" };
   return {
-    title: `${course.name} — Duration, Fees, Top Colleges, Career Scope ${new Date().getFullYear() + 1}`,
+    title: pageTitle(`${course.name} — Fees, Duration & Career Scope`),
     description: `Complete guide to ${course.name}: ${course.duration} duration, ₹${(course.avgFees / 100000).toFixed(1)}L avg fees, ${course.topColleges.toLocaleString()}+ colleges.${course.avgSalary ? ` Avg salary ₹${(course.avgSalary / 100000).toFixed(1)} LPA.` : ""} Eligibility, syllabus, and career scope.`,
     openGraph: {
+      images: DEFAULT_OG_IMAGES,
       title: `${course.name} — Fees, Duration & Career Scope`,
       description: course.description.slice(0, 160),
       url: `https://www.mayrainternational.com/courses/${course.slug}`,
@@ -88,6 +90,7 @@ export default async function CourseDetailPage({ params }: Props) {
   if (!course) notFound();
 
   const Icon = streamIconMap[course.stream] ?? BookOpen;
+  const faqs = courseFaqs(course as any);
 
   const relatedCourses = await prisma.course.findMany({
     where: {
@@ -101,7 +104,7 @@ export default async function CourseDetailPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gray-50">
       <JsonLd data={courseJsonLd(course as any)} />
-      <JsonLd data={courseFaqJsonLd(course as any)} />
+      <JsonLd data={faqJsonLd(faqs)} />
       <JsonLd data={breadcrumbJsonLd([
         { name: "Courses", url: "/courses" },
         { name: course.name },
@@ -156,9 +159,11 @@ export default async function CourseDetailPage({ params }: Props) {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Button variant="gradient" size="lg">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4" />
+                <Button asChild variant="gradient" size="lg">
+                  <Link href="/contact#inquiry-form">
+                    Get Admission Guidance
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
                 <Link href="/courses">
                   <Button variant="ghost" size="lg">
@@ -170,7 +175,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
             {/* Quick Info Card */}
             <div className="w-full lg:w-72 bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl border border-primary-100 p-5 flex-shrink-0">
-              <h3 className="font-bold text-gray-900 mb-4 text-sm">Key Information</h3>
+              <h2 className="font-bold text-gray-900 mb-4 text-sm">Key Information</h2>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Duration</span>
@@ -289,19 +294,23 @@ export default async function CourseDetailPage({ params }: Props) {
                       {item.step}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm">{item.title}</h4>
+                      <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
                       <p className="text-sm text-gray-500 mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="mt-5">
-                <Button variant="gradient" className="gap-2">
-                  Find Colleges for {course.name}
-                  <ArrowRight className="h-4 w-4" />
+                <Button asChild variant="gradient" className="gap-2">
+                  <Link href={`/colleges?stream=${encodeURIComponent(course.stream)}`}>
+                    Find {course.stream} Colleges
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
             </section>
+
+            <FaqSection faqs={faqs} />
           </div>
 
           {/* Sidebar */}
@@ -346,7 +355,7 @@ export default async function CourseDetailPage({ params }: Props) {
                         <p className="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">
                           {c.name}
                         </p>
-                        <p className="text-xs text-gray-400">{c.duration}</p>
+                        <p className="text-xs text-gray-500">{c.duration}</p>
                       </div>
                       <Badge variant="secondary" className="text-xs">{c.level}</Badge>
                     </Link>

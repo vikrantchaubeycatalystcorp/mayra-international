@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, TrendingUp, Award, Users, BookOpen, ArrowRight, Sparkles, ChevronRight, type LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
+import { CATALOG } from "../../lib/site-stats";
 
 const iconMap: Record<string, LucideIcon> = {
   Award, BookOpen, Users, TrendingUp, Search, Sparkles,
@@ -32,17 +33,17 @@ const defaultBanner = {
   badgeLink: "/news",
   heading: "Find Your Dream College",
   headingHighlight: "Dream College",
-  subheading: "Explore 25,000+ colleges, 500+ entrance exams, and get expert guidance to make your best education decision.",
+  subheading: `Explore ${CATALOG.colleges} colleges, ${CATALOG.exams} entrance exams, and get expert guidance to make your best education decision.`,
   bgImage: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=90&auto=format&fit=crop",
   ctaText: "Search",
   stats: [
-    { id: "1", icon: "Award", value: "25,000+", label: "Colleges", color: "text-indigo-300" },
-    { id: "2", icon: "BookOpen", value: "500+", label: "Exams", color: "text-amber-300" },
+    { id: "1", icon: "Award", value: CATALOG.colleges, label: "Colleges", color: "text-indigo-300" },
+    { id: "2", icon: "BookOpen", value: CATALOG.exams, label: "Exams", color: "text-amber-300" },
     { id: "3", icon: "Users", value: "10L+", label: "Students", color: "text-emerald-300" },
-    { id: "4", icon: "TrendingUp", value: "800+", label: "Courses", color: "text-purple-300" },
+    { id: "4", icon: "TrendingUp", value: CATALOG.courses, label: "Courses", color: "text-purple-300" },
   ],
   searchTabs: [
-    { id: "1", label: "Colleges", placeholder: "Search 25,000+ colleges — IIT, NIT, IIM, AIIMS...", searchPath: "/colleges" },
+    { id: "1", label: "Colleges", placeholder: `Search ${CATALOG.colleges} colleges — IIT, NIT, IIM, AIIMS...`, searchPath: "/colleges" },
     { id: "2", label: "Exams", placeholder: "Search entrance exams — JEE, NEET, CAT, GATE...", searchPath: "/exams" },
     { id: "3", label: "Courses", placeholder: "Search courses — B.Tech, MBA, MBBS, LLB...", searchPath: "/courses" },
   ],

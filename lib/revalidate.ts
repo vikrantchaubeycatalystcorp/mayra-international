@@ -9,7 +9,7 @@ const ENTITY_PATH_MAP: Record<string, string[]> = {
   College: ["/", "/colleges", "/compare", "/map"],
   Course: ["/", "/courses"],
   Exam: ["/", "/exams"],
-  News: ["/", "/news", "/articles"],
+  News: ["/", "/news"],
   StudyAbroad: ["/", "/study-abroad", "/study-abroad/[slug]"],
 
   // Homepage settings

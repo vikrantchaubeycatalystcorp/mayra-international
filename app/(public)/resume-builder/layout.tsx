@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Free Resume Builder for Students — Create Professional CV Online",
+  title: "Free Resume Builder for Students",
   description:
     "Build a professional resume for free. Choose from multiple templates, add education, experience, skills, and projects. Download as PDF. Perfect for freshers and students.",
   keywords: [
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     "resume download pdf",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Free Resume Builder — Create Professional CV",
     description:
       "Build and download a professional resume for free. Multiple templates for students and freshers.",

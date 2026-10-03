@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Globe, Map as MapIcon, Building2 } from "lucide-react";
 import { prisma } from "../../../lib/db";
 import { MapClientWrapper } from "../../../components/map/MapClientWrapper";
+import { SITE_URL } from "../../../lib/sitemap";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "World College Map | Mayra",
+  title: "World College Map",
   description: "Explore colleges worldwide on an interactive map. Zoom in to see exact college locations.",
+  alternates: { canonical: `${SITE_URL}/map` },
 };
 
 export default async function MapPage() {
@@ -74,7 +76,7 @@ export default async function MapPage() {
       <div className="bg-slate-900 border-b border-slate-700 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center gap-3 sm:gap-6 flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-2">
           <MapIcon className="h-4 w-4 text-blue-400" />
-          <span className="text-white font-bold text-sm">World College Map</span>
+          <h1 className="text-white font-bold text-sm">World College Map</h1>
         </div>
         <div className="h-4 w-px bg-slate-600" />
         <div className="flex items-center gap-4 text-sm">

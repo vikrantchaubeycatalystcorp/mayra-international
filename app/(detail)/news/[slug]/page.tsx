@@ -7,7 +7,7 @@ import { Badge } from "../../../../components/ui/badge";
 import { ShareButtons } from "../../../../components/shared/ShareButtons";
 import { LiveBadge } from "../../../../components/shared/LiveBadge";
 import { formatDate, getReadTime, normalizeImageUrl } from "../../../../lib/utils";
-import { JsonLd, newsArticleJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+import { JsonLd, newsArticleJsonLd, breadcrumbJsonLd, pageTitle } from "../../../../lib/seo";
 
 export const revalidate = 60;
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props) {
   const article = await prisma.newsArticle.findUnique({ where: { slug } });
   if (!article) return { title: "Article Not Found" };
   return {
-    title: article.title,
+    title: pageTitle(article.title),
     description: article.summary,
     openGraph: {
       title: article.title,

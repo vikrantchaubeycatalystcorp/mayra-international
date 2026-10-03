@@ -68,8 +68,8 @@ const navItems: NavItem[] = [
         {
           title: "By Stream",
           items: [
-            { label: "Engineering Colleges", href: "/colleges?stream=Engineering", icon: Cpu, desc: "4500+ colleges" },
-            { label: "Medical Colleges", href: "/colleges?stream=Medical", icon: Stethoscope, desc: "706 MBBS colleges" },
+            { label: "Engineering Colleges", href: "/colleges?stream=Engineering", icon: Cpu, desc: "B.Tech & B.E. colleges" },
+            { label: "Medical Colleges", href: "/colleges?stream=Medical", icon: Stethoscope, desc: "MBBS & BDS colleges" },
             { label: "Management", href: "/colleges?stream=Management", icon: Briefcase, desc: "Top MBA colleges" },
             { label: "Law Colleges", href: "/colleges?stream=Law", icon: Scale, desc: "NLUs & more" },
             { label: "Arts & Sciences", href: "/colleges?stream=Arts", icon: BookOpen, desc: "Liberal arts colleges" },

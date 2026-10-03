@@ -8,6 +8,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Input } from "../../../components/ui/input";
 import { cn, formatCurrency } from "../../../lib/utils";
 import { useMasterData } from "../../../hooks/useMasterData";
+import { CATALOG } from "../../../lib/site-stats";
 
 const PAGE_SIZE = 12;
 
@@ -101,7 +102,7 @@ export function CoursesClient({ courses, streams: propStreams, levels: propLevel
         <div className="container mx-auto py-8">
           <Breadcrumb items={[{ label: "Courses" }]} className="mb-4" />
           <h1 className="text-3xl font-black text-gray-900 mb-2">Courses in India</h1>
-          <p className="text-gray-500">Explore 800+ courses across UG, PG, Diploma and certificate programs</p>
+          <p className="text-gray-500">Explore {CATALOG.courses} courses across UG, PG, Diploma and certificate programs</p>
         </div>
       </div>
 

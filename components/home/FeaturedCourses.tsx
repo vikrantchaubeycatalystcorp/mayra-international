@@ -3,6 +3,7 @@ import { ArrowRight, Cpu, Stethoscope, Briefcase, Scale, Monitor, FlaskConical, 
 import { courses } from "../../data/courses";
 import { formatCurrency } from "../../lib/utils";
 import { cn } from "../../lib/utils";
+import { CATALOG } from "../../lib/site-stats";
 
 const streamIconMap: Record<string, LucideIcon> = {
   Engineering: Cpu,
@@ -81,7 +82,7 @@ export function FeaturedCourses() {
               Popular Courses
             </h2>
             <p className="text-gray-500 mt-1 text-sm sm:text-base">
-              Explore 800+ courses across engineering, medicine, law, management and more
+              Explore {CATALOG.courses} courses across engineering, medicine, law, management and more
             </p>
           </div>
           <Link

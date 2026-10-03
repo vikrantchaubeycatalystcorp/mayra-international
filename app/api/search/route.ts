@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { CATALOG } from "@/lib/site-stats";
 import { prisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
@@ -67,9 +68,9 @@ export async function GET(req: NextRequest) {
 
   // Quick links / pages that students can navigate to
   const quickLinks = [
-    { id: "ql-colleges", title: "Browse Colleges", description: "Explore 25,000+ colleges across India", href: "/colleges", category: "page", icon: "GraduationCap" },
+    { id: "ql-colleges", title: "Browse Colleges", description: `Explore ${CATALOG.colleges} colleges across India`, href: "/colleges", category: "page", icon: "GraduationCap" },
     { id: "ql-exams", title: "Entrance Exams", description: "Find exam dates, eligibility & registration", href: "/exams", category: "page", icon: "FileText" },
-    { id: "ql-courses", title: "Explore Courses", description: "Browse 800+ courses across all streams", href: "/courses", category: "page", icon: "BookOpen" },
+    { id: "ql-courses", title: "Explore Courses", description: `Browse ${CATALOG.courses} courses across all streams`, href: "/courses", category: "page", icon: "BookOpen" },
     { id: "ql-news", title: "Latest News & Articles", description: "Education news, updates & articles", href: "/news", category: "page", icon: "Newspaper" },
     { id: "ql-compare", title: "Compare Colleges", description: "Side-by-side college comparison tool", href: "/compare", category: "page", icon: "Scale" },
     { id: "ql-study-abroad", title: "Study Abroad", description: "Explore international education options", href: "/study-abroad", category: "page", icon: "Globe" },

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGES } from "../../../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Education News India 2026 — Exams, Admissions, Results, Rankings",
+  title: { absolute: "Education News India 2026 — Exams, Admissions & Results" },
   description:
     "Latest education news and updates on entrance exams, admissions, results, NIRF rankings, scholarships, policy changes, and career guidance for students in India.",
   keywords: [
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     "education policy india",
   ],
   openGraph: {
+    images: DEFAULT_OG_IMAGES,
     title: "Education News India 2026 — Latest Updates",
     description:
       "Stay updated with the latest education news on exams, admissions, results, rankings, and scholarships.",

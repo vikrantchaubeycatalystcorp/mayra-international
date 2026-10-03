@@ -16,7 +16,8 @@ import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../../components/ui/accordion";
 import { formatDate } from "../../../../lib/utils";
-import { JsonLd, examJsonLd, examFaqJsonLd, breadcrumbJsonLd } from "../../../../lib/seo";
+import { JsonLd, examJsonLd, examFaqs, faqJsonLd, breadcrumbJsonLd, DEFAULT_OG_IMAGES, pageTitle } from "../../../../lib/seo";
+import { FaqSection } from "../../../../components/shared/FaqSection";
 
 export const revalidate = 60;
 
@@ -32,9 +33,10 @@ export async function generateMetadata({ params }: Props) {
   const exam = await prisma.exam.findUnique({ where: { slug } });
   if (!exam) return { title: "Exam Not Found" };
   return {
-    title: `${exam.name} 2026 — Exam Date, Registration, Syllabus, Eligibility`,
+    title: pageTitle(`${exam.name} 2026 — Dates, Syllabus & Eligibility`),
     description: `${exam.name} (${exam.fullName}) 2026: Exam date ${exam.examDate}, conducted by ${exam.conductingBody}. Check registration dates, syllabus, eligibility, application fee ₹${exam.applicationFeeGeneral}, and preparation tips.`,
     openGraph: {
+      images: DEFAULT_OG_IMAGES,
       title: `${exam.name} 2026 — Dates, Syllabus & Eligibility`,
       description: exam.description.slice(0, 160),
       url: `https://www.mayrainternational.com/exams/${exam.slug}`,
@@ -82,11 +84,12 @@ export default async function ExamDetailPage({ params }: Props) {
     applicationFee: { general: exam.applicationFeeGeneral, sc_st: exam.applicationFeeSCST },
     syllabus,
   };
+  const faqs = examFaqs(examSeo as any);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <JsonLd data={examJsonLd(examSeo as any)} />
-      <JsonLd data={examFaqJsonLd(examSeo as any)} />
+      <JsonLd data={faqJsonLd(faqs)} />
       <JsonLd data={breadcrumbJsonLd([
         { name: "Exams", url: "/exams" },
         { name: exam.name },
@@ -159,12 +162,14 @@ export default async function ExamDetailPage({ params }: Props) {
               )}
 
               <div className="flex flex-wrap gap-3">
-                <Button variant="gradient" size="lg">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4" />
+                <Button asChild variant="gradient" size="lg">
+                  <Link href="/contact#inquiry-form">
+                    Get Exam Guidance
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
-                <Button variant="outline" size="lg">
-                  Download Syllabus
+                <Button asChild variant="outline" size="lg">
+                  <a href="#syllabus">View Syllabus</a>
                 </Button>
                 <Link href="/exams">
                   <Button variant="ghost" size="lg">
@@ -235,7 +240,7 @@ export default async function ExamDetailPage({ params }: Props) {
             </section>
 
             {/* Syllabus */}
-            <section className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
+            <section id="syllabus" className="bg-white rounded-2xl border border-gray-100 shadow-card p-6 scroll-mt-24">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary-600" />
                 Exam Syllabus
@@ -289,12 +294,16 @@ export default async function ExamDetailPage({ params }: Props) {
                 ))}
               </div>
               <div className="mt-5">
-                <Button variant="gradient" className="gap-2">
-                  Apply for {exam.name}
-                  <ArrowRight className="h-4 w-4" />
+                <Button asChild variant="gradient" className="gap-2">
+                  <Link href="/contact#inquiry-form">
+                    Get help applying for {exam.name}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
             </section>
+
+            <FaqSection faqs={faqs} />
           </div>
 
           {/* Sidebar */}
